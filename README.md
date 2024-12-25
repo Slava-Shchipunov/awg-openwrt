@@ -1,3 +1,3 @@
 AmneziaWG immortalwrt
 
-Fork [Slava-Shchipunov](https://github.com/Slava-Shchipunov/awg-openwrt)
+branch [Slava-Shchipunov](https://github.com/Slava-Shchipunov/awg-openwrt)
