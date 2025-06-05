@@ -64,15 +64,29 @@ function generateDescription(name, texts) {
 	]);
 }
 
-function invokeQREncode(data, code) {
+function invokeQREncode(data, div) {
+	
+	var code = div.children[0];
+	var btn = div.children[1];
+	
+	dom.content(btn, [
+				E('a', {
+					'class': 'btn cbi-button-action',
+					'style': 'text-align: center',
+					'href': 'data:text/plain;charset=utf-8,' + encodeURIComponent(data),
+					'download': 'amneziawg.conf'
+
+				}, ['Download Configuration']),	
+	]);
+	
 	return fs.exec_direct('/usr/bin/qrencode', [
 		'--inline', '--8bit', '--type=SVG',
 		'--output=-', '--', data
 	]).then(function(svg) {
-		code.style.opacity = '';
+		div.style.opacity = '';
 		dom.content(code, Object.assign(E(svg), { style: 'width:100%;height:auto' }));
 	}).catch(function(error) {
-		code.style.opacity = '';
+		div.style.opacity = '';
 
 		if (L.isObject(error) && error.name == 'NotFoundError') {
 			dom.content(code, [
@@ -894,9 +908,16 @@ return network.registerProtocol('amneziawg', {
 					}, [
 						E('div', {
 							'class': 'qr-code',
-							'style': 'width:320px;flex:0 1 320px;text-align:center'
+							'style': 'display:flex; flex-direction: column; text-align: center',
 						}, [
-							E('em', { 'class': 'spinning' }, [ _('Generating QR code…') ])
+							E('div', {
+								'style': 'width:320px;flex:0 1 320px;text-align:center'
+							}, [
+								E('em', { 'class': 'spinning' }, [ _('Generating QR code…') ])
+							]),
+							
+							E('div', {
+							}, ['Download Configuration']),	
 						]),
 						E('pre', {
 							'class': 'client-config',
