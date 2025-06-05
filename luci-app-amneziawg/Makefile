@@ -7,7 +7,7 @@
 include $(TOPDIR)/rules.mk
 
 LUCI_TITLE:=Support for AmneziaWG VPN
-LUCI_DEPENDS:=+amneziawg-tools +ucode
+LUCI_DEPENDS:=+amneziawg-tools +ucode +qrencode
 LUCI_PKGARCH:=all
 
 PKG_PROVIDES:=luci-app-amneziawg
