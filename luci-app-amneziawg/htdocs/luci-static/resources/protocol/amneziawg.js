@@ -743,33 +743,56 @@ return network.registerProtocol('amneziawg', {
 
 		o.modalonly = true;
 
-		o.createPeerConfig = function(section_id, endpoint, ips) {
+	        o.createPeerConfig = function (section_id, endpoint, ips) {
 			var pub = s.formvalue(s.section, 'public_key'),
-			    port = s.formvalue(s.section, 'listen_port') || '51820',
-                jc = s.formvalue
-			    prv = this.section.formvalue(section_id, 'private_key'),
-			    psk = this.section.formvalue(section_id, 'preshared_key'),
-			    eport = this.section.formvalue(section_id, 'endpoint_port'),
-			    keep = this.section.formvalue(section_id, 'persistent_keepalive');
-
-			// If endpoint is IPv6 we must escape it with []
+			port = s.formvalue(s.section, 'listen_port') || '51820',
+			prv = this.section.formvalue(section_id, 'private_key'),
+			psk = this.section.formvalue(section_id, 'preshared_key'),
+			eport = this.section.formvalue(section_id, 'endpoint_port'),
+			keep = this.section.formvalue(section_id, 'persistent_keepalive'),
+			jc = s.formvalue(s.section, 'awg_jc'),
+			jmin = s.formvalue(s.section, 'awg_jmin'),
+			jmax = s.formvalue(s.section, 'awg_jmax'),
+			s1 = s.formvalue(s.section, 'awg_s1'),
+			s2 = s.formvalue(s.section, 'awg_s2'),
+			h1 = s.formvalue(s.section, 'awg_h1'),
+			h2 = s.formvalue(s.section, 'awg_h2'),
+			h3 = s.formvalue(s.section, 'awg_h3'),
+			h4 = s.formvalue(s.section, 'awg_h4');		
+				
 			if (endpoint.indexOf(':') > 0) {
-				endpoint = '['+endpoint+']';
+			endpoint = '[' + endpoint + ']';
 			}
-
-			return [
+			var configLines = [
 				'[Interface]',
 				'PrivateKey = ' + prv,
 				eport ? 'ListenPort = ' + eport : '# ListenPort not defined',
+				''
+			];
+	
+			if (jc) configLines.push('jc = ' + jc);
+			if (jmin) configLines.push('jmin = ' + jmin);
+			if (jmax) configLines.push('jmax = ' + jmax);
+			if (s1) configLines.push('s1 = ' + s1);
+			if (s2) configLines.push('s2 = ' + s2);
+			if (h1) configLines.push('h1 = ' + h1);
+			if (h2) configLines.push('h2 = ' + h2);
+			if (h3) configLines.push('h3 = ' + h3);
+			if (h4) configLines.push('h4 = ' + h4);
+	
+			configLines.push(
 				'',
 				'[Peer]',
 				'PublicKey = ' + pub,
 				psk ? 'PresharedKey = ' + psk : '# PresharedKey not used',
 				ips && ips.length ? 'AllowedIPs = ' + ips.join(', ') : '# AllowedIPs not defined',
 				endpoint ? 'Endpoint = ' + endpoint + ':' + port : '# Endpoint not defined',
-				keep ? 'PersistentKeepAlive = ' + keep : '# PersistentKeepAlive not defined'
-			].join('\n');
-		};
+				keep ? 'PersistentKeepAlive = ' + keep : '# PersistentKeepAlive not defined',
+				''
+			);
+	
+			return configLines.join('\n');
+	        };
 
 		o.handleGenerateQR = function(section_id, ev) {
 			var mapNode = ss.getActiveModalMap(),
