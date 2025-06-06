@@ -781,6 +781,7 @@ return network.registerProtocol('amneziawg', {
 				'[Interface]',
 				'PrivateKey = ' + prv,
 				eport ? 'ListenPort = ' + eport : '# ListenPort not defined',
+				eips && eips.length ? 'Address = ' + eips.join(', ') : '# Address not defined',
 				dns && dns.length ? 'DNS = ' + dns.join(', ') : '# DNS not defined',
 				''
 			];
@@ -801,7 +802,6 @@ return network.registerProtocol('amneziawg', {
 				'PublicKey = ' + pub,
 				psk ? 'PresharedKey = ' + psk : '# PresharedKey not used',
 				ips && ips.length ? 'AllowedIPs = ' + ips.join(', ') : '# AllowedIPs not defined',
-				eips && eips.length ? 'Address = ' + eips.join(', ') : '# Address not defined',
 				endpoint ? 'Endpoint = ' + endpoint + ':' + port : '# Endpoint not defined',
 				keep ? 'PersistentKeepAlive = ' + keep : '# PersistentKeepAlive not defined',
 				''
