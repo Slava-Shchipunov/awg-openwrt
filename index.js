@@ -3,16 +3,19 @@ const cheerio = require('cheerio');
 const core = require('@actions/core');
 
 const version = process.argv[2]; // Получение версии OpenWRT из аргумента командной строки
+const filterTargetsStr = process.argv[3] || ''; // Фильтр по targets (опционально, через запятую)
+const filterSubtargetsStr = process.argv[4] || ''; // Фильтр по subtargets (опционально, через запятую)
 
-const SNAPSHOT_TARGETS_TO_BUILD = ['mediatek', 'ramips', 'x86', 'armsr'];
-const SNAPSHOT_SUBTARGETS_TO_BUILD = ['filogic', 'mt7622', 'mt7623', 'mt7629', 'mt7620', 'mt7621', 'mt76x8', '64', 'generic', 'armv8'];
+// Преобразуем строки с запятыми в массивы
+const filterTargets = filterTargetsStr ? filterTargetsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+const filterSubtargets = filterSubtargetsStr ? filterSubtargetsStr.split(',').map(s => s.trim()).filter(s => s) : [];
 
 if (!version) {
   core.setFailed('Version argument is required');
   process.exit(1);
 }
 
-const url = version === 'SNAPSHOT' ? 'https://downloads.openwrt.org/snapshots/targets/' : `https://downloads.openwrt.org/releases/${version}/targets/`;
+const url = `https://downloads.openwrt.org/releases/${version}/targets/`;
 
 async function fetchHTML(url) {
   try {
@@ -74,19 +77,38 @@ async function main() {
     const jobConfig = [];
 
     for (const target of targets) {
+      // Пропускаем target, если указан массив фильтров и target не входит в него
+      if (filterTargets.length > 0 && !filterTargets.includes(target)) {
+        continue;
+      }
+
       const subtargets = await getSubtargets(target);
       for (const subtarget of subtargets) {
+        // Пропускаем subtarget, если указан массив фильтров и subtarget не входит в него
+        if (filterSubtargets.length > 0 && !filterSubtargets.includes(subtarget)) {
+          continue;
+        }
+
+        // Добавляем в конфигурацию только если:
+        // 1. Оба массива пустые (автоматическая сборка по тегу) - собираем всё
+        // 2. Оба массива НЕ пустые (ручной запуск) - target И subtarget должны быть в своих массивах
+        const isAutomatic = filterTargets.length === 0 && filterSubtargets.length === 0;
+        const isManualMatch = filterTargets.length > 0 && filterSubtargets.length > 0 &&
+                              filterTargets.includes(target) && filterSubtargets.includes(subtarget);
+        
+        if (!isAutomatic && !isManualMatch) {
+          continue;
+        }
+
         const { vermagic, pkgarch } = await getDetails(target, subtarget);
 
-        if (version !== 'SNAPSHOT' || (SNAPSHOT_SUBTARGETS_TO_BUILD.includes(subtarget) && SNAPSHOT_TARGETS_TO_BUILD.includes(target))) {
-          jobConfig.push({
-            tag: version,
-            target,
-            subtarget,
-            vermagic,
-            pkgarch,
-          });
-        }
+        jobConfig.push({
+          tag: version,
+          target,
+          subtarget,
+          vermagic,
+          pkgarch,
+        });
       }
     }
 
