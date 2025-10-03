@@ -198,3 +198,4 @@ jobs:
         with:
           files: awgrelease/*.ipk
           tag_name: v${{ matrix.build_env.tag }}
+          make_latest: false
