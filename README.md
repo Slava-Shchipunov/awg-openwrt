@@ -66,8 +66,8 @@ AWG 2.0 можно собрать под определённую платфор
 - [@ygurov](https://github.com/ygurov) - за [имплементацию](https://github.com/amnezia-vpn/amneziawg-linux-kernel-module/pull/88) awg 2.0 для модуля ядра 💪
 - А также всем, кто приносил полезные примеры в личку и в [ишью](https://github.com/Slava-Shchipunov/awg-openwrt/issues/39), отписывались в комменты к PR с имплементацией о возникших багах и проблемах ❤️
 
-# Automatic configuration of AmneziaWG for OpenWRT version 23.05.0 and newer
-1) If your router has enough available RAM, I recommend using the script described below only to install the necessary packages, and use podkop from user [@itdog](https://github.com/itdog) for selective traffic routing into the tunnel - the setup process is described in the [documentation](https://podkop.net/docs/tunnels/awg_settings/)
+## Automatic configuration of AmneziaWG for OpenWRT version 23.05.0 and newer
+1) If your router has enough available RAM, I recommend using the script described below only to install the necessary packages, and use podkop from user [@itdoginfo](https://github.com/itdoginfo) for selective traffic routing into the tunnel - the setup process is described in the [documentation](https://podkop.net/docs/tunnels/awg_settings/)
 
 2) If you only need to install packages, I added the amneziawg-install script - it will automatically download packages from this repository for your device (only for the stable version of OpenWRT), and also offer to immediately configure the interface with the AmneziaWG protocol. If the user agrees, you will need to enter the config parameters that the script will request. The script will create an interface, configure firewall rules for it, and also **enable redirection of all traffic through the AmneziaWG tunnel** (check the Route Allowed IPs box in the Peer settings).
 To run the script, connect to the router via SSH, enter the command and follow the instructions on the screen:
@@ -75,7 +75,7 @@ To run the script, connect to the router via SSH, enter the command and follow t
 sh <(wget -O - https://raw.githubusercontent.com/Slava-Shchipunov/awg-openwrt/refs/heads/master/amneziawg-install.sh)
 ```
 
-3) In addition, for automatic configuration you can also use the [script](https://github.com/itdoginfo/domain-routing-openwrt) from user [@itdog](https://github.com/itdog). This script allows you to automatically download the necessary packages from those collected here and configure [point-by-point bypass of blocking by domains](https://habr.com/ru/articles/767464/) (instructions in Russian). Suitable if you have a weak router with insufficient RAM to install podkop and its dependencies
+3) In addition, for automatic configuration you can also use the [script](https://github.com/itdoginfo/domain-routing-openwrt) from user [@itdoginfo](https://github.com/itdoginfo). This script allows you to automatically download the necessary packages from those collected here and configure [point-by-point bypass of blocking by domains](https://habr.com/ru/articles/767464/) (instructions in Russian). Suitable if you have a weak router with insufficient RAM to install podkop and its dependencies
 
 # Building packages for all devices that support OpenWRT
 A script has been added to the repository that parses data on supported platforms from the OpenWRT page and automatically starts building AmneziaWG packages for all devices.
