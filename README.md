@@ -6,6 +6,10 @@
 ```
 sh <(wget -O - https://raw.githubusercontent.com/Slava-Shchipunov/awg-openwrt/refs/heads/master/amneziawg-install.sh)
 ```
+AWG 2.0 пока не влит в мастер, поэтому можно установить из фиче ветки (при настройке скриптом параметры S3, S4 и все I параметры нужно будет ввести вручную через luci или в /etc/config/network, позже доработаю скрипт):
+```
+sh <(wget -O - https://raw.githubusercontent.com/Slava-Shchipunov/awg-openwrt/refs/heads/feat/awg-2.0/amneziawg-install.sh)
+```
 
 # Сборка пакетов для всех устройств, поддерживающих OpenWRT
 В репозиторий добавлен скрипт, который парсит данные о поддерживаемых платформах со страницы OpenWRT и автоматически запускает сборку пакетов AmneziaWG для всех устройств.
@@ -16,11 +20,11 @@ sh <(wget -O - https://raw.githubusercontent.com/Slava-Shchipunov/awg-openwrt/re
 4) [23.05.3](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v23.05.3)
 5) [23.05.4](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v23.05.4)
 6) [23.05.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v23.05.5)
-7) [23.05.6](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v23.05.6)
+7) AWG-2.0 [23.05.6](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v23.05.6)
 8) [24.10.0](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.0)
 9) [24.10.1](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.1)
 10) [24.10.2](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.2)
-11) [24.10.3](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.3)
+11) AWG-2.0 [24.10.3](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.3)
 
 Также запускал сборку для версии [22.03.7](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v22.03.7), но там для двух платформ сборка завершилась ошибкой. Так как это достаточно старая версия OpenWRT, я не стал разбираться, в чем проблема.
 
@@ -62,8 +66,12 @@ At the moment I have collected packages for all devices for OpenWRT versions:
 3) [23.05.2](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v23.05.2)
 4) [23.05.3](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v23.05.3)
 5) [23.05.4](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v23.05.4)
-
-And collected packages for popular devices for OpenWRT [SNAPSHOT](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/SNAPSHOT)
+6) [23.05.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v23.05.5)
+7) AWG-2.0 [23.05.6](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v23.05.6)
+8) [24.10.0](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.0)
+9) [24.10.1](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.1)
+10) [24.10.2](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.2)
+11) AWG-2.0 [24.10.3](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.3)
 
 I also ran the build for version [22.03.7](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v22.03.7), but the build ended with an error for two platforms. Since this is a fairly old version of OpenWRT, I did not bother to figure out what the problem was.
 
