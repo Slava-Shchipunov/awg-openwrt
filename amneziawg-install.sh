@@ -18,6 +18,24 @@ install_awg_packages() {
     PKGPOSTFIX="_v${VERSION}_${PKGARCH}_${TARGET}_${SUBTARGET}.ipk"
     BASE_URL="https://github.com/Slava-Shchipunov/awg-openwrt/releases/download/"
 
+    # Определяем версию AWG протокола (2.0 для OpenWRT >= 23.05.6 и >= 24.10.3)
+    AWG_VERSION="1.0"
+    MAJOR_VERSION=$(echo "$VERSION" | cut -d '.' -f 1)
+    MINOR_VERSION=$(echo "$VERSION" | cut -d '.' -f 2)
+    PATCH_VERSION=$(echo "$VERSION" | cut -d '.' -f 3)
+    
+    if [ "$MAJOR_VERSION" -gt 24 ] || \
+       [ "$MAJOR_VERSION" -eq 24 -a "$MINOR_VERSION" -gt 10 ] || \
+       [ "$MAJOR_VERSION" -eq 24 -a "$MINOR_VERSION" -eq 10 -a "$PATCH_VERSION" -ge 3 ] || \
+       [ "$MAJOR_VERSION" -eq 23 -a "$MINOR_VERSION" -eq 5 -a "$PATCH_VERSION" -ge 6 ]; then
+        AWG_VERSION="2.0"
+        LUCI_PACKAGE_NAME="luci-proto-amneziawg"
+    else
+        LUCI_PACKAGE_NAME="luci-app-amneziawg"
+    fi
+
+    printf "\033[32;1mDetected AWG version: $AWG_VERSION\033[0m\n"
+
     AWG_DIR="/tmp/amneziawg"
     mkdir -p "$AWG_DIR"
     
@@ -69,57 +87,60 @@ install_awg_packages() {
         fi
     fi
     
-    if opkg list-installed | grep -q luci-proto-amneziawg; then
-        echo "luci-proto-amneziawg already installed"
+    # Проверяем оба возможных названия пакета
+    if opkg list-installed | grep -q "luci-proto-amneziawg\|luci-app-amneziawg"; then
+        echo "$LUCI_PACKAGE_NAME already installed"
     else
-        LUCI_APP_AMNEZIAWG_FILENAME="luci-proto-amneziawg${PKGPOSTFIX}"
-        DOWNLOAD_URL="${BASE_URL}v${VERSION}/${LUCI_APP_AMNEZIAWG_FILENAME}"
-        wget -O "$AWG_DIR/$LUCI_APP_AMNEZIAWG_FILENAME" "$DOWNLOAD_URL"
+        LUCI_AMNEZIAWG_FILENAME="${LUCI_PACKAGE_NAME}${PKGPOSTFIX}"
+        DOWNLOAD_URL="${BASE_URL}v${VERSION}/${LUCI_AMNEZIAWG_FILENAME}"
+        wget -O "$AWG_DIR/$LUCI_AMNEZIAWG_FILENAME" "$DOWNLOAD_URL"
 
         if [ $? -eq 0 ]; then
-            echo "luci-proto-amneziawg file downloaded successfully"
+            echo "$LUCI_PACKAGE_NAME file downloaded successfully"
         else
-            echo "Error downloading luci-proto-amneziawg. Please, install luci-proto-amneziawg manually and run the script again"
+            echo "Error downloading $LUCI_PACKAGE_NAME. Please, install $LUCI_PACKAGE_NAME manually and run the script again"
             exit 1
         fi
 
-        opkg install "$AWG_DIR/$LUCI_APP_AMNEZIAWG_FILENAME"
+        opkg install "$AWG_DIR/$LUCI_AMNEZIAWG_FILENAME"
 
         if [ $? -eq 0 ]; then
-            echo "luci-proto-amneziawg installed successfully"
+            echo "$LUCI_PACKAGE_NAME installed successfully"
         else
-            echo "Error installing luci-proto-amneziawg. Please, install luci-proto-amneziawg manually and run the script again"
+            echo "Error installing $LUCI_PACKAGE_NAME. Please, install $LUCI_PACKAGE_NAME manually and run the script again"
             exit 1
         fi
     fi
 
-    # Ask about Russian localization
-    printf "\033[32;1mУстанавливаем пакет с русской локализацией? Install Russian language pack? (y/n) [n]: \033[0m\n"
-    read INSTALL_RU_LANG
-    INSTALL_RU_LANG=${INSTALL_RU_LANG:-n}
+    # Устанавливаем русскую локализацию только для AWG 2.0
+    if [ "$AWG_VERSION" = "2.0" ]; then
+        printf "\033[32;1mУстанавливаем пакет с русской локализацией? Install Russian language pack? (y/n) [n]: \033[0m\n"
+        read INSTALL_RU_LANG
+        INSTALL_RU_LANG=${INSTALL_RU_LANG:-n}
 
-    if [ "$INSTALL_RU_LANG" = "y" ] || [ "$INSTALL_RU_LANG" = "Y" ]; then
-        if opkg list-installed | grep -q luci-i18n-amneziawg-ru; then
-            echo "luci-i18n-amneziawg-ru already installed"
-        else
-            LUCI_I18N_AMNEZIAWG_RU_FILENAME="luci-i18n-amneziawg-ru${PKGPOSTFIX}"
-            DOWNLOAD_URL="${BASE_URL}v${VERSION}/${LUCI_I18N_AMNEZIAWG_RU_FILENAME}"
-            wget -O "$AWG_DIR/$LUCI_I18N_AMNEZIAWG_RU_FILENAME" "$DOWNLOAD_URL"
-
-            if [ $? -eq 0 ]; then
-                echo "luci-i18n-amneziawg-ru file downloaded successfully"
-                opkg install "$AWG_DIR/$LUCI_I18N_AMNEZIAWG_RU_FILENAME"
-                if [ $? -eq 0 ]; then
-                    echo "luci-i18n-amneziawg-ru installed successfully"
-                else
-                    echo "Warning: Error installing luci-i18n-amneziawg-ru (non-critical)"
-                fi
+        if [ "$INSTALL_RU_LANG" = "y" ] || [ "$INSTALL_RU_LANG" = "Y" ]; then
+            if opkg list-installed | grep -q luci-i18n-amneziawg-ru; then
+                echo "luci-i18n-amneziawg-ru already installed"
             else
-                echo "Warning: Russian localization not available for this version/platform (non-critical)"
+                LUCI_I18N_AMNEZIAWG_RU_FILENAME="luci-i18n-amneziawg-ru${PKGPOSTFIX}"
+                DOWNLOAD_URL="${BASE_URL}v${VERSION}/${LUCI_I18N_AMNEZIAWG_RU_FILENAME}"
+                wget -O "$AWG_DIR/$LUCI_I18N_AMNEZIAWG_RU_FILENAME" "$DOWNLOAD_URL"
+
+                if [ $? -eq 0 ]; then
+                    echo "luci-i18n-amneziawg-ru file downloaded successfully"
+                    opkg install "$AWG_DIR/$LUCI_I18N_AMNEZIAWG_RU_FILENAME"
+                    if [ $? -eq 0 ]; then
+                        echo "luci-i18n-amneziawg-ru installed successfully"
+                    else
+                        echo "Warning: Error installing luci-i18n-amneziawg-ru (non-critical)"
+                    fi
+                else
+                    echo "Warning: Russian localization not available for this version/platform (non-critical)"
+                fi
             fi
+        else
+            printf "\033[32;1mSkipping Russian language pack installation.\033[0m\n"
         fi
-    else
-        printf "\033[32;1mSkipping Russian language pack installation.\033[0m\n"
     fi
 
     rm -rf "$AWG_DIR"
@@ -162,6 +183,17 @@ configure_amneziawg_interface() {
     read -r -p "Enter H3 value (from [Interface]):"$'\n' AWG_H3
     read -r -p "Enter H4 value (from [Interface]):"$'\n' AWG_H4
     
+    # AWG 2.0 новые параметры
+    if [ "$AWG_VERSION" = "2.0" ]; then
+        read -r -p "Enter S3 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_S3
+        read -r -p "Enter S4 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_S4
+        read -r -p "Enter I1 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_I1
+        read -r -p "Enter I2 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_I2
+        read -r -p "Enter I3 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_I3
+        read -r -p "Enter I4 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_I4
+        read -r -p "Enter I5 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_I5
+    fi
+    
     uci set network.${INTERFACE_NAME}=interface
     uci set network.${INTERFACE_NAME}.proto=$PROTO
     uci set network.${INTERFACE_NAME}.private_key=$AWG_PRIVATE_KEY_INT
@@ -177,6 +209,17 @@ configure_amneziawg_interface() {
     uci set network.${INTERFACE_NAME}.awg_h2=$AWG_H2
     uci set network.${INTERFACE_NAME}.awg_h3=$AWG_H3
     uci set network.${INTERFACE_NAME}.awg_h4=$AWG_H4
+
+    # Устанавливаем новые параметры для AWG 2.0 (только если они заданы)
+    if [ "$AWG_VERSION" = "2.0" ]; then
+        [ -n "$AWG_S3" ] && uci set network.${INTERFACE_NAME}.awg_s3=$AWG_S3
+        [ -n "$AWG_S4" ] && uci set network.${INTERFACE_NAME}.awg_s4=$AWG_S4
+        [ -n "$AWG_I1" ] && uci set network.${INTERFACE_NAME}.awg_i1=$AWG_I1
+        [ -n "$AWG_I2" ] && uci set network.${INTERFACE_NAME}.awg_i2=$AWG_I2
+        [ -n "$AWG_I3" ] && uci set network.${INTERFACE_NAME}.awg_i3=$AWG_I3
+        [ -n "$AWG_I4" ] && uci set network.${INTERFACE_NAME}.awg_i4=$AWG_I4
+        [ -n "$AWG_I5" ] && uci set network.${INTERFACE_NAME}.awg_i5=$AWG_I5
+    fi
 
     if ! uci show network | grep -q ${CONFIG_NAME}; then
         uci add network ${CONFIG_NAME}
