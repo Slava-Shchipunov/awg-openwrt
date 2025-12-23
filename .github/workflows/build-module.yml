@@ -127,52 +127,28 @@ jobs:
 
       - name: Setup SDK and feeds
         run: |
-          set -e
-
           SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
           [ -z "$SDK_DIR" ] && echo "SDK directory not found" && exit 1
 
           WORKSPACE_DIR=$(pwd)
           cd "$SDK_DIR"
 
-          echo "Switching feeds to GitHub mirrors (CI mode)"
-
           # Remove unstable feeds
           sed -i '/telephony/d' feeds.conf.default
           sed -i '/routing/d' feeds.conf.default
 
-          # Force GitHub mirrors (avoid git.openwrt.org flakiness)
-          sed -i \
-            -e 's|https://git.openwrt.org/openwrt/openwrt.git|https://github.com/openwrt/openwrt.git|' \
-            -e 's|https://git.openwrt.org/feed/packages.git|https://github.com/openwrt/packages.git|' \
-            -e 's|https://git.openwrt.org/project/luci.git|https://github.com/openwrt/luci.git|' \
-            feeds.conf.default
-
-          echo "feeds.conf.default:"
-          cat feeds.conf.default
-
-          echo "Updating feeds..."
+          # Update only required feeds
           ./scripts/feeds update base packages luci
-
-          # Hard check — CI must fail if feeds are missing
-          for feed in base packages luci; do
-            [ -d "feeds/$feed" ] || {
-              echo "ERROR: feed '$feed' not found after update"
-              exit 1
-            }
-          done
-
-          echo "Installing feeds..."
           ./scripts/feeds install -p base
           ./scripts/feeds install -p packages
           ./scripts/feeds install -p luci
 
-          # Copy custom packages
+          # Copy packages
           cp -r "$WORKSPACE_DIR/kmod-amneziawg" package/
           cp -r "$WORKSPACE_DIR/amneziawg-tools" package/
           cp -r "$WORKSPACE_DIR/luci-proto-amneziawg" package/
 
-          # Minimal config
+          # Config
           cat > .config <<EOF
           CONFIG_PACKAGE_kmod-amneziawg=m
           CONFIG_PACKAGE_amneziawg-tools=y
