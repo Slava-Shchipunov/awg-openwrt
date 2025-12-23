@@ -171,8 +171,6 @@ jobs:
             }
           fi
 
-          make tools/install
-
           # Install feeds
           ./scripts/feeds install -p base
           ./scripts/feeds install -p packages
@@ -192,6 +190,8 @@ jobs:
           EOF
 
           make defconfig
+
+          make tools/install
 
       - name: Build AmneziaWG packages
         run: |
