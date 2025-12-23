@@ -127,64 +127,52 @@ jobs:
 
       - name: Setup SDK and feeds
         run: |
+          set -e
+
           SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
           [ -z "$SDK_DIR" ] && echo "SDK directory not found" && exit 1
 
           WORKSPACE_DIR=$(pwd)
           cd "$SDK_DIR"
 
-          set -e
+          echo "Switching feeds to GitHub mirrors (CI mode)"
 
           # Remove unstable feeds
           sed -i '/telephony/d' feeds.conf.default
           sed -i '/routing/d' feeds.conf.default
 
-          update_feeds() {
-            ./scripts/feeds update base packages luci || return 1
+          # Force GitHub mirrors (avoid git.openwrt.org flakiness)
+          sed -i \
+            -e 's|https://git.openwrt.org/openwrt/openwrt.git|https://github.com/openwrt/openwrt.git|' \
+            -e 's|https://git.openwrt.org/feed/packages.git|https://github.com/openwrt/packages.git|' \
+            -e 's|https://git.openwrt.org/project/luci.git|https://github.com/openwrt/luci.git|' \
+            feeds.conf.default
 
-            # feeds update может "успешно" завершиться без base — проверяем руками
-            [ -d feeds/base ] && [ -d feeds/packages ] && [ -d feeds/luci ]
-          }
+          echo "feeds.conf.default:"
+          cat feeds.conf.default
 
-          echo "Updating feeds from git.openwrt.org..."
+          echo "Updating feeds..."
+          ./scripts/feeds update base packages luci
 
-          success=false
-
-          for i in 1 2 3; do
-            echo "Attempt $i..."
-            if update_feeds; then
-              success=true
-              break
-            fi
-            sleep 15
-          done
-
-          if [ "$success" != "true" ]; then
-            echo "Primary feed server unavailable. Switching to GitHub mirrors."
-
-            sed -i \
-              -e 's|https://git.openwrt.org/openwrt/openwrt.git|https://github.com/openwrt/openwrt.git|' \
-              -e 's|https://git.openwrt.org/feed/packages.git|https://github.com/openwrt/packages.git|' \
-              -e 's|https://git.openwrt.org/project/luci.git|https://github.com/openwrt/luci.git|' \
-              feeds.conf.default
-
-            update_feeds || {
-              echo "Feeds update failed even with GitHub mirrors"
+          # Hard check — CI must fail if feeds are missing
+          for feed in base packages luci; do
+            [ -d "feeds/$feed" ] || {
+              echo "ERROR: feed '$feed' not found after update"
               exit 1
             }
-          fi
+          done
 
-          # Install feeds
+          echo "Installing feeds..."
           ./scripts/feeds install -p base
           ./scripts/feeds install -p packages
           ./scripts/feeds install -p luci
 
-          # Copy packages
+          # Copy custom packages
           cp -r "$WORKSPACE_DIR/kmod-amneziawg" package/
           cp -r "$WORKSPACE_DIR/amneziawg-tools" package/
           cp -r "$WORKSPACE_DIR/luci-proto-amneziawg" package/
 
-          # Config
+          # Minimal config
           cat > .config <<EOF
           CONFIG_PACKAGE_kmod-amneziawg=m
           CONFIG_PACKAGE_amneziawg-tools=y
@@ -194,8 +182,10 @@ jobs:
 
           make defconfig
 
+          # Prevent menuconfig / ncurses issues in CI
           export TERM=dumb
 
+          echo "Installing build tools..."
           make tools/install
 
       - name: Build AmneziaWG packages
