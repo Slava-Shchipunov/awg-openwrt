@@ -138,7 +138,7 @@ jobs:
           sed -i '/routing/d' feeds.conf.default
 
           # Update only required feeds
-          ./scripts/feeds update base packages luci
+          ./scripts/feeds update packages luci
           ./scripts/feeds install -p base
           ./scripts/feeds install -p packages
           ./scripts/feeds install -p luci
