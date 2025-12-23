@@ -171,6 +171,8 @@ jobs:
             }
           fi
 
+          make tools/install
+
           # Install feeds
           ./scripts/feeds install -p base
           ./scripts/feeds install -p packages
