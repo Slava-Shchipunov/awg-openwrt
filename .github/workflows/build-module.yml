@@ -140,7 +140,10 @@ jobs:
           sed -i '/routing/d' feeds.conf.default
 
           update_feeds() {
-            ./scripts/feeds update base packages luci
+            ./scripts/feeds update base packages luci || return 1
+
+            # feeds update может "успешно" завершиться без base — проверяем руками
+            [ -d feeds/base ] && [ -d feeds/packages ] && [ -d feeds/luci ]
           }
 
           echo "Updating feeds from git.openwrt.org..."
