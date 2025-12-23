@@ -127,31 +127,34 @@ jobs:
 
       - name: Setup SDK and feeds
         run: |
+          # Find SDK directory
           SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
-          [ -z "$SDK_DIR" ] && echo "SDK directory not found" && exit 1
-
+          
+          if [ -z "$SDK_DIR" ]; then
+            echo "SDK directory not found"
+            exit 1
+          fi
+          
+          # Get absolute paths
           WORKSPACE_DIR=$(pwd)
+          
           cd "$SDK_DIR"
-
-          # Update only required feeds
-          ./scripts/feeds update base packages luci
-          ./scripts/feeds install -p base
-          ./scripts/feeds install -p packages
-          ./scripts/feeds install -p luci
-
-          # Copy packages
+          
+          # Update feeds to include LuCI
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+          
+          # Copy current repository packages directly to package directory
           cp -r "$WORKSPACE_DIR/kmod-amneziawg" package/
           cp -r "$WORKSPACE_DIR/amneziawg-tools" package/
           cp -r "$WORKSPACE_DIR/luci-proto-amneziawg" package/
-
-          # Config
-          cat > .config <<EOF
-          CONFIG_PACKAGE_kmod-amneziawg=m
-          CONFIG_PACKAGE_amneziawg-tools=y
-          CONFIG_PACKAGE_luci-proto-amneziawg=y
-          CONFIG_PACKAGE_luci-i18n-amneziawg-ru=y
-          EOF
-
+          
+          # Configure packages to build
+          echo "CONFIG_PACKAGE_kmod-amneziawg=m" > .config
+          echo "CONFIG_PACKAGE_amneziawg-tools=y" >> .config
+          echo "CONFIG_PACKAGE_luci-proto-amneziawg=y" >> .config
+          echo "CONFIG_PACKAGE_luci-i18n-amneziawg-ru=y" >> .config
+          
           make defconfig
 
       - name: Build AmneziaWG packages
