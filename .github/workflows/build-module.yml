@@ -137,22 +137,39 @@ jobs:
           sed -i '/telephony/d' feeds.conf.default
           sed -i '/routing/d' feeds.conf.default
 
-          # Update only required feeds (with retries)
+          set -e
+
+          update_feeds() {
+            ./scripts/feeds update base packages luci
+          }
+
+          echo "Updating feeds from git.openwrt.org..."
+
+          success=false
+
           for i in 1 2 3; do
-            echo "Feeds update attempt $i..."
-            if ./scripts/feeds update base packages luci; then
-              echo "Feeds updated successfully"
+            echo "Attempt $i..."
+            if update_feeds; then
+              success=true
               break
             fi
-
-            if [ "$i" -eq 3 ]; then
-              echo "Feeds update failed after 3 attempts"
-              exit 1
-            fi
-
-            echo "Retrying in 15 seconds..."
             sleep 15
           done
+
+          if [ "$success" != "true" ]; then
+            echo "Primary feed server unavailable. Switching to GitHub mirrors."
+
+            sed -i \
+              -e 's|https://git.openwrt.org/openwrt/openwrt.git|https://github.com/openwrt/openwrt.git|' \
+              -e 's|https://git.openwrt.org/feed/packages.git|https://github.com/openwrt/packages.git|' \
+              -e 's|https://git.openwrt.org/project/luci.git|https://github.com/openwrt/luci.git|' \
+              feeds.conf.default
+
+            update_feeds || {
+              echo "Feeds update failed even with GitHub mirrors"
+              exit 1
+            }
+          fi
 
           # Install feeds
           ./scripts/feeds install -p base
