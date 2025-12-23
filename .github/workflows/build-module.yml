@@ -182,12 +182,6 @@ jobs:
 
           make defconfig
 
-          # Prevent menuconfig / ncurses issues in CI
-          export TERM=dumb
-
-          echo "Installing build tools..."
-          make tools/install
-
       - name: Build AmneziaWG packages
         run: |
           # Find SDK directory
