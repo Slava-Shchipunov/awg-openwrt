@@ -15,31 +15,31 @@ MAKE_PATH:=src
 include $(INCLUDE_DIR)/package.mk
 
 define KernelPackage/amneziawg
-    SECTION:=kernel
-    CATEGORY:=Kernel modules
-    SUBMENU:=Network Support
-    TITLE:=AmneziaWG VPN Kernel Module
-    FILES:=$(PKG_BUILD_DIR)/$(MAKE_PATH)/amneziawg.ko
-    DEPENDS:= \
-        +kmod-udptunnel4 \
-        +kmod-udptunnel6 \
-        +kmod-crypto-lib-chacha20poly1305 \
-        +kmod-crypto-lib-curve25519
+	SECTION:=kernel
+	CATEGORY:=Kernel modules
+	SUBMENU:=Network Support
+	TITLE:=AmneziaWG VPN Kernel Module
+	FILES:=$(PKG_BUILD_DIR)/$(MAKE_PATH)/amneziawg.ko
+	DEPENDS:= \
+		+kmod-udptunnel4 \
+		+kmod-udptunnel6 \
+		+kmod-crypto-lib-chacha20poly1305 \
+		+kmod-crypto-lib-curve25519
 endef
 
 define Build/Prepare
-    $(call Build/Prepare/Default)
-    mkdir -p $(PKG_BUILD_DIR)/$(MAKE_PATH)/kernel
-    $(CP) $(LINUX_DIR)/* $(PKG_BUILD_DIR)/$(MAKE_PATH)/kernel/
+	$(call Build/Prepare/Default)
+	mkdir -p $(PKG_BUILD_DIR)/$(MAKE_PATH)/kernel
+	$(CP) $(LINUX_DIR)/* $(PKG_BUILD_DIR)/$(MAKE_PATH)/kernel/
 endef
 
 define Build/Compile
-    $(MAKE_VARS) $(MAKE) -C "$(LINUX_DIR)" \
-        $(KERNEL_MAKE_FLAGS) \
-        M="$(PKG_BUILD_DIR)/$(MAKE_PATH)" \
-        EXTRA_CFLAGS="$(BUILDFLAGS) -DCOMPAT_CANNOT_USE_PCPU_STAT_TYPE" \
-        WIREGUARD_VERSION="$(WIREGUARD_VERSION)" \
-        modules
+	$(MAKE_VARS) $(MAKE) -C "$(LINUX_DIR)" \
+		$(KERNEL_MAKE_FLAGS) \
+		M="$(PKG_BUILD_DIR)/$(MAKE_PATH)" \
+		EXTRA_CFLAGS="$(BUILDFLAGS)" \
+		WIREGUARD_VERSION="$(WIREGUARD_VERSION)" \
+		modules
 endef
 
 $(eval $(call KernelPackage,amneziawg))
