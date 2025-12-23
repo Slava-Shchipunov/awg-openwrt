@@ -137,8 +137,24 @@ jobs:
           sed -i '/telephony/d' feeds.conf.default
           sed -i '/routing/d' feeds.conf.default
 
-          # Update only required feeds
-          ./scripts/feeds update base packages luci
+          # Update only required feeds (with retries)
+          for i in 1 2 3; do
+            echo "Feeds update attempt $i..."
+            if ./scripts/feeds update base packages luci; then
+              echo "Feeds updated successfully"
+              break
+            fi
+
+            if [ "$i" -eq 3 ]; then
+              echo "Feeds update failed after 3 attempts"
+              exit 1
+            fi
+
+            echo "Retrying in 15 seconds..."
+            sleep 15
+          done
+
+          # Install feeds
           ./scripts/feeds install -p base
           ./scripts/feeds install -p packages
           ./scripts/feeds install -p luci
