@@ -133,11 +133,11 @@ jobs:
           WORKSPACE_DIR=$(pwd)
           cd "$SDK_DIR"
 
+          set -e
+
           # Remove unstable feeds
           sed -i '/telephony/d' feeds.conf.default
           sed -i '/routing/d' feeds.conf.default
-
-          set -e
 
           update_feeds() {
             ./scripts/feeds update base packages luci
@@ -190,6 +190,8 @@ jobs:
           EOF
 
           make defconfig
+
+          export TERM=dumb
 
           make tools/install
 
