@@ -934,7 +934,7 @@ return network.registerProtocol('amneziawg', {
 					}, [
 						E('div', {
 							'class': 'qr-code',
-							'style': 'width:320px;flex:0 1 320px;text-align:center'
+							'style': 'text-align:center'
 						}, [
 							E('em', { 'class': 'spinning' }, [ _('Generating QR code…') ])
 						]),
