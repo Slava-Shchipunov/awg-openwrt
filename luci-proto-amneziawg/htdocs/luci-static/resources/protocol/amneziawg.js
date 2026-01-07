@@ -66,9 +66,9 @@ function generateDescription(name, texts) {
 }
 
 function buildSVGQRCode(data, code) {
-	// pixel size larger than 4 clips right and bottom edges of complex configs
+	// pixel size 3 for mobile browser
 	const options = {
-		pixelSize: 4,
+		pixelSize: 3,
 		whiteColor: 'white',
 		blackColor: 'black'
 	};
