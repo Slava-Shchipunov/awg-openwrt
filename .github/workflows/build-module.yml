@@ -192,10 +192,10 @@ jobs:
           postfix="v${{ matrix.build_env.tag }}_${{ matrix.build_env.pkgarch}}_${{ matrix.build_env.target}}_${{ matrix.build_env.subtarget}}"
           
           # Copy built packages
-          find "$SDK_DIR/bin/packages" -name "amneziawg-tools_*.ipk" -exec cp {} awgrelease/amneziawg-tools_${postfix}.ipk \; || echo "amneziawg-tools package not found"
-          find "$SDK_DIR/bin/packages" -name "luci-proto-amneziawg_*.ipk" -exec cp {} awgrelease/luci-proto-amneziawg_${postfix}.ipk \; || echo "luci-proto-amneziawg package not found"
-          find "$SDK_DIR/bin/packages" -name "luci-i18n-amneziawg-ru_*.ipk" -exec cp {} awgrelease/luci-i18n-amneziawg-ru_${postfix}.ipk \; || echo "luci-i18n-amneziawg-ru package not found"
-          find "$SDK_DIR/bin/targets" -name "kmod-amneziawg_*.ipk" -exec cp {} awgrelease/kmod-amneziawg_${postfix}.ipk \; || echo "kmod-amneziawg package not found"
+          find "$SDK_DIR/bin/packages" -name "amneziawg-tools_*.apk" -exec cp {} awgrelease/amneziawg-tools_${postfix}.apk \; || echo "amneziawg-tools package not found"
+          find "$SDK_DIR/bin/packages" -name "luci-proto-amneziawg_*.apk" -exec cp {} awgrelease/luci-proto-amneziawg_${postfix}.apk \; || echo "luci-proto-amneziawg package not found"
+          find "$SDK_DIR/bin/packages" -name "luci-i18n-amneziawg-ru_*.apk" -exec cp {} awgrelease/luci-i18n-amneziawg-ru_${postfix}.apk \; || echo "luci-i18n-amneziawg-ru package not found"
+          find "$SDK_DIR/bin/targets" -name "kmod-amneziawg_*.apk" -exec cp {} awgrelease/kmod-amneziawg_${postfix}.apk \; || echo "kmod-amneziawg package not found"
           
           echo "Built packages:"
           ls -la awgrelease/
@@ -203,5 +203,5 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: awgrelease/*.ipk
+          files: awgrelease/*.apk
           tag_name: v${{ matrix.build_env.tag }}
