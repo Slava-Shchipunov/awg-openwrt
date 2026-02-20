@@ -9,6 +9,7 @@ on:
       tag_name:
         required: true
         type: string
+        
   workflow_dispatch:
     inputs:
       version:
@@ -139,8 +140,21 @@ jobs:
           WORKSPACE_DIR=$(pwd)
           
           cd "$SDK_DIR"
+
+         # 1. Настройка Git для стабильности
+          git config --global http.postBuffer 524288000
+          git config --global http.version HTTP/1.1
           
-          # Update feeds to include LuCI
+          # 2. Перезаписываем конфиг фидов на быстрые зеркала GitHub
+          cat <<EOF > feeds.conf.default
+          src-git base https://github.com
+          src-git packages https://github.com
+          src-git luci https://github.com
+          src-git routing https://github.com
+          src-git amnezia https://github.com
+          EOF
+
+          # 3. Обновление и установка (telephony теперь не мешает)
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           
