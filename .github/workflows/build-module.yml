@@ -140,6 +140,8 @@ jobs:
           
           cd "$SDK_DIR"
           
+          sed -i 's/^src-git telephony/#&/' feeds.conf.default
+          
           # Update feeds to include LuCI
           ./scripts/feeds update -a
           ./scripts/feeds install -a
