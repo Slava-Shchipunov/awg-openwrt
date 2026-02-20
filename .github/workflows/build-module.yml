@@ -139,23 +139,21 @@ jobs:
           WORKSPACE_DIR=$(pwd)
           
           cd "$SDK_DIR"
-        
-     
-          # 1. Подменяем медленные официальные серверы на быстрые зеркала GitHub
-          sed -i 's|https://git.openwrt.org/openwrt/openwrt.git|https://github.com|g' feeds.conf.default
-          sed -i 's|https://git.openwrt.org/feed/packages.git|https://github.com|g' feeds.conf.default
-          sed -i 's|https://git.openwrt.org/project/luci.git|https://github.com|g' feeds.conf.default
-          sed -i 's|https://git.openwrt.org|https://github.com|g' feeds.conf.default
-          sed -i 's|https://git.openwrt.org|https://github.com|g' feeds.conf.default
 
-          # 2. Отключаем проблемную телефонию совсем
-          sed -i 's/^src-git telephony/#&/' feeds.conf.default
-
-          # 3. Настройка Git для стабильности
+         # 1. Настройка Git для стабильности
           git config --global http.postBuffer 524288000
           git config --global http.version HTTP/1.1
+          
+          # 2. Перезаписываем конфиг фидов на быстрые зеркала GitHub
+          cat <<EOF > feeds.conf.default
+          src-git base https://github.com
+          src-git packages https://github.com
+          src-git luci https://github.com
+          src-git routing https://github.com
+          src-git amnezia https://github.com
+          EOF
 
-          # 4. Запуск обновления
+          # 3. Обновление и установка (telephony теперь не мешает)
           ./scripts/feeds update -a
           ./scripts/feeds install -a
           
