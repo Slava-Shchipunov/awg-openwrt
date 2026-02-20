@@ -141,16 +141,22 @@ jobs:
           cd "$SDK_DIR"
         
      
-          # 1. Увеличиваем буферы Git, чтобы избежать ошибки "curl 18"
+          # 1. Подменяем медленные официальные серверы на быстрые зеркала GitHub
+          sed -i 's|https://git.openwrt.org/openwrt/openwrt.git|https://github.com|g' feeds.conf.default
+          sed -i 's|https://git.openwrt.org/feed/packages.git|https://github.com|g' feeds.conf.default
+          sed -i 's|https://git.openwrt.org/project/luci.git|https://github.com|g' feeds.conf.default
+          sed -i 's|https://git.openwrt.org|https://github.com|g' feeds.conf.default
+          sed -i 's|https://git.openwrt.org|https://github.com|g' feeds.conf.default
+
+          # 2. Отключаем проблемную телефонию совсем
+          sed -i 's/^src-git telephony/#&/' feeds.conf.default
+
+          # 3. Настройка Git для стабильности
           git config --global http.postBuffer 524288000
-          git config --global http.lowSpeedLimit 0
-          git config --global http.lowSpeedTime 999999
-          
-          # 2. Полностью отключаем проблемные фиды (telephony нам не нужен для AWG)
-          [ -f feeds.conf.default ] && sed -i 's/^src-git telephony/#&/' feeds.conf.default
-          
-          # 3. Обновляем фиды с повторными попытками в случае сбоя сети
-          ./scripts/feeds update -a || ./scripts/feeds update -a
+          git config --global http.version HTTP/1.1
+
+          # 4. Запуск обновления
+          ./scripts/feeds update -a
           ./scripts/feeds install -a
           
           # Copy current repository packages directly to package directory
