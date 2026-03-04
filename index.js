@@ -52,19 +52,27 @@ async function getSubtargets(target) {
 }
 
 async function getDetails(target, subtarget) {
-  const packagesUrl = `${url}${target}/${subtarget}/packages/`;
-  const $ = await fetchHTML(packagesUrl);
-  let vermagic = '';
+  // pkgarch from packages/index.json
+  // for apk-based is required change (should work also for ipk-based)
+  const indexUrl = `${url}${target}/${subtarget}/packages/index.json`;
   let pkgarch = '';
+  try {
+    const { data } = await axios.get(indexUrl, { responseType: 'json' });
+    pkgarch = data.architecture || '';
+  } catch (e) {
+    // keep pkgarch empty
+  }
 
-  $('a').each((index, element) => {
-    const name = $(element).attr('href');
-    if (name && name.startsWith('kernel_')) {
-      const vermagicMatch = name.match(/kernel_\d+\.\d+\.\d+(?:-\d+)?[-~]([a-f0-9]+)(?:-r\d+)?_([a-zA-Z0-9_-]+)\.ipk$/);
-      if (vermagicMatch) {
-        vermagic = vermagicMatch[1];
-        pkgarch = vermagicMatch[2];
-      }
+  // vermagic from kmods directory name (more reliable than parsing kernel filename)
+  const kmodsUrl = `${url}${target}/${subtarget}/kmods/`;
+  const $ = await fetchHTML(kmodsUrl);
+  let vermagic = '';
+
+  $('table tr td.n a').each((_, el) => {
+    const name = $(el).attr('href');
+    if (name && name.endsWith('/')) {
+      vermagic = name.slice(0, -1);
+      return false; // break
     }
   });
 
