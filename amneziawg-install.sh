@@ -2,20 +2,127 @@
 
 #set -x
 
+PKG_MANAGER=""
+PKG_EXT=""
+
+detect_package_manager() {
+    if command -v apk >/dev/null 2>&1; then
+        PKG_MANAGER="apk"
+        PKG_EXT="apk"
+    elif command -v opkg >/dev/null 2>&1; then
+        PKG_MANAGER="opkg"
+        PKG_EXT="ipk"
+    else
+        printf "\033[32;1mNo supported package manager found (apk/opkg).\033[0m\n"
+        exit 1
+    fi
+}
+
+pkg_update() {
+    if [ "$PKG_MANAGER" = "apk" ]; then
+        apk update
+    else
+        opkg update
+    fi
+}
+
+is_pkg_installed() {
+    pkg_name="$1"
+    if [ "$PKG_MANAGER" = "apk" ]; then
+        apk info -e "$pkg_name" >/dev/null 2>&1
+    else
+        opkg status "$pkg_name" >/dev/null 2>&1
+    fi
+}
+
+install_local_pkg() {
+    pkg_file="$1"
+    if [ "$PKG_MANAGER" = "apk" ]; then
+        apk add --allow-untrusted "$pkg_file"
+    else
+        opkg install "$pkg_file"
+    fi
+}
+
+get_pkgarch() {
+    PKGARCH_UBUS=$(ubus call system board 2>/dev/null | jsonfilter -e '@.release.arch' 2>/dev/null)
+    if [ -n "$PKGARCH_UBUS" ]; then
+        echo "$PKGARCH_UBUS"
+        return
+    fi
+
+    if command -v opkg >/dev/null 2>&1; then
+        opkg print-architecture | awk 'BEGIN {max=0} {if ($3 > max) {max = $3; arch = $2}} END {print arch}'
+        return
+    fi
+
+    if [ -f /etc/openwrt_release ]; then
+        PKGARCH_RELEASE=$(grep "^DISTRIB_ARCH='" /etc/openwrt_release | cut -d"'" -f2)
+        if [ -n "$PKGARCH_RELEASE" ]; then
+            echo "$PKGARCH_RELEASE"
+            return
+        fi
+    fi
+
+    if command -v apk >/dev/null 2>&1; then
+        apk --print-arch
+        return
+    fi
+
+    uname -m
+}
+
+download_package() {
+    pkg_base_name="$1"
+    pkg_postfix_base="$2"
+    awg_dir="$3"
+    base_url="$4"
+
+    preferred_file="${pkg_base_name}${pkg_postfix_base}.${PKG_EXT}"
+    preferred_url="${base_url}${preferred_file}"
+    if wget -q -O "$awg_dir/$preferred_file" "$preferred_url" && [ -s "$awg_dir/$preferred_file" ]; then
+        echo "$preferred_file"
+        return 0
+    fi
+    rm -f "$awg_dir/$preferred_file"
+
+    if [ "$PKG_EXT" = "apk" ]; then
+        fallback_ext="ipk"
+    else
+        fallback_ext="apk"
+    fi
+
+    fallback_file="${pkg_base_name}${pkg_postfix_base}.${fallback_ext}"
+    fallback_url="${base_url}${fallback_file}"
+    if wget -q -O "$awg_dir/$fallback_file" "$fallback_url" && [ -s "$awg_dir/$fallback_file" ]; then
+        echo "$fallback_file"
+        return 0
+    fi
+    rm -f "$awg_dir/$fallback_file"
+
+    return 1
+}
+
 #Репозиторий OpenWRT должен быть доступен для установки зависимостей пакета kmod-amneziawg
 check_repo() {
     printf "\033[32;1mChecking OpenWrt repo availability...\033[0m\n"
-    opkg update | grep -q "Failed to download" && printf "\033[32;1mopkg failed. Check internet or date. Command for force ntp sync: ntpd -p ptbtime1.ptb.de\033[0m\n" && exit 1
+    if [ "$PKG_MANAGER" = "apk" ]; then
+        pkg_update >/dev/null 2>&1 || \
+            { printf "\033[32;1mapk failed. Check internet or date. Command for force ntp sync: ntpd -p ptbtime1.ptb.de\033[0m\n"; exit 1; }
+    else
+        pkg_update | grep -q "Failed to download" && \
+            printf "\033[32;1mopkg failed. Check internet or date. Command for force ntp sync: ntpd -p ptbtime1.ptb.de\033[0m\n" && exit 1
+    fi
 }
 
 install_awg_packages() {
     # Получение pkgarch с наибольшим приоритетом
-    PKGARCH=$(opkg print-architecture | awk 'BEGIN {max=0} {if ($3 > max) {max = $3; arch = $2}} END {print arch}')
+    PKGARCH=$(get_pkgarch)
 
     TARGET=$(ubus call system board | jsonfilter -e '@.release.target' | cut -d '/' -f 1)
     SUBTARGET=$(ubus call system board | jsonfilter -e '@.release.target' | cut -d '/' -f 2)
     VERSION=$(ubus call system board | jsonfilter -e '@.release.version')
-    PKGPOSTFIX="_v${VERSION}_${PKGARCH}_${TARGET}_${SUBTARGET}.ipk"
+    PKGPOSTFIX_BASE="_v${VERSION}_${PKGARCH}_${TARGET}_${SUBTARGET}"
     BASE_URL="https://github.com/Slava-Shchipunov/awg-openwrt/releases/download/"
 
     # Определяем версию AWG протокола (2.0 для OpenWRT >= 23.05.6 и >= 24.10.3)
@@ -23,7 +130,7 @@ install_awg_packages() {
     MAJOR_VERSION=$(echo "$VERSION" | cut -d '.' -f 1)
     MINOR_VERSION=$(echo "$VERSION" | cut -d '.' -f 2)
     PATCH_VERSION=$(echo "$VERSION" | cut -d '.' -f 3)
-    
+
     if [ "$MAJOR_VERSION" -gt 24 ] || \
        [ "$MAJOR_VERSION" -eq 24 -a "$MINOR_VERSION" -gt 10 ] || \
        [ "$MAJOR_VERSION" -eq 24 -a "$MINOR_VERSION" -eq 10 -a "$PATCH_VERSION" -ge 3 ] || \
@@ -38,22 +145,19 @@ install_awg_packages() {
 
     AWG_DIR="/tmp/amneziawg"
     mkdir -p "$AWG_DIR"
-    
-    if opkg list-installed | grep -q kmod-amneziawg; then
+
+    if is_pkg_installed "kmod-amneziawg"; then
         echo "kmod-amneziawg already installed"
     else
-        KMOD_AMNEZIAWG_FILENAME="kmod-amneziawg${PKGPOSTFIX}"
-        DOWNLOAD_URL="${BASE_URL}v${VERSION}/${KMOD_AMNEZIAWG_FILENAME}"
-        wget -O "$AWG_DIR/$KMOD_AMNEZIAWG_FILENAME" "$DOWNLOAD_URL"
-
+        KMOD_AMNEZIAWG_FILENAME=$(download_package "kmod-amneziawg" "$PKGPOSTFIX_BASE" "$AWG_DIR" "${BASE_URL}v${VERSION}/")
         if [ $? -eq 0 ]; then
             echo "kmod-amneziawg file downloaded successfully"
         else
             echo "Error downloading kmod-amneziawg. Please, install kmod-amneziawg manually and run the script again"
             exit 1
         fi
-        
-        opkg install "$AWG_DIR/$KMOD_AMNEZIAWG_FILENAME"
+
+        install_local_pkg "$AWG_DIR/$KMOD_AMNEZIAWG_FILENAME"
 
         if [ $? -eq 0 ]; then
             echo "kmod-amneziawg installed successfully"
@@ -63,13 +167,10 @@ install_awg_packages() {
         fi
     fi
 
-    if opkg list-installed | grep -q amneziawg-tools; then
+    if is_pkg_installed "amneziawg-tools"; then
         echo "amneziawg-tools already installed"
     else
-        AMNEZIAWG_TOOLS_FILENAME="amneziawg-tools${PKGPOSTFIX}"
-        DOWNLOAD_URL="${BASE_URL}v${VERSION}/${AMNEZIAWG_TOOLS_FILENAME}"
-        wget -O "$AWG_DIR/$AMNEZIAWG_TOOLS_FILENAME" "$DOWNLOAD_URL"
-
+        AMNEZIAWG_TOOLS_FILENAME=$(download_package "amneziawg-tools" "$PKGPOSTFIX_BASE" "$AWG_DIR" "${BASE_URL}v${VERSION}/")
         if [ $? -eq 0 ]; then
             echo "amneziawg-tools file downloaded successfully"
         else
@@ -77,7 +178,7 @@ install_awg_packages() {
             exit 1
         fi
 
-        opkg install "$AWG_DIR/$AMNEZIAWG_TOOLS_FILENAME"
+        install_local_pkg "$AWG_DIR/$AMNEZIAWG_TOOLS_FILENAME"
 
         if [ $? -eq 0 ]; then
             echo "amneziawg-tools installed successfully"
@@ -86,15 +187,12 @@ install_awg_packages() {
             exit 1
         fi
     fi
-    
+
     # Проверяем оба возможных названия пакета
-    if opkg list-installed | grep -q "luci-proto-amneziawg\|luci-app-amneziawg"; then
+    if is_pkg_installed "luci-proto-amneziawg" || is_pkg_installed "luci-app-amneziawg"; then
         echo "$LUCI_PACKAGE_NAME already installed"
     else
-        LUCI_AMNEZIAWG_FILENAME="${LUCI_PACKAGE_NAME}${PKGPOSTFIX}"
-        DOWNLOAD_URL="${BASE_URL}v${VERSION}/${LUCI_AMNEZIAWG_FILENAME}"
-        wget -O "$AWG_DIR/$LUCI_AMNEZIAWG_FILENAME" "$DOWNLOAD_URL"
-
+        LUCI_AMNEZIAWG_FILENAME=$(download_package "$LUCI_PACKAGE_NAME" "$PKGPOSTFIX_BASE" "$AWG_DIR" "${BASE_URL}v${VERSION}/")
         if [ $? -eq 0 ]; then
             echo "$LUCI_PACKAGE_NAME file downloaded successfully"
         else
@@ -102,7 +200,7 @@ install_awg_packages() {
             exit 1
         fi
 
-        opkg install "$AWG_DIR/$LUCI_AMNEZIAWG_FILENAME"
+        install_local_pkg "$AWG_DIR/$LUCI_AMNEZIAWG_FILENAME"
 
         if [ $? -eq 0 ]; then
             echo "$LUCI_PACKAGE_NAME installed successfully"
@@ -119,16 +217,13 @@ install_awg_packages() {
         INSTALL_RU_LANG=${INSTALL_RU_LANG:-n}
 
         if [ "$INSTALL_RU_LANG" = "y" ] || [ "$INSTALL_RU_LANG" = "Y" ]; then
-            if opkg list-installed | grep -q luci-i18n-amneziawg-ru; then
+            if is_pkg_installed "luci-i18n-amneziawg-ru"; then
                 echo "luci-i18n-amneziawg-ru already installed"
             else
-                LUCI_I18N_AMNEZIAWG_RU_FILENAME="luci-i18n-amneziawg-ru${PKGPOSTFIX}"
-                DOWNLOAD_URL="${BASE_URL}v${VERSION}/${LUCI_I18N_AMNEZIAWG_RU_FILENAME}"
-                wget -O "$AWG_DIR/$LUCI_I18N_AMNEZIAWG_RU_FILENAME" "$DOWNLOAD_URL"
-
+                LUCI_I18N_AMNEZIAWG_RU_FILENAME=$(download_package "luci-i18n-amneziawg-ru" "$PKGPOSTFIX_BASE" "$AWG_DIR" "${BASE_URL}v${VERSION}/")
                 if [ $? -eq 0 ]; then
                     echo "luci-i18n-amneziawg-ru file downloaded successfully"
-                    opkg install "$AWG_DIR/$LUCI_I18N_AMNEZIAWG_RU_FILENAME"
+                    install_local_pkg "$AWG_DIR/$LUCI_I18N_AMNEZIAWG_RU_FILENAME"
                     if [ $? -eq 0 ]; then
                         echo "luci-i18n-amneziawg-ru installed successfully"
                     else
@@ -182,7 +277,7 @@ configure_amneziawg_interface() {
     read -r -p "Enter H2 value (from [Interface]):"$'\n' AWG_H2
     read -r -p "Enter H3 value (from [Interface]):"$'\n' AWG_H3
     read -r -p "Enter H4 value (from [Interface]):"$'\n' AWG_H4
-    
+
     # AWG 2.0 новые параметры
     if [ "$AWG_VERSION" = "2.0" ]; then
         read -r -p "Enter S3 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_S3
@@ -193,7 +288,7 @@ configure_amneziawg_interface() {
         read -r -p "Enter I4 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_I4
         read -r -p "Enter I5 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_I5
     fi
-    
+
     uci set network.${INTERFACE_NAME}=interface
     uci set network.${INTERFACE_NAME}.proto=$PROTO
     uci set network.${INTERFACE_NAME}.private_key=$AWG_PRIVATE_KEY_INT
@@ -263,6 +358,7 @@ configure_amneziawg_interface() {
     fi
 }
 
+detect_package_manager
 check_repo
 
 install_awg_packages
