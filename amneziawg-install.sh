@@ -356,6 +356,8 @@ configure_amneziawg_interface() {
         uci set firewall.@forwarding[-1].family='ipv4'
         uci commit firewall
     fi
+
+    service network restart
 }
 
 detect_package_manager
@@ -371,5 +373,3 @@ if [ "$IS_SHOULD_CONFIGURE_AWG_INTERFACE" = "y" ] || [ "$IS_SHOULD_CONFIGURE_AWG
 else
     printf "\033[32;1mSkipping amneziawg interface configuration.\033[0m\n"
 fi
-
-service network restart
