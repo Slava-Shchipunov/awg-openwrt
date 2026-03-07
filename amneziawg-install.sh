@@ -31,7 +31,7 @@ is_pkg_installed() {
     if [ "$PKG_MANAGER" = "apk" ]; then
         apk info -e "$pkg_name" >/dev/null 2>&1
     else
-        opkg status "$pkg_name" >/dev/null 2>&1
+        opkg list-installed 2>/dev/null | grep -q "^${pkg_name} - "
     fi
 }
 
