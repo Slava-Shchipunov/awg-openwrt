@@ -72,9 +72,25 @@ function buildSVGQRCode(data, code) {
 		whiteColor: 'white',
 		blackColor: 'black'
 	};
-	const svg = uqr.renderSVG(data, options);
-	code.style.opacity = '';
-	dom.content(code, Object.assign(E(svg), { style: 'width:100%;height:auto' }));
+
+	try {
+		const svg = uqr.renderSVG(data, options);
+		code.style.opacity = '';
+		dom.content(code, Object.assign(E(svg), {
+			style: 'width:100%;height:auto'
+		}));
+	}
+	catch (e) {
+		console.warn('QR generation failed:', e);
+
+		code.style.opacity = '';
+		dom.content(code, E('div', {
+			'class': 'alert-message warning',
+			'style': 'margin:0;text-align:center'
+		}, [
+			_('QR code generation failed. The configuration may be too large.')
+		]));
+	}
 }
 
 var cbiKeyPairGenerate = form.DummyValue.extend({
