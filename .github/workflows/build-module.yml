@@ -23,6 +23,8 @@ on:
         description: 'Subtargets (comma-separated, optional)'
         required: false
         type: string
+
+jobs:
    strategy:
       matrix:
         build_env:
@@ -31,8 +33,6 @@ on:
             target: mediatek
             subtarget: mt7622
             vermagic: "74~09da6f8026836be755e675b8c6a70b8b-r1"
-
-jobs:
   generate-config:
     runs-on: ubuntu-latest
     outputs:
@@ -79,8 +79,8 @@ jobs:
     name: "v${{ matrix.build_env.tag }} - ${{ matrix.build_env.pkgarch}} :: ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}} build"
     runs-on: ubuntu-latest
     needs: generate-config
- 
-      fail-fast: false
+
+ fail-fast: false  
 
     steps:
       - name: Checkout AWG source code
