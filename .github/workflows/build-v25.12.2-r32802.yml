@@ -1,0 +1,137 @@
+name: Build AmneziaWG (OpenWrt 25.12.2 snapshot)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      VERSION: "25.12.2"
+      REVISION: "r32802-f505120278"
+      TARGET: "mediatek"
+      SUBTARGET: "mt7622"
+      ARCH: "aarch64_cortex-a53"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential clang flex bison g++ gawk gcc-multilib \
+            gettext git libncurses5-dev libssl-dev python3 \
+            python3-pyelftools rsync unzip zlib1g-dev wget curl file
+
+      # =========================
+      # DOWNLOAD SNAPSHOT SDK
+      # =========================
+      - name: Get snapshot SDK
+        run: |
+          BASE="https://downloads.openwrt.org/snapshots/targets/${TARGET}/${SUBTARGET}/"
+
+          echo "Fetching SDK list from $BASE"
+
+          SDK_FILE=$(curl -s "$BASE" | \
+            grep -oE 'openwrt-sdk-[^"]+\.tar\.(xz|zst)' | \
+            head -n1)
+
+          if [ -z "$SDK_FILE" ]; then
+            echo "SDK not found in snapshot"
+            exit 1
+          fi
+
+          echo "SDK_FILE=$SDK_FILE"
+
+          wget "${BASE}${SDK_FILE}"
+
+          if [[ "$SDK_FILE" == *.tar.zst ]]; then
+            tar --zstd -xf "$SDK_FILE"
+          else
+            tar -xf "$SDK_FILE"
+          fi
+
+          rm -f "$SDK_FILE"
+
+      # =========================
+      # SETUP SDK
+      # =========================
+      - name: Prepare SDK
+        run: |
+          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
+
+          echo "SDK_DIR=$SDK_DIR"
+
+          cd "$SDK_DIR"
+
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      # =========================
+      # COPY PACKAGES
+      # =========================
+      - name: Add AmneziaWG packages
+        run: |
+          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
+
+          cp -r kmod-amneziawg "$SDK_DIR/package/"
+          cp -r amneziawg-tools "$SDK_DIR/package/"
+          cp -r luci-proto-amneziawg "$SDK_DIR/package/"
+
+      # =========================
+      # CONFIG (IMPORTANT)
+      # =========================
+      - name: Configure
+        run: |
+          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
+          cd "$SDK_DIR"
+
+          cat > .config <<EOF
+CONFIG_PACKAGE_kmod-amneziawg=m
+CONFIG_PACKAGE_amneziawg-tools=y
+CONFIG_PACKAGE_luci-proto-amneziawg=y
+CONFIG_PACKAGE_luci-i18n-amneziawg-ru=y
+EOF
+
+          make defconfig
+
+      # =========================
+      # BUILD
+      # =========================
+      - name: Build packages
+        run: |
+          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
+          cd "$SDK_DIR"
+
+          make package/kmod-amneziawg/compile V=s -j$(nproc)
+          make package/amneziawg-tools/compile V=s -j$(nproc)
+          make package/luci-proto-amneziawg/compile V=s -j$(nproc)
+
+      # =========================
+      # COLLECT
+      # =========================
+      - name: Collect artifacts
+        run: |
+          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
+
+          mkdir -p release
+
+          find "$SDK_DIR/bin/" -name "*.ipk" -exec cp {} release/ \;
+
+          echo "Artifacts:"
+          ls -lah release
+
+      # =========================
+      # RELEASE
+      # =========================
+      - name: Upload release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*.ipk
+          tag_name: v25.12.2-r32802
