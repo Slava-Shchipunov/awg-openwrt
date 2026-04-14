@@ -68,6 +68,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 build:
+  name: "v25.12.2 - aarch64_cortex-a53 :: mediatek/mt7622 build"
   needs: generate-config
   runs-on: ubuntu-latest
 
