@@ -67,12 +67,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build:
-    name: "v25.12.2 - aarch64_cortex-a53 :: mediatek/mt7622 build"
-    runs-on: ubuntu-latest
-    needs: generate-config
-    strategy:
-      fail-fast: false
+build:
+  needs: generate-config
+  runs-on: ubuntu-latest
+
+  strategy:
+    fail-fast: false
+    matrix:
+      build_env:
+        - tag: 25.12.2
+          pkgarch: aarch64_cortex-a53
+          target: mediatek
+          subtarget: mt7622
 
     steps:
       - name: Checkout AWG source code
