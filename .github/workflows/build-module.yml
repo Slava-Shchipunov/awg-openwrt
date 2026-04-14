@@ -6,7 +6,7 @@ on:
       version:
         description: "OpenWrt version"
         required: true
-        default: "24.10.5"
+        default: "25.12.2"
       target:
         description: "Target"
         required: true
