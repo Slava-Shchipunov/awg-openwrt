@@ -70,15 +70,9 @@ jobs:
   build:
     name: "v${{ matrix.build_env.tag }} - ${{ matrix.build_env.pkgarch}} :: ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}} build"
     runs-on: ubuntu-latest
-    			 strategy:
+        strategy:
     needs: generate-config
     strategy:
-          matrix:
-        build_env:
-          - tag: 25.12.2
-            pkgarch: aarch64_cortex-a53
-            target: mediatek
-            subtarget: mt7622
       fail-fast: false
 
     steps:
