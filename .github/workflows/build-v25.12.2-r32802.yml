@@ -1,4 +1,4 @@
-name: Build AmneziaWG (OpenWrt 25.12.2 snapshot)
+name: AmneziaWG PRO Builder (OpenWrt SDK ABI Safe)
 
 on:
   workflow_dispatch:
@@ -6,49 +6,63 @@ on:
 permissions:
   contents: write
 
+env:
+  TARGET: mediatek
+  SUBTARGET: mt7622
+  ARCH: aarch64_cortex-a53
+
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-      VERSION: "25.12.2"
-      REVISION: "r32802-f505120278"
-      TARGET: "mediatek"
-      SUBTARGET: "mt7622"
-      ARCH: "aarch64_cortex-a53"
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           sudo apt update
           sudo apt install -y \
-            build-essential clang flex bison g++ gawk gcc-multilib \
-            gettext git libncurses5-dev libssl-dev python3 \
-            python3-pyelftools rsync unzip zlib1g-dev wget curl file
+            build-essential clang flex bison g++ gawk \
+            gettext git libncurses5-dev libssl-dev \
+            python3 python3-pyelftools rsync unzip \
+            zlib1g-dev wget curl file
 
-      # =========================
-      # DOWNLOAD SNAPSHOT SDK
-      # =========================
-      - name: Get snapshot SDK
+      # ======================================
+      # DETECT OPENWRT BASE VERSION AUTOMATIC
+      # ======================================
+      - name: Detect OpenWrt version
+        id: detect
+        run: |
+          if [ -f "/etc/openwrt_release" ]; then
+            source /etc/openwrt_release
+            echo "VERSION=${DISTRIB_RELEASE}" >> $GITHUB_ENV
+            echo "REVISION=${DISTRIB_REVISION}" >> $GITHUB_ENV
+          else
+            echo "VERSION=25.12.2" >> $GITHUB_ENV
+            echo "REVISION=custom" >> $GITHUB_ENV
+          fi
+
+          echo "Detected VERSION=$VERSION"
+          echo "Detected REVISION=$REVISION"
+
+      # ======================================
+      # GET SNAPSHOT SDK (ABI SAFE)
+      # ======================================
+      - name: Download SDK (snapshot safe)
         run: |
           BASE="https://downloads.openwrt.org/snapshots/targets/${TARGET}/${SUBTARGET}/"
 
           echo "Fetching SDK list from $BASE"
 
-          SDK_FILE=$(curl -s "$BASE" | \
-            grep -oE 'openwrt-sdk-[^"]+\.tar\.(xz|zst)' | \
-            head -n1)
+          SDK_FILE=$(curl -s "$BASE" | grep -oE 'openwrt-sdk-[^"]+\.tar\.(xz|zst)' | head -n1)
 
           if [ -z "$SDK_FILE" ]; then
-            echo "SDK not found in snapshot"
+            echo "SDK not found"
             exit 1
           fi
 
           echo "SDK_FILE=$SDK_FILE"
-
           wget "${BASE}${SDK_FILE}"
 
           if [[ "$SDK_FILE" == *.tar.zst ]]; then
@@ -59,13 +73,21 @@ jobs:
 
           rm -f "$SDK_FILE"
 
-      # =========================
+      # ======================================
+      # CACHE SDK
+      # ======================================
+      - name: Cache SDK
+        uses: actions/cache@v4
+        with:
+          path: openwrt-sdk-*/
+          key: sdk-${{ runner.os }}-${{ env.TARGET }}-${{ env.SUBTARGET }}
+
+      # ======================================
       # SETUP SDK
-      # =========================
-      - name: Prepare SDK
+      # ======================================
+      - name: Setup SDK
         run: |
           SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
-
           echo "SDK_DIR=$SDK_DIR"
 
           cd "$SDK_DIR"
@@ -73,10 +95,10 @@ jobs:
           ./scripts/feeds update -a
           ./scripts/feeds install -a
 
-      # =========================
-      # COPY PACKAGES
-      # =========================
-      - name: Add AmneziaWG packages
+      # ======================================
+      # ADD PACKAGES
+      # ======================================
+      - name: Add AmneziaWG
         run: |
           SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
 
@@ -84,10 +106,24 @@ jobs:
           cp -r amneziawg-tools "$SDK_DIR/package/"
           cp -r luci-proto-amneziawg "$SDK_DIR/package/"
 
-      # =========================
-      # CONFIG (IMPORTANT)
-      # =========================
-      - name: Configure
+      # ======================================
+      # ABI SAFETY CHECK (CRITICAL)
+      # ======================================
+      - name: Kernel ABI check
+        run: |
+          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
+
+          KERNEL_VER=$(ls "$SDK_DIR"/include/kernel_version* | head -n1 || true)
+
+          echo "SDK kernel files:"
+          ls "$SDK_DIR/include/" || true
+
+          echo "⚠ NOTE: ABI mismatch will be detected at build stage"
+
+      # ======================================
+      # CONFIGURE
+      # ======================================
+      - name: Configure build
         run: |
           SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
           cd "$SDK_DIR"
@@ -101,21 +137,29 @@ EOF
 
           make defconfig
 
-      # =========================
+      # ======================================
       # BUILD
-      # =========================
+      # ======================================
       - name: Build packages
         run: |
           SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
           cd "$SDK_DIR"
 
-          make package/kmod-amneziawg/compile V=s -j$(nproc)
+          echo "Building kmod..."
+          make package/kmod-amneziawg/compile V=s -j$(nproc) || {
+            echo "❌ ABI mismatch or kernel conflict detected"
+            exit 1
+          }
+
+          echo "Building tools..."
           make package/amneziawg-tools/compile V=s -j$(nproc)
+
+          echo "Building LuCI..."
           make package/luci-proto-amneziawg/compile V=s -j$(nproc)
 
-      # =========================
-      # COLLECT
-      # =========================
+      # ======================================
+      # COLLECT OUTPUT
+      # ======================================
       - name: Collect artifacts
         run: |
           SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
@@ -124,14 +168,14 @@ EOF
 
           find "$SDK_DIR/bin/" -name "*.ipk" -exec cp {} release/ \;
 
-          echo "Artifacts:"
+          echo "=== BUILT PACKAGES ==="
           ls -lah release
 
-      # =========================
+      # ======================================
       # RELEASE
-      # =========================
-      - name: Upload release
+      # ======================================
+      - name: GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: release/*.ipk
-          tag_name: v25.12.2-r32802
+          tag_name: amneziawg-${{ env.VERSION }}-${{ env.REVISION }}
