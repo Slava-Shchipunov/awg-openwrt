@@ -128,8 +128,9 @@ jobs:
           SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
           cd "$SDK_DIR"
 
-          cat > .config <<EOF
-CONFIG_PACKAGE_kmod-amneziawg=m
+          cat > .config 
+          <<EOF
+CONFIG_PACKAGE_kmod-amneziawg=y
 CONFIG_PACKAGE_amneziawg-tools=y
 CONFIG_PACKAGE_luci-proto-amneziawg=y
 CONFIG_PACKAGE_luci-i18n-amneziawg-ru=y
