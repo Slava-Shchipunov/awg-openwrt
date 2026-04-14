@@ -66,11 +66,9 @@ jobs:
         run: node index.js 25.12.2 "mediatek" "mt7622"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-            build:
+build:
   needs: generate-config
   runs-on: ubuntu-latest
-
   strategy:
     fail-fast: false
     matrix:
