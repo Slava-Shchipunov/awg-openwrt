@@ -63,7 +63,7 @@ jobs:
 
       - name: Generate Job Config
         id: generate-config
-        run: node index.js 25.12.2 "mediatek" "mt7622"
+        run: node index.js "${VERSION}" "mediatek" "mt7622"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
