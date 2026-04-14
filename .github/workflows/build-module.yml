@@ -23,7 +23,14 @@ on:
         description: 'Subtargets (comma-separated, optional)'
         required: false
         type: string
-
+   strategy:
+      matrix:
+        build_env:
+          - tag: "25.12.2"
+            pkgarch: aarch64_cortex-a53
+            target: mediatek
+            subtarget: mt7622
+            vermagic: "74~09da6f8026836be755e675b8c6a70b8b-r1"
 
 jobs:
   generate-config:
@@ -72,9 +79,7 @@ jobs:
     name: "v${{ matrix.build_env.tag }} - ${{ matrix.build_env.pkgarch}} :: ${{ matrix.build_env.target}}/${{ matrix.build_env.subtarget}} build"
     runs-on: ubuntu-latest
     needs: generate-config
-    strategy:
-      matrix:
-        build_env: ${{ fromJson(needs.generate-config.outputs.job-config) }}
+ 
       fail-fast: false
 
     steps:
