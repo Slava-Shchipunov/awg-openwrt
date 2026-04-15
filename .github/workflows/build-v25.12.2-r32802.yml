@@ -1,181 +1,66 @@
-name: AmneziaWG PRO Builder (OpenWrt SDK ABI Safe)
+name: Build OpenWrt with AmneziaWG
 
 on:
   workflow_dispatch:
-
-permissions:
-  contents: write
+  push:
+    branches:
+      - main
 
 env:
-  TARGET: mediatek
-  SUBTARGET: mt7622
-  ARCH: aarch64_cortex-a53
+  # Указываем ваши специфические параметры
+  VERSION: "25.12.2"
+  TARGET: "x86"
+  SUBTARGET: "64"
+  KERNEL_VER: "6.12.74"
+  # Ссылка на Image Builder (замените на актуальное зеркало вашей версии)
+  IB_URL: "https://downloads.openwrt.org/snapshots/targets/x86/64/openwrt-imagebuilder-x86-64.Linux-x86_64.tar.xz"
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install deps
+      - name: Preparation
         run: |
-          sudo apt update
-          sudo apt install -y \
-            build-essential clang flex bison g++ gawk \
-            gettext git libncurses5-dev libssl-dev \
-            python3 python3-pyelftools rsync unzip \
-            zlib1g-dev wget curl file
+          sudo apt-get update
+          sudo apt-get install -y build-essential libncurses5-dev libncursesw5-dev \
+            zlib1g-dev gawk git gettext libssl-dev xsltproc wget unzip python3
 
-      # ======================================
-      # DETECT OPENWRT BASE VERSION AUTOMATIC
-      # ======================================
-      - name: Detect OpenWrt version
-        id: detect
+      - name: Download and Unpack Image Builder
         run: |
-          if [ -f "/etc/openwrt_release" ]; then
-            source /etc/openwrt_release
-            echo "VERSION=${DISTRIB_RELEASE}" >> $GITHUB_ENV
-            echo "REVISION=${DISTRIB_REVISION}" >> $GITHUB_ENV
-          else
-            echo "VERSION=25.12.2" >> $GITHUB_ENV
-            echo "REVISION=custom" >> $GITHUB_ENV
-          fi
+          wget $IB_URL
+          tar -xJf *.tar.xz
+          mv openwrt-imagebuilder-* ib
 
-          echo "Detected VERSION=$VERSION"
-          echo "Detected REVISION=$REVISION"
-
-      # ======================================
-      # GET SNAPSHOT SDK (ABI SAFE)
-      # ======================================
-      - name: Download SDK (snapshot safe)
+      - name: Add AmneziaWG Feed
+        working-directory: ./ib
         run: |
-          BASE="https://downloads.openwrt.org/snapshots/targets/${TARGET}/${SUBTARGET}/"
+          # Добавляем репозиторий с исходниками AmneziaWG
+          echo "src-git amnezia https://github.com/amnezia-vpn/amneziawg-openwrt.git" >> feeds.conf.default
+          ./scripts/feeds update amnezia
+          ./scripts/feeds install -a -p amnezia
 
-          echo "Fetching SDK list from $BASE"
-
-          SDK_FILE=$(curl -s "$BASE" | grep -oE 'openwrt-sdk-[^"]+\.tar\.(xz|zst)' | head -n1)
-
-          if [ -z "$SDK_FILE" ]; then
-            echo "SDK not found"
-            exit 1
-          fi
-
-          echo "SDK_FILE=$SDK_FILE"
-          wget "${BASE}${SDK_FILE}"
-
-          if [[ "$SDK_FILE" == *.tar.zst ]]; then
-            tar --zstd -xf "$SDK_FILE"
-          else
-            tar -xf "$SDK_FILE"
-          fi
-
-          rm -f "$SDK_FILE"
-
-      # ======================================
-      # CACHE SDK
-      # ======================================
-      - name: Cache SDK
-        uses: actions/cache@v4
-        with:
-          path: openwrt-sdk-*/
-          key: sdk-${{ runner.os }}-${{ env.TARGET }}-${{ env.SUBTARGET }}
-
-      # ======================================
-      # SETUP SDK
-      # ======================================
-      - name: Setup SDK
+      - name: Compile Kmod-AmneziaWG
+        working-directory: ./ib
         run: |
-          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
-          echo "SDK_DIR=$SDK_DIR"
-
-          cd "$SDK_DIR"
-
-          ./scripts/feeds update -a
-          ./scripts/feeds install -a
-
-      # ======================================
-      # ADD PACKAGES
-      # ======================================
-      - name: Add AmneziaWG
-        run: |
-          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
-
-          cp -r kmod-amneziawg "$SDK_DIR/package/"
-          cp -r amneziawg-tools "$SDK_DIR/package/"
-          cp -r luci-proto-amneziawg "$SDK_DIR/package/"
-
-      # ======================================
-      # ABI SAFETY CHECK (CRITICAL)
-      # ======================================
-      - name: Kernel ABI check
-        run: |
-          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
-
-          KERNEL_VER=$(ls "$SDK_DIR"/include/kernel_version* | head -n1 || true)
-
-          echo "SDK kernel files:"
-          ls "$SDK_DIR/include/" || true
-
-          echo "⚠ NOTE: ABI mismatch will be detected at build stage"
-
-      # ======================================
-      # CONFIGURE
-      # ======================================
-      - name: Configure build
-        run: |
-          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
-          cd "$SDK_DIR"
-
-          cat > .config <<EOF
-CONFIG_PACKAGE_kmod-amneziawg=m
-CONFIG_PACKAGE_amneziawg-tools=y
-CONFIG_PACKAGE_luci-proto-amneziawg=y
-CONFIG_PACKAGE_luci-i18n-amneziawg-ru=y
-EOF
-
+          # Для сборки модуля под конкретное ядро через IB требуются установленные пакеты
           make defconfig
+          # Мы добавляем пакеты в список сборки образа ниже
 
-      # ======================================
-      # BUILD
-      # ======================================
-      - name: Build packages
+      - name: Build Image
+        working-directory: ./ib
         run: |
-          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
-          cd "$SDK_DIR"
+          # PACKAGES: указываем AmneziaWG и зависимости
+          # FILES: если у вас есть папка 'files' с конфигами в репозитории
+          make image \
+            PACKAGES="amneziawg-tools kmod-amneziawg luci-app-amneziawg wireguard-tools bash" \
+            FILES="../files" \
+            EXTRA_IMAGE_NAME="AmneziaWG-Custom"
 
-          echo "Building kmod..."
-          make package/kmod-amneziawg/compile V=s -j$(nproc) || {
-            echo "❌ ABI mismatch or kernel conflict detected"
-            exit 1
-          }
-
-          echo "Building tools..."
-          make package/amneziawg-tools/compile V=s -j$(nproc)
-
-          echo "Building LuCI..."
-          make package/luci-proto-amneziawg/compile V=s -j$(nproc)
-
-      # ======================================
-      # COLLECT OUTPUT
-      # ======================================
-      - name: Collect artifacts
-        run: |
-          SDK_DIR=$(find . -maxdepth 1 -type d -name "openwrt-sdk-*")
-
-          mkdir -p release
-
-          find "$SDK_DIR/bin/" -name "*.ipk" -exec cp {} release/ \;
-
-          echo "=== BUILT PACKAGES ==="
-          ls -lah release
-
-      # ======================================
-      # RELEASE
-      # ======================================
-      - name: GitHub Release
-        uses: softprops/action-gh-release@v2
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          files: release/*.ipk
-          tag_name: amneziawg-${{ env.VERSION }}-${{ env.REVISION }}
+          name: OpenWrt_AmneziaWG_${{ env.VERSION }}
+          path: ./ib/bin/targets/${{ env.TARGET }}/${{ env.SUBTARGET }}/*
