@@ -166,16 +166,15 @@ jobs:
           mkdir -p "$CANONICAL_AWG_FEED_DIR"
 
           # Build only AWG feed packages from package/feeds/awg into isolated AWG feed directory.
-          make package/feeds/awg/kmod-amneziawg/{download,prepare} V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+          # Use compile targets directly for fail-fast behavior on download/prepare failures.
           make package/feeds/awg/kmod-amneziawg/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
-          make package/feeds/awg/luci-proto-amneziawg/{download,prepare} V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
           make package/feeds/awg/luci-proto-amneziawg/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
-          make package/feeds/awg/amneziawg-tools/{download,prepare} V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
           make package/feeds/awg/amneziawg-tools/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
 
           # Generate repository metadata/signatures only for AWG feed directory.
           make package/index V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
 
+          # Ensure all expected AWG packages were produced before indexing/publishing.
           ls "$CANONICAL_AWG_FEED_DIR"/amneziawg-tools*.?pk >/dev/null
           ls "$CANONICAL_AWG_FEED_DIR"/kmod-amneziawg*.?pk >/dev/null
           ls "$CANONICAL_AWG_FEED_DIR"/luci-proto-amneziawg*.?pk >/dev/null
