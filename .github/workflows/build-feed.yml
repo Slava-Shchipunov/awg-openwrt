@@ -117,6 +117,7 @@ jobs:
             echo "SDK directory not found"
             exit 1
           fi
+          SDK_DIR=$(cd "$SDK_DIR" && pwd)
 
           WORKSPACE_DIR=$(pwd)
           cd "$SDK_DIR"
@@ -159,6 +160,11 @@ jobs:
         run: |
           set -euo pipefail
           SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
+          if [ -z "$SDK_DIR" ]; then
+            echo "SDK directory not found"
+            exit 1
+          fi
+          SDK_DIR=$(cd "$SDK_DIR" && pwd)
           cd "$SDK_DIR"
           MAJOR_VERSION="${{ matrix.build_env.tag }}"
           MAJOR_VERSION="${MAJOR_VERSION%%.*}"
@@ -197,6 +203,11 @@ jobs:
           set -euo pipefail
 
           SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
+          if [ -z "$SDK_DIR" ]; then
+            echo "SDK directory not found"
+            exit 1
+          fi
+          SDK_DIR=$(cd "$SDK_DIR" && pwd)
           VERSION="${{ matrix.build_env.tag }}"
           TARGET="${{ matrix.build_env.target }}"
           SUBTARGET="${{ matrix.build_env.subtarget }}"
@@ -216,6 +227,11 @@ jobs:
           set -euo pipefail
 
           SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
+          if [ -z "$SDK_DIR" ]; then
+            echo "SDK directory not found"
+            exit 1
+          fi
+          SDK_DIR=$(cd "$SDK_DIR" && pwd)
           VERSION="${{ matrix.build_env.tag }}"
           MAJOR_VERSION="${VERSION%%.*}"
           FEED_DIR="$GITHUB_WORKSPACE/feed-publish/${{ matrix.build_env.tag }}/${{ matrix.build_env.target }}/${{ matrix.build_env.subtarget }}/${{ matrix.build_env.pkgarch }}"
