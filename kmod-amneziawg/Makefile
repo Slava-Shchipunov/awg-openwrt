@@ -2,13 +2,14 @@ include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=kmod-amneziawg
-PKG_VERSION:=1.0.20260329-2
+PKG_VERSION:=1.0.20260329
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/amnezia-vpn/amneziawg-linux-kernel-module.git
 # Version: latest stable release tag
-PKG_SOURCE_VERSION:=v$(PKG_VERSION)
+# TODO: при следующем обновлении убрать -2
+PKG_SOURCE_VERSION:=v$(PKG_VERSION)-2
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
 MAKE_PATH:=src
 
