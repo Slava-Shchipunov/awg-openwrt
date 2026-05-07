@@ -145,7 +145,7 @@ jobs:
           mkdir -p "$TARGET_FEED_DIR"
 
           # Build all custom packages into a single SDK-managed target feed directory.
-          make package/kmod-amneziawg/{download,prepare} V=s PACKAGE_DIR="$TARGET_FEED_DIR" || true
+          make package/kmod-amneziawg/{download,prepare} V=s PACKAGE_DIR="$TARGET_FEED_DIR"
           make package/kmod-amneziawg/compile V=s PACKAGE_DIR="$TARGET_FEED_DIR"
           make package/luci-proto-amneziawg/{download,prepare} V=s PACKAGE_DIR="$TARGET_FEED_DIR"
           make package/luci-proto-amneziawg/compile V=s PACKAGE_DIR="$TARGET_FEED_DIR"
@@ -155,18 +155,19 @@ jobs:
           # Generate and sign repository metadata via OpenWrt buildsystem (no manual merge/reindex).
           make package/index V=s PACKAGE_DIR="$TARGET_FEED_DIR"
 
-          # Resolve canonical AWG feed directory by userspace package presence.
-          CANDIDATES_FILE="$RUNNER_TEMP/awg_feed_candidates.txt"
-          : > "$CANDIDATES_FILE"
-          while IFS= read -r pkg; do dirname "$pkg"; done < <(find "$SDK_DIR/bin" -type f -name "amneziawg-tools*.?pk") >> "$CANDIDATES_FILE"
-          sort -u "$CANDIDATES_FILE" -o "$CANDIDATES_FILE"
-          CANDIDATE_COUNT=$(wc -l < "$CANDIDATES_FILE" | tr -d ' ')
-          if [ "$CANDIDATE_COUNT" -ne 1 ]; then
-            echo "Expected exactly one canonical AWG feed containing amneziawg-tools, got: $CANDIDATE_COUNT"
-            cat "$CANDIDATES_FILE" || true
+          # Canonical AWG feed is the SDK base feed for current pkgarch; validate it really contains amneziawg-tools.
+          MAJOR_VERSION="${{ matrix.build_env.tag }}"
+          MAJOR_VERSION="${MAJOR_VERSION%%.*}"
+          CANONICAL_AWG_FEED_DIR="$SDK_DIR/bin/packages/${{ matrix.build_env.pkgarch }}/base"
+          if [ ! -d "$CANONICAL_AWG_FEED_DIR" ]; then
+            echo "Canonical AWG feed directory not found: $CANONICAL_AWG_FEED_DIR"
             exit 1
           fi
-          CANONICAL_AWG_FEED_DIR=$(cat "$CANDIDATES_FILE")
+          if ! ls "$CANONICAL_AWG_FEED_DIR"/amneziawg-tools*.?pk >/dev/null 2>&1; then
+            echo "amneziawg-tools package not found in canonical feed: $CANONICAL_AWG_FEED_DIR"
+            ls -la "$CANONICAL_AWG_FEED_DIR" || true
+            exit 1
+          fi
 
           # Add kmod package into canonical feed and regenerate metadata there.
           KMOD_FILE=$(find "$SDK_DIR/bin" -type f -name "kmod-amneziawg*.?pk" | head -n1)
@@ -183,8 +184,6 @@ jobs:
           echo "CANONICAL_AWG_FEED_DIR=$CANONICAL_AWG_FEED_DIR" >> "$GITHUB_ENV"
 
           # Validate SDK-generated metadata in canonical feed.
-          MAJOR_VERSION="${{ matrix.build_env.tag }}"
-          MAJOR_VERSION="${MAJOR_VERSION%%.*}"
           if [ "$MAJOR_VERSION" -ge 25 ]; then
             test -s "$CANONICAL_AWG_FEED_DIR/packages.adb"
             test -s "$CANONICAL_AWG_FEED_DIR/packages.adb.sig"
