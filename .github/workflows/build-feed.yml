@@ -140,9 +140,11 @@ jobs:
           echo "src-link awg $AWG_FEED_DIR" >> feeds.conf
 
           ./scripts/feeds update -a
-          ./scripts/feeds install -a
           ./scripts/feeds update awg
-          ./scripts/feeds install -a -p awg
+          # Install only AWG feed packages to avoid pulling unrelated package symbols.
+          ./scripts/feeds install -p awg kmod-amneziawg
+          ./scripts/feeds install -p awg amneziawg-tools
+          ./scripts/feeds install -p awg luci-proto-amneziawg
 
           echo "CONFIG_PACKAGE_kmod-amneziawg=m" > .config
           echo "CONFIG_PACKAGE_amneziawg-tools=y" >> .config
@@ -158,25 +160,22 @@ jobs:
           set -euo pipefail
           SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
           cd "$SDK_DIR"
-          # Build only AWG feed packages from package/feeds/awg (isolated custom namespace).
-          make package/feeds/awg/kmod-amneziawg/{download,prepare} V=s
-          make package/feeds/awg/kmod-amneziawg/compile V=s
-          make package/feeds/awg/luci-proto-amneziawg/{download,prepare} V=s
-          make package/feeds/awg/luci-proto-amneziawg/compile V=s
-          make package/feeds/awg/amneziawg-tools/{download,prepare} V=s
-          make package/feeds/awg/amneziawg-tools/compile V=s
-
-          # Generate repository metadata/signatures via OpenWrt buildsystem.
-          make package/index V=s
-
-          # Canonical AWG feed must be isolated from base feed.
           MAJOR_VERSION="${{ matrix.build_env.tag }}"
           MAJOR_VERSION="${MAJOR_VERSION%%.*}"
           CANONICAL_AWG_FEED_DIR="$SDK_DIR/bin/packages/${{ matrix.build_env.pkgarch }}/awg"
-          if [ ! -d "$CANONICAL_AWG_FEED_DIR" ]; then
-            echo "Canonical AWG feed directory not found: $CANONICAL_AWG_FEED_DIR"
-            exit 1
-          fi
+          mkdir -p "$CANONICAL_AWG_FEED_DIR"
+
+          # Build only AWG feed packages from package/feeds/awg into isolated AWG feed directory.
+          make package/feeds/awg/kmod-amneziawg/{download,prepare} V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+          make package/feeds/awg/kmod-amneziawg/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+          make package/feeds/awg/luci-proto-amneziawg/{download,prepare} V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+          make package/feeds/awg/luci-proto-amneziawg/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+          make package/feeds/awg/amneziawg-tools/{download,prepare} V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+          make package/feeds/awg/amneziawg-tools/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+
+          # Generate repository metadata/signatures only for AWG feed directory.
+          make package/index V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+
           ls "$CANONICAL_AWG_FEED_DIR"/amneziawg-tools*.?pk >/dev/null
           ls "$CANONICAL_AWG_FEED_DIR"/kmod-amneziawg*.?pk >/dev/null
           ls "$CANONICAL_AWG_FEED_DIR"/luci-proto-amneziawg*.?pk >/dev/null
