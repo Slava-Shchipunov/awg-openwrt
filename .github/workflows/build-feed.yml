@@ -301,12 +301,103 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-feed
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Restore existing GitHub Pages content
+        run: |
+          set -euo pipefail
+
+          mkdir -p gh-pages-content
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git fetch --depth=1 origin gh-pages
+            git --work-tree=gh-pages-content checkout FETCH_HEAD -- .
+          fi
+
       - name: Download all feed artifacts
         uses: actions/download-artifact@v4
         with:
           path: gh-pages-content
           pattern: feed-*
           merge-multiple: true
+
+      - name: Generate GitHub Pages site
+        run: |
+          set -euo pipefail
+
+          SITE_DIR="$GITHUB_WORKSPACE/gh-pages-content"
+          BASE_URL="https://slava-shchipunov.github.io/awg-openwrt"
+
+          rm -f "$SITE_DIR/.nojekyll"
+
+          cat > "$SITE_DIR/_config.yml" <<'EOF'
+          title: AmneziaWG OpenWrt Feed
+          description: APK package feed for AmneziaWG on OpenWrt 25.x and newer
+          theme: jekyll-theme-minimal
+          EOF
+
+          cat > "$SITE_DIR/index.md" <<'EOF'
+          ---
+          layout: default
+          title: AmneziaWG OpenWrt Feed
+          ---
+
+          # AmneziaWG OpenWrt Feed
+
+          This GitHub Pages site publishes an APK package feed for OpenWrt 25.x and newer.
+
+          OpenWrt 24.x and older are not supported by this feed. Use GitHub Releases artifacts for legacy `.ipk` packages.
+
+          ## Available feeds
+
+          EOF
+
+          mapfile -t FEED_DIRS < <(find "$SITE_DIR" -mindepth 4 -maxdepth 4 -type d | sort)
+          for feed_dir in "${FEED_DIRS[@]}"; do
+            if [ ! -s "$feed_dir/packages.adb" ]; then
+              continue
+            fi
+
+            rel_path="${feed_dir#"$SITE_DIR"/}"
+            IFS=/ read -r version target subtarget pkgarch <<EOF
+          $rel_path
+          EOF
+            feed_url="$BASE_URL/$rel_path"
+            adb_url="$feed_url/packages.adb"
+
+            printf -- '- [%s %s/%s %s](%s/)\n' "$version" "$target" "$subtarget" "$pkgarch" "$feed_url" >> "$SITE_DIR/index.md"
+
+            cat > "$feed_dir/index.md" <<EOF
+          ---
+          layout: default
+          title: "$version $target/$subtarget $pkgarch"
+          ---
+
+          # AmneziaWG feed
+
+          - OpenWrt version: \`$version\`
+          - Target: \`$target\`
+          - Subtarget: \`$subtarget\`
+          - Package architecture: \`$pkgarch\`
+
+          ## Repository
+
+          \`\`\`sh
+          echo "$adb_url" >> /etc/apk/repositories.d/customfeeds.list
+          apk update
+          apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
+          \`\`\`
+
+          ## Files
+
+          EOF
+
+            find "$feed_dir" -maxdepth 1 -type f \
+              ! -name "index.md" \
+              -printf "%f\n" | sort | while read -r file_name; do
+                printf -- '- [%s](%s/%s)\n' "$file_name" "$feed_url" "$file_name" >> "$feed_dir/index.md"
+              done
+          done
 
       - name: Publish to GitHub Pages branch
         # Keep existing feed data for previously built versions/arches.
@@ -316,3 +407,4 @@ jobs:
           publish_branch: gh-pages
           publish_dir: gh-pages-content
           keep_files: true
+          enable_jekyll: true
