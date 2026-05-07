@@ -1,6 +1,10 @@
 # Custom package feed (GitHub Pages)
 
-Этот репозиторий поддерживает отдельный bootstrap workflow `.github/workflows/build-feed.yml`, который публикует полноценный feed в ветку `gh-pages` в формате:
+Этот репозиторий публикует полноценный OpenWrt package feed для OpenWrt 25.x и новее, где используется `apk` и APK v3 metadata.
+
+OpenWrt 24.x и более старые версии в GitHub Pages feed не поддерживаются. Для них используйте `.ipk` пакеты из GitHub Releases.
+
+Feed публикуется workflow `.github/workflows/build-feed.yml` в ветку `gh-pages` в формате:
 
 `/<openwrt-version>/<target>/<subtarget>/<pkgarch>/`
 
@@ -8,31 +12,14 @@
 
 `/25.12.3/mediatek/filogic/aarch64_cortex-a53/`
 
-В feed публикуются не только `.apk/.ipk`, но и SDK-generated metadata (`Packages`, `Packages.gz`, `Packages.sig` для opkg; `packages.adb` для apk) и публичные ключи из сборки.
+В feed публикуются:
 
-## OpenWRT 24.x (opkg)
+- `.apk` packages
+- `packages.adb`
+- SDK-generated APK repository metadata
+- публичные ключи из сборки
 
-Добавьте feed (замените `VERSION`, `TARGET`, `SUBTARGET`, `PKGARCH`):
-
-```sh
-echo "src/gz awg_custom https://slava-shchipunov.github.io/awg-openwrt/VERSION/TARGET/SUBTARGET/PKGARCH" >> /etc/opkg/customfeeds.conf
-opkg update
-opkg install amneziawg-tools kmod-amneziawg luci-proto-amneziawg
-```
-
-Если на устройстве включена проверка подписи, установите публичный ключ feed в usign keyring:
-
-```sh
-wget -O /tmp/awg-feed.pub https://slava-shchipunov.github.io/awg-openwrt/keys/<KEY_FILE>.pub
-cp /tmp/awg-feed.pub /etc/opkg/keys/
-opkg update
-```
-
-Ключи публикуются в стабильном пути:
-
-`https://slava-shchipunov.github.io/awg-openwrt/keys/`
-
-## OpenWRT 25.x (apk)
+## OpenWrt 25.x (apk)
 
 Добавьте feed (замените `VERSION`, `TARGET`, `SUBTARGET`, `PKGARCH`):
 
@@ -49,6 +36,12 @@ apk update
 apk add amneziawg-tools
 ```
 
+## Public signing keys
+
+Ключи публикуются в стабильном пути:
+
+`https://slava-shchipunov.github.io/awg-openwrt/keys/`
+
 Для доверенной установки добавьте public key в `/etc/apk/keys/`:
 
 ```sh
@@ -56,16 +49,14 @@ wget -O /etc/apk/keys/awg-feed.pub https://slava-shchipunov.github.io/awg-openwr
 apk update
 ```
 
-Ключи публикуются в стабильном пути:
-
-`https://slava-shchipunov.github.io/awg-openwrt/keys/`
+`<KEY_FILE>.pub` нужно заменить на фактическое имя опубликованного `.pub` файла из директории `/keys/`.
 
 ## ASU / owut
 
-Для ASU/owut используйте URL feed в этом же формате:
+Для ASU/owut используйте URL feed в формате:
 
 `https://slava-shchipunov.github.io/awg-openwrt/VERSION/TARGET/SUBTARGET/PKGARCH/`
 
-и для APK-потока индекс:
+APK index:
 
 `https://slava-shchipunov.github.io/awg-openwrt/VERSION/TARGET/SUBTARGET/PKGARCH/packages.adb`

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "OpenWRT version (e.g., 24.10.6 or 25.12.3)"
+        description: "OpenWRT version with apk support (25.x or newer, e.g., 25.12.3)"
         required: true
         type: string
       targets:
@@ -35,7 +35,20 @@ jobs:
 
       - name: Prepare build inputs
         run: |
-          echo "VERSION=${{ inputs.version }}" >> "$GITHUB_ENV"
+          set -euo pipefail
+          VERSION="${{ inputs.version }}"
+          MAJOR_VERSION="${VERSION%%.*}"
+          if ! printf '%s\n' "$MAJOR_VERSION" | grep -Eq '^[0-9]+$'; then
+            echo "Invalid OpenWrt version: $VERSION"
+            exit 1
+          fi
+          if [ "$MAJOR_VERSION" -lt 25 ]; then
+            echo "GitHub Pages package feed is supported only for OpenWrt 25.x or newer (apk/packages.adb)."
+            echo "Use GitHub Releases artifacts for OpenWrt $VERSION."
+            exit 1
+          fi
+
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
           if [ -n "${{ inputs.targets }}" ]; then
             echo "TARGETS=${{ inputs.targets }}" >> "$GITHUB_ENV"
@@ -166,8 +179,6 @@ jobs:
           fi
           SDK_DIR=$(cd "$SDK_DIR" && pwd)
           cd "$SDK_DIR"
-          MAJOR_VERSION="${{ matrix.build_env.tag }}"
-          MAJOR_VERSION="${MAJOR_VERSION%%.*}"
           CANONICAL_AWG_FEED_DIR="$SDK_DIR/bin/packages/${{ matrix.build_env.pkgarch }}/awg"
           mkdir -p "$CANONICAL_AWG_FEED_DIR"
 
@@ -178,27 +189,27 @@ jobs:
           make package/feeds/awg/amneziawg-tools/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
 
           # PACKAGE_DIR is inherited by dependency builds; keep the published feed restricted to AWG packages.
-          find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f \( -name "*.apk" -o -name "*.ipk" \) \
-            ! -name "amneziawg-tools*.?pk" \
-            ! -name "kmod-amneziawg*.?pk" \
-            ! -name "luci-proto-amneziawg*.?pk" \
-            ! -name "luci-i18n-amneziawg-ru*.?pk" \
+          find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f -name "*.apk" \
+            ! -name "amneziawg-tools*.apk" \
+            ! -name "kmod-amneziawg*.apk" \
+            ! -name "luci-proto-amneziawg*.apk" \
+            ! -name "luci-i18n-amneziawg-ru*.apk" \
             -delete
 
           echo "AWG feed package files:"
-          find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f \( -name "*.apk" -o -name "*.ipk" \) -printf "%f\n" | sort
+          find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f -name "*.apk" -printf "%f\n" | sort
 
           # Ensure all expected AWG packages were produced before indexing/publishing.
-          ls "$CANONICAL_AWG_FEED_DIR"/amneziawg-tools*.?pk >/dev/null
-          ls "$CANONICAL_AWG_FEED_DIR"/kmod-amneziawg*.?pk >/dev/null
-          ls "$CANONICAL_AWG_FEED_DIR"/luci-proto-amneziawg*.?pk >/dev/null
-          ls "$CANONICAL_AWG_FEED_DIR"/luci-i18n-amneziawg-ru*.?pk >/dev/null
+          ls "$CANONICAL_AWG_FEED_DIR"/amneziawg-tools*.apk >/dev/null
+          ls "$CANONICAL_AWG_FEED_DIR"/kmod-amneziawg*.apk >/dev/null
+          ls "$CANONICAL_AWG_FEED_DIR"/luci-proto-amneziawg*.apk >/dev/null
+          ls "$CANONICAL_AWG_FEED_DIR"/luci-i18n-amneziawg-ru*.apk >/dev/null
 
-          UNEXPECTED_PACKAGES=$(find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f \( -name "*.apk" -o -name "*.ipk" \) \
-            ! -name "amneziawg-tools*.?pk" \
-            ! -name "kmod-amneziawg*.?pk" \
-            ! -name "luci-proto-amneziawg*.?pk" \
-            ! -name "luci-i18n-amneziawg-ru*.?pk" \
+          UNEXPECTED_PACKAGES=$(find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f -name "*.apk" \
+            ! -name "amneziawg-tools*.apk" \
+            ! -name "kmod-amneziawg*.apk" \
+            ! -name "luci-proto-amneziawg*.apk" \
+            ! -name "luci-i18n-amneziawg-ru*.apk" \
             -printf "%f\n")
           if [ -n "$UNEXPECTED_PACKAGES" ]; then
             echo "Unexpected package files in AWG feed:"
@@ -214,14 +225,8 @@ jobs:
 
           echo "CANONICAL_AWG_FEED_DIR=$CANONICAL_AWG_FEED_DIR" >> "$GITHUB_ENV"
 
-          # Validate SDK-generated metadata in canonical feed.
-          if [ "$MAJOR_VERSION" -ge 25 ]; then
-            test -s "$CANONICAL_AWG_FEED_DIR/packages.adb"
-          else
-            test -s "$CANONICAL_AWG_FEED_DIR/Packages"
-            test -s "$CANONICAL_AWG_FEED_DIR/Packages.gz"
-            test -s "$CANONICAL_AWG_FEED_DIR/Packages.sig"
-          fi
+          # Validate SDK-generated APK repository metadata in canonical feed.
+          test -s "$CANONICAL_AWG_FEED_DIR/packages.adb"
 
       - name: Prepare feed publish directory
         run: |
@@ -257,48 +262,32 @@ jobs:
             exit 1
           fi
           SDK_DIR=$(cd "$SDK_DIR" && pwd)
-          VERSION="${{ matrix.build_env.tag }}"
-          MAJOR_VERSION="${VERSION%%.*}"
           FEED_DIR="$GITHUB_WORKSPACE/feed-publish/${{ matrix.build_env.tag }}/${{ matrix.build_env.target }}/${{ matrix.build_env.subtarget }}/${{ matrix.build_env.pkgarch }}"
 
           test -d "$FEED_DIR"
 
           # Ensure expected packages are present as package files.
-          ls "$FEED_DIR"/amneziawg-tools*.?pk >/dev/null
-          ls "$FEED_DIR"/kmod-amneziawg*.?pk >/dev/null
-          ls "$FEED_DIR"/luci-proto-amneziawg*.?pk >/dev/null
-          ls "$FEED_DIR"/luci-i18n-amneziawg-ru*.?pk >/dev/null
+          ls "$FEED_DIR"/amneziawg-tools*.apk >/dev/null
+          ls "$FEED_DIR"/kmod-amneziawg*.apk >/dev/null
+          ls "$FEED_DIR"/luci-proto-amneziawg*.apk >/dev/null
+          ls "$FEED_DIR"/luci-i18n-amneziawg-ru*.apk >/dev/null
 
-          if [ "$MAJOR_VERSION" -ge 25 ]; then
-            # APK repository must exist and include kmod in adb index.
-            test -s "$FEED_DIR/packages.adb"
-            APK_BIN="$SDK_DIR/staging_dir/host/bin/apk"
-            if [ ! -x "$APK_BIN" ]; then
-              echo "OpenWrt host apk tool not found: $APK_BIN"
-              exit 1
-            fi
-            ADB_DUMP_FILE="$RUNNER_TEMP/packages.adb.dump"
-            "$APK_BIN" adbdump "$FEED_DIR/packages.adb" > "$ADB_DUMP_FILE"
-            grep -q "amneziawg-tools" "$ADB_DUMP_FILE"
-            grep -q "kmod-amneziawg" "$ADB_DUMP_FILE"
-            grep -q "luci-proto-amneziawg" "$ADB_DUMP_FILE"
-            grep -q "luci-i18n-amneziawg-ru" "$ADB_DUMP_FILE"
-            ! grep -q "busybox" "$ADB_DUMP_FILE"
-            ! grep -q "\blibc\b" "$ADB_DUMP_FILE"
-            ! grep -q "\bubus\b" "$ADB_DUMP_FILE"
-          else
-            # opkg repository must exist and include kmod in Packages index.
-            test -f "$FEED_DIR/Packages"
-            test -f "$FEED_DIR/Packages.gz"
-            test -f "$FEED_DIR/Packages.sig"
-            zgrep -q "Package: amneziawg-tools" "$FEED_DIR/Packages.gz"
-            zgrep -q "Package: kmod-amneziawg" "$FEED_DIR/Packages.gz"
-            zgrep -q "Package: luci-proto-amneziawg" "$FEED_DIR/Packages.gz"
-            zgrep -q "Package: luci-i18n-amneziawg-ru" "$FEED_DIR/Packages.gz"
-            ! zgrep -q "Package: busybox" "$FEED_DIR/Packages.gz"
-            ! zgrep -q "Package: libc" "$FEED_DIR/Packages.gz"
-            ! zgrep -q "Package: ubus" "$FEED_DIR/Packages.gz"
+          # APK repository must exist and include every AWG package in adb index.
+          test -s "$FEED_DIR/packages.adb"
+          APK_BIN="$SDK_DIR/staging_dir/host/bin/apk"
+          if [ ! -x "$APK_BIN" ]; then
+            echo "OpenWrt host apk tool not found: $APK_BIN"
+            exit 1
           fi
+          ADB_DUMP_FILE="$RUNNER_TEMP/packages.adb.dump"
+          "$APK_BIN" adbdump "$FEED_DIR/packages.adb" > "$ADB_DUMP_FILE"
+          grep -q "amneziawg-tools" "$ADB_DUMP_FILE"
+          grep -q "kmod-amneziawg" "$ADB_DUMP_FILE"
+          grep -q "luci-proto-amneziawg" "$ADB_DUMP_FILE"
+          grep -q "luci-i18n-amneziawg-ru" "$ADB_DUMP_FILE"
+          ! grep -q "busybox" "$ADB_DUMP_FILE"
+          ! grep -q "\blibc\b" "$ADB_DUMP_FILE"
+          ! grep -q "\bubus\b" "$ADB_DUMP_FILE"
 
       - name: Upload feed artifact
         uses: actions/upload-artifact@v4

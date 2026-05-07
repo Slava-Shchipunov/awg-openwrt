@@ -5,7 +5,7 @@
 ## Custom package feed (GitHub Pages)
 
 Репозиторий также публикует полноценный OpenWRT package feed
-для ASU / owut / apk / opkg.
+для ASU / owut / apk на OpenWrt 25.x и новее.
 
 Подробная документация:
 [`docs/custom-feed.md`](docs/custom-feed.md)
