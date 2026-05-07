@@ -142,15 +142,13 @@ jobs:
           cp -a "$WORKSPACE_DIR/kmod-amneziawg" "$AWG_FEED_DIR/"
           cp -a "$WORKSPACE_DIR/amneziawg-tools" "$AWG_FEED_DIR/"
           cp -a "$WORKSPACE_DIR/luci-proto-amneziawg" "$AWG_FEED_DIR/"
-          # Keep default OpenWrt feeds (including luci) and append custom AWG feed.
-          if [ -f feeds.conf ]; then
-            cp feeds.conf feeds.conf.bak
-          elif [ -f feeds.conf.default ]; then
-            cp feeds.conf.default feeds.conf
-          else
+          # Always rebuild feeds.conf from the SDK default. The SDK directory is cached
+          # between workflow runs, so appending to an existing feeds.conf is not idempotent.
+          if [ ! -f feeds.conf.default ]; then
             echo "feeds.conf.default is missing"
             exit 1
           fi
+          cp feeds.conf.default feeds.conf
           echo "src-link awg $AWG_FEED_DIR" >> feeds.conf
 
           ./scripts/feeds update -a
