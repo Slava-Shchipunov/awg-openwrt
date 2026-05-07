@@ -110,6 +110,7 @@ jobs:
 
       - name: Setup SDK and feeds
         run: |
+          set -euo pipefail
           SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
 
           if [ -z "$SDK_DIR" ]; then
@@ -120,12 +121,19 @@ jobs:
           WORKSPACE_DIR=$(pwd)
           cd "$SDK_DIR"
 
+          # Register isolated custom AWG feed as a local linked feed.
+          AWG_FEED_DIR="$WORKSPACE_DIR/.tmp-awg-feed"
+          rm -rf "$AWG_FEED_DIR"
+          mkdir -p "$AWG_FEED_DIR"
+          cp -a "$WORKSPACE_DIR/kmod-amneziawg" "$AWG_FEED_DIR/"
+          cp -a "$WORKSPACE_DIR/amneziawg-tools" "$AWG_FEED_DIR/"
+          cp -a "$WORKSPACE_DIR/luci-proto-amneziawg" "$AWG_FEED_DIR/"
+          echo "src-link awg $AWG_FEED_DIR" >> feeds.conf
+
           ./scripts/feeds update -a
           ./scripts/feeds install -a
-
-          cp -r "$WORKSPACE_DIR/kmod-amneziawg" package/
-          cp -r "$WORKSPACE_DIR/amneziawg-tools" package/
-          cp -r "$WORKSPACE_DIR/luci-proto-amneziawg" package/
+          ./scripts/feeds update awg
+          ./scripts/feeds install -a -p awg
 
           echo "CONFIG_PACKAGE_kmod-amneziawg=m" > .config
           echo "CONFIG_PACKAGE_amneziawg-tools=y" >> .config
@@ -141,45 +149,29 @@ jobs:
           set -euo pipefail
           SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
           cd "$SDK_DIR"
-          TARGET_FEED_DIR="$SDK_DIR/bin/targets/${{ matrix.build_env.target }}/${{ matrix.build_env.subtarget }}/packages"
-          mkdir -p "$TARGET_FEED_DIR"
+          # Build only AWG feed packages from package/feeds/awg (isolated custom namespace).
+          make package/feeds/awg/kmod-amneziawg/{download,prepare} V=s
+          make package/feeds/awg/kmod-amneziawg/compile V=s
+          make package/feeds/awg/luci-proto-amneziawg/{download,prepare} V=s
+          make package/feeds/awg/luci-proto-amneziawg/compile V=s
+          make package/feeds/awg/amneziawg-tools/{download,prepare} V=s
+          make package/feeds/awg/amneziawg-tools/compile V=s
 
-          # Build all custom packages into a single SDK-managed target feed directory.
-          make package/kmod-amneziawg/{download,prepare} V=s PACKAGE_DIR="$TARGET_FEED_DIR"
-          make package/kmod-amneziawg/compile V=s PACKAGE_DIR="$TARGET_FEED_DIR"
-          make package/luci-proto-amneziawg/{download,prepare} V=s PACKAGE_DIR="$TARGET_FEED_DIR"
-          make package/luci-proto-amneziawg/compile V=s PACKAGE_DIR="$TARGET_FEED_DIR"
-          make package/amneziawg-tools/{download,prepare} V=s PACKAGE_DIR="$TARGET_FEED_DIR"
-          make package/amneziawg-tools/compile V=s PACKAGE_DIR="$TARGET_FEED_DIR"
+          # Generate repository metadata/signatures via OpenWrt buildsystem.
+          make package/index V=s
 
-          # Generate and sign repository metadata via OpenWrt buildsystem (no manual merge/reindex).
-          make package/index V=s PACKAGE_DIR="$TARGET_FEED_DIR"
-
-          # Canonical AWG feed is the SDK base feed for current pkgarch; validate it really contains amneziawg-tools.
+          # Canonical AWG feed must be isolated from base feed.
           MAJOR_VERSION="${{ matrix.build_env.tag }}"
           MAJOR_VERSION="${MAJOR_VERSION%%.*}"
-          CANONICAL_AWG_FEED_DIR="$SDK_DIR/bin/packages/${{ matrix.build_env.pkgarch }}/base"
+          CANONICAL_AWG_FEED_DIR="$SDK_DIR/bin/packages/${{ matrix.build_env.pkgarch }}/awg"
           if [ ! -d "$CANONICAL_AWG_FEED_DIR" ]; then
             echo "Canonical AWG feed directory not found: $CANONICAL_AWG_FEED_DIR"
             exit 1
           fi
-          if ! ls "$CANONICAL_AWG_FEED_DIR"/amneziawg-tools*.?pk >/dev/null 2>&1; then
-            echo "amneziawg-tools package not found in canonical feed: $CANONICAL_AWG_FEED_DIR"
-            ls -la "$CANONICAL_AWG_FEED_DIR" || true
-            exit 1
-          fi
-
-          # Add kmod package into canonical feed and regenerate metadata there.
-          KMOD_FILE=$(find "$SDK_DIR/bin" -type f -name "kmod-amneziawg*.?pk" | head -n1)
-          if [ -z "$KMOD_FILE" ]; then
-            echo "kmod-amneziawg package file not found"
-            exit 1
-          fi
-          cp -a "$KMOD_FILE" "$CANONICAL_AWG_FEED_DIR"/
-          make package/index V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
-
-          # kmod must be present in canonical feed package files.
+          ls "$CANONICAL_AWG_FEED_DIR"/amneziawg-tools*.?pk >/dev/null
           ls "$CANONICAL_AWG_FEED_DIR"/kmod-amneziawg*.?pk >/dev/null
+          ls "$CANONICAL_AWG_FEED_DIR"/luci-proto-amneziawg*.?pk >/dev/null
+          ls "$CANONICAL_AWG_FEED_DIR"/luci-i18n-amneziawg-ru*.?pk >/dev/null
 
           echo "CANONICAL_AWG_FEED_DIR=$CANONICAL_AWG_FEED_DIR" >> "$GITHUB_ENV"
 
@@ -222,7 +214,12 @@ jobs:
           FEED_DIR="$GITHUB_WORKSPACE/feed-publish/${{ matrix.build_env.tag }}/${{ matrix.build_env.target }}/${{ matrix.build_env.subtarget }}/${{ matrix.build_env.pkgarch }}"
 
           test -d "$FEED_DIR"
-          ls "$FEED_DIR"/kmod-amneziawg*.?pk
+
+          # Ensure expected packages are present as package files.
+          ls "$FEED_DIR"/amneziawg-tools*.?pk >/dev/null
+          ls "$FEED_DIR"/kmod-amneziawg*.?pk >/dev/null
+          ls "$FEED_DIR"/luci-proto-amneziawg*.?pk >/dev/null
+          ls "$FEED_DIR"/luci-i18n-amneziawg-ru*.?pk >/dev/null
 
           if [ "$MAJOR_VERSION" -ge 25 ]; then
             # APK repository must exist and include kmod in adb index.
@@ -238,6 +235,10 @@ jobs:
             grep -q "amneziawg-tools" "$ADB_DUMP_FILE"
             grep -q "kmod-amneziawg" "$ADB_DUMP_FILE"
             grep -q "luci-proto-amneziawg" "$ADB_DUMP_FILE"
+            grep -q "luci-i18n-amneziawg-ru" "$ADB_DUMP_FILE"
+            ! grep -q "busybox" "$ADB_DUMP_FILE"
+            ! grep -q "\blibc\b" "$ADB_DUMP_FILE"
+            ! grep -q "\bubus\b" "$ADB_DUMP_FILE"
           else
             # opkg repository must exist and include kmod in Packages index.
             test -f "$FEED_DIR/Packages"
@@ -246,6 +247,10 @@ jobs:
             zgrep -q "Package: amneziawg-tools" "$FEED_DIR/Packages.gz"
             zgrep -q "Package: kmod-amneziawg" "$FEED_DIR/Packages.gz"
             zgrep -q "Package: luci-proto-amneziawg" "$FEED_DIR/Packages.gz"
+            zgrep -q "Package: luci-i18n-amneziawg-ru" "$FEED_DIR/Packages.gz"
+            ! zgrep -q "Package: busybox" "$FEED_DIR/Packages.gz"
+            ! zgrep -q "Package: libc" "$FEED_DIR/Packages.gz"
+            ! zgrep -q "Package: ubus" "$FEED_DIR/Packages.gz"
           fi
 
       - name: Upload feed artifact
