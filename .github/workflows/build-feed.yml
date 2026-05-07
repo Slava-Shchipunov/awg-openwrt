@@ -362,8 +362,64 @@ jobs:
           EOF
             feed_url="$BASE_URL/$rel_path"
             adb_url="$feed_url/packages.adb"
+            version_dir="$SITE_DIR/$version"
+            target_dir="$version_dir/$target"
+            subtarget_dir="$target_dir/$subtarget"
 
             printf -- '- [%s %s/%s %s](%s/)\n' "$version" "$target" "$subtarget" "$pkgarch" "$feed_url" >> "$SITE_DIR/index.md"
+
+            if [ ! -f "$version_dir/index.md" ]; then
+              cat > "$version_dir/index.md" <<EOF
+          ---
+          layout: default
+          title: "OpenWrt $version"
+          ---
+
+          # OpenWrt $version
+
+          ## Targets
+
+          EOF
+            fi
+            target_url="$BASE_URL/$version/$target"
+            if ! grep -q "($target_url/)" "$version_dir/index.md"; then
+              printf -- '- [%s](%s/)\n' "$target" "$target_url" >> "$version_dir/index.md"
+            fi
+
+            if [ ! -f "$target_dir/index.md" ]; then
+              cat > "$target_dir/index.md" <<EOF
+          ---
+          layout: default
+          title: "OpenWrt $version $target"
+          ---
+
+          # OpenWrt $version / $target
+
+          ## Subtargets
+
+          EOF
+            fi
+            subtarget_url="$BASE_URL/$version/$target/$subtarget"
+            if ! grep -q "($subtarget_url/)" "$target_dir/index.md"; then
+              printf -- '- [%s](%s/)\n' "$subtarget" "$subtarget_url" >> "$target_dir/index.md"
+            fi
+
+            if [ ! -f "$subtarget_dir/index.md" ]; then
+              cat > "$subtarget_dir/index.md" <<EOF
+          ---
+          layout: default
+          title: "OpenWrt $version $target/$subtarget"
+          ---
+
+          # OpenWrt $version / $target / $subtarget
+
+          ## Package architectures
+
+          EOF
+            fi
+            if ! grep -q "($feed_url/)" "$subtarget_dir/index.md"; then
+              printf -- '- [%s](%s/)\n' "$pkgarch" "$feed_url" >> "$subtarget_dir/index.md"
+            fi
 
             cat > "$feed_dir/index.md" <<EOF
           ---
@@ -398,11 +454,10 @@ jobs:
           done
 
       - name: Publish to GitHub Pages branch
-        # Keep existing feed data for previously built versions/arches.
+        # Existing gh-pages content is restored above, then republished as one complete tree.
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: gh-pages-content
-          keep_files: true
           enable_jekyll: true
