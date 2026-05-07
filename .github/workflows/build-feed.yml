@@ -155,16 +155,35 @@ jobs:
           # Generate and sign repository metadata via OpenWrt buildsystem (no manual merge/reindex).
           make package/index V=s PACKAGE_DIR="$TARGET_FEED_DIR"
 
-          # Validate that SDK generated metadata in expected formats.
+          # Resolve canonical AWG feed directory.
+          CANDIDATES_FILE="$RUNNER_TEMP/awg_feed_candidates.txt"
+          : > "$CANDIDATES_FILE"
+          while IFS= read -r pkg; do
+            d=$(dirname "$pkg")
+            if ls "$d"/kmod-amneziawg*.?pk >/dev/null 2>&1; then
+              echo "$d" >> "$CANDIDATES_FILE"
+            fi
+          done < <(find "$SDK_DIR/bin" -type f -name "amneziawg-tools*.?pk")
+          sort -u "$CANDIDATES_FILE" -o "$CANDIDATES_FILE"
+          CANDIDATE_COUNT=$(wc -l < "$CANDIDATES_FILE" | tr -d ' ')
+          if [ "$CANDIDATE_COUNT" -ne 1 ]; then
+            echo "Expected exactly one canonical AWG feed (amneziawg-tools + kmod-amneziawg), got: $CANDIDATE_COUNT"
+            cat "$CANDIDATES_FILE" || true
+            exit 1
+          fi
+          CANONICAL_AWG_FEED_DIR=$(cat "$CANDIDATES_FILE")
+          echo "CANONICAL_AWG_FEED_DIR=$CANONICAL_AWG_FEED_DIR" >> "$GITHUB_ENV"
+
+          # Validate SDK-generated metadata in canonical feed.
           MAJOR_VERSION="${{ matrix.build_env.tag }}"
           MAJOR_VERSION="${MAJOR_VERSION%%.*}"
           if [ "$MAJOR_VERSION" -ge 25 ]; then
-            test -s "$TARGET_FEED_DIR/packages.adb"
-            test -s "$TARGET_FEED_DIR/packages.adb.sig"
+            test -s "$CANONICAL_AWG_FEED_DIR/packages.adb"
+            test -s "$CANONICAL_AWG_FEED_DIR/packages.adb.sig"
           else
-            test -s "$TARGET_FEED_DIR/Packages"
-            test -s "$TARGET_FEED_DIR/Packages.gz"
-            test -s "$TARGET_FEED_DIR/Packages.sig"
+            test -s "$CANONICAL_AWG_FEED_DIR/Packages"
+            test -s "$CANONICAL_AWG_FEED_DIR/Packages.gz"
+            test -s "$CANONICAL_AWG_FEED_DIR/Packages.sig"
           fi
 
       - name: Prepare feed publish directory
@@ -177,10 +196,10 @@ jobs:
           SUBTARGET="${{ matrix.build_env.subtarget }}"
           PKGARCH="${{ matrix.build_env.pkgarch }}"
           FEED_DIR="$GITHUB_WORKSPACE/feed-publish/$VERSION/$TARGET/$SUBTARGET/$PKGARCH"
-          TARGET_FEED_DIR="$SDK_DIR/bin/targets/$TARGET/$SUBTARGET/packages"
+          CANONICAL_AWG_FEED_DIR="${CANONICAL_AWG_FEED_DIR:?canonical feed is not resolved}"
 
           mkdir -p "$FEED_DIR"
-          cp -a "$TARGET_FEED_DIR"/. "$FEED_DIR"/
+          cp -a "$CANONICAL_AWG_FEED_DIR"/. "$FEED_DIR"/
 
           # Persist a stable key path for client trust bootstrap.
           mkdir -p "$GITHUB_WORKSPACE/feed-publish/keys"
