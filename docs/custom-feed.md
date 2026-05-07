@@ -8,7 +8,7 @@
 
 `/25.12.3/mediatek/filogic/aarch64_cortex-a53/`
 
-В feed публикуются не только `.apk/.ipk`, но и SDK-generated metadata (`Packages`, `Packages.gz`, `Packages.sig` для opkg; `packages.adb`, `packages.adb.sig` для apk) и подписи/публичные ключи из сборки.
+В feed публикуются не только `.apk/.ipk`, но и SDK-generated metadata (`Packages`, `Packages.gz`, `Packages.sig` для opkg; `packages.adb` для apk) и публичные ключи из сборки.
 
 ## OpenWRT 24.x (opkg)
 

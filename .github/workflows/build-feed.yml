@@ -177,8 +177,16 @@ jobs:
           make package/feeds/awg/luci-proto-amneziawg/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
           make package/feeds/awg/amneziawg-tools/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
 
-          # Generate repository metadata/signatures only for AWG feed directory.
-          make package/index V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+          # PACKAGE_DIR is inherited by dependency builds; keep the published feed restricted to AWG packages.
+          find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f \( -name "*.apk" -o -name "*.ipk" \) \
+            ! -name "amneziawg-tools*.?pk" \
+            ! -name "kmod-amneziawg*.?pk" \
+            ! -name "luci-proto-amneziawg*.?pk" \
+            ! -name "luci-i18n-amneziawg-ru*.?pk" \
+            -delete
+
+          echo "AWG feed package files:"
+          find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f \( -name "*.apk" -o -name "*.ipk" \) -printf "%f\n" | sort
 
           # Ensure all expected AWG packages were produced before indexing/publishing.
           ls "$CANONICAL_AWG_FEED_DIR"/amneziawg-tools*.?pk >/dev/null
@@ -186,12 +194,29 @@ jobs:
           ls "$CANONICAL_AWG_FEED_DIR"/luci-proto-amneziawg*.?pk >/dev/null
           ls "$CANONICAL_AWG_FEED_DIR"/luci-i18n-amneziawg-ru*.?pk >/dev/null
 
+          UNEXPECTED_PACKAGES=$(find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f \( -name "*.apk" -o -name "*.ipk" \) \
+            ! -name "amneziawg-tools*.?pk" \
+            ! -name "kmod-amneziawg*.?pk" \
+            ! -name "luci-proto-amneziawg*.?pk" \
+            ! -name "luci-i18n-amneziawg-ru*.?pk" \
+            -printf "%f\n")
+          if [ -n "$UNEXPECTED_PACKAGES" ]; then
+            echo "Unexpected package files in AWG feed:"
+            echo "$UNEXPECTED_PACKAGES"
+            exit 1
+          fi
+
+          # Generate repository metadata/signatures only after the AWG feed directory is clean.
+          make package/index V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+
+          echo "AWG feed metadata:"
+          find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f -printf "%f\n" | sort
+
           echo "CANONICAL_AWG_FEED_DIR=$CANONICAL_AWG_FEED_DIR" >> "$GITHUB_ENV"
 
           # Validate SDK-generated metadata in canonical feed.
           if [ "$MAJOR_VERSION" -ge 25 ]; then
             test -s "$CANONICAL_AWG_FEED_DIR/packages.adb"
-            test -s "$CANONICAL_AWG_FEED_DIR/packages.adb.sig"
           else
             test -s "$CANONICAL_AWG_FEED_DIR/Packages"
             test -s "$CANONICAL_AWG_FEED_DIR/Packages.gz"
@@ -247,7 +272,6 @@ jobs:
           if [ "$MAJOR_VERSION" -ge 25 ]; then
             # APK repository must exist and include kmod in adb index.
             test -s "$FEED_DIR/packages.adb"
-            test -f "$FEED_DIR/packages.adb.sig"
             APK_BIN="$SDK_DIR/staging_dir/host/bin/apk"
             if [ ! -x "$APK_BIN" ]; then
               echo "OpenWrt host apk tool not found: $APK_BIN"
