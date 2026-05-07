@@ -155,23 +155,31 @@ jobs:
           # Generate and sign repository metadata via OpenWrt buildsystem (no manual merge/reindex).
           make package/index V=s PACKAGE_DIR="$TARGET_FEED_DIR"
 
-          # Resolve canonical AWG feed directory.
+          # Resolve canonical AWG feed directory by userspace package presence.
           CANDIDATES_FILE="$RUNNER_TEMP/awg_feed_candidates.txt"
           : > "$CANDIDATES_FILE"
-          while IFS= read -r pkg; do
-            d=$(dirname "$pkg")
-            if ls "$d"/kmod-amneziawg*.?pk >/dev/null 2>&1; then
-              echo "$d" >> "$CANDIDATES_FILE"
-            fi
-          done < <(find "$SDK_DIR/bin" -type f -name "amneziawg-tools*.?pk")
+          while IFS= read -r pkg; do dirname "$pkg"; done < <(find "$SDK_DIR/bin" -type f -name "amneziawg-tools*.?pk") >> "$CANDIDATES_FILE"
           sort -u "$CANDIDATES_FILE" -o "$CANDIDATES_FILE"
           CANDIDATE_COUNT=$(wc -l < "$CANDIDATES_FILE" | tr -d ' ')
           if [ "$CANDIDATE_COUNT" -ne 1 ]; then
-            echo "Expected exactly one canonical AWG feed (amneziawg-tools + kmod-amneziawg), got: $CANDIDATE_COUNT"
+            echo "Expected exactly one canonical AWG feed containing amneziawg-tools, got: $CANDIDATE_COUNT"
             cat "$CANDIDATES_FILE" || true
             exit 1
           fi
           CANONICAL_AWG_FEED_DIR=$(cat "$CANDIDATES_FILE")
+
+          # Add kmod package into canonical feed and regenerate metadata there.
+          KMOD_FILE=$(find "$SDK_DIR/bin" -type f -name "kmod-amneziawg*.?pk" | head -n1)
+          if [ -z "$KMOD_FILE" ]; then
+            echo "kmod-amneziawg package file not found"
+            exit 1
+          fi
+          cp -a "$KMOD_FILE" "$CANONICAL_AWG_FEED_DIR"/
+          make package/index V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+
+          # kmod must be present in canonical feed package files.
+          ls "$CANONICAL_AWG_FEED_DIR"/kmod-amneziawg*.?pk >/dev/null
+
           echo "CANONICAL_AWG_FEED_DIR=$CANONICAL_AWG_FEED_DIR" >> "$GITHUB_ENV"
 
           # Validate SDK-generated metadata in canonical feed.
