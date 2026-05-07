@@ -240,11 +240,20 @@ jobs:
           TARGET="${{ matrix.build_env.target }}"
           SUBTARGET="${{ matrix.build_env.subtarget }}"
           PKGARCH="${{ matrix.build_env.pkgarch }}"
-          FEED_DIR="$GITHUB_WORKSPACE/feed-publish/$VERSION/$TARGET/$SUBTARGET/$PKGARCH"
+          FEED_DIR="$GITHUB_WORKSPACE/feed-publish/$VERSION/$TARGET/$SUBTARGET"
           CANONICAL_AWG_FEED_DIR="${CANONICAL_AWG_FEED_DIR:?canonical feed is not resolved}"
 
           mkdir -p "$FEED_DIR"
           cp -a "$CANONICAL_AWG_FEED_DIR"/. "$FEED_DIR"/
+          cat > "$FEED_DIR/feed.json" <<EOF
+          {
+            "version": "$VERSION",
+            "target": "$TARGET",
+            "subtarget": "$SUBTARGET",
+            "pkgarch": "$PKGARCH",
+            "feed": "awg"
+          }
+          EOF
 
           # Persist a stable key path for client trust bootstrap.
           mkdir -p "$GITHUB_WORKSPACE/feed-publish/keys"
@@ -260,7 +269,7 @@ jobs:
             exit 1
           fi
           SDK_DIR=$(cd "$SDK_DIR" && pwd)
-          FEED_DIR="$GITHUB_WORKSPACE/feed-publish/${{ matrix.build_env.tag }}/${{ matrix.build_env.target }}/${{ matrix.build_env.subtarget }}/${{ matrix.build_env.pkgarch }}"
+          FEED_DIR="$GITHUB_WORKSPACE/feed-publish/${{ matrix.build_env.tag }}/${{ matrix.build_env.target }}/${{ matrix.build_env.subtarget }}"
 
           test -d "$FEED_DIR"
 
@@ -327,6 +336,23 @@ jobs:
           BASE_URL="https://slava-shchipunov.github.io/awg-openwrt"
 
           rm -f "$SITE_DIR/.nojekyll"
+          find "$SITE_DIR" -name "index.md" -delete
+          # Migrate the previous public layout where pkgarch was part of the URL.
+          # The current public layout is /<version>/<target>/<subtarget>/.
+          find "$SITE_DIR" -mindepth 4 -maxdepth 4 -type d -exec sh -c '
+            for dir do
+              [ -s "$dir/packages.adb" ] || continue
+              parent=$(dirname "$dir")
+              if [ ! -s "$parent/packages.adb" ]; then
+                cp -a "$dir"/. "$parent"/
+                if [ ! -s "$parent/feed.json" ]; then
+                  pkgarch=$(basename "$dir")
+                  printf '{\n  "pkgarch": "%s",\n  "feed": "awg"\n}\n' "$pkgarch" > "$parent/feed.json"
+                fi
+              fi
+              rm -rf "$dir"
+            done
+          ' sh {} +
 
           cat > "$SITE_DIR/_config.yml" <<'EOF'
           title: AmneziaWG OpenWrt Feed
@@ -346,27 +372,37 @@ jobs:
 
           OpenWrt 24.x and older are not supported by this feed. Use GitHub Releases artifacts for legacy `.ipk` packages.
 
-          ## Available feeds
+          ## Available OpenWrt versions
 
           EOF
 
-          mapfile -t FEED_DIRS < <(find "$SITE_DIR" -mindepth 4 -maxdepth 4 -type d | sort)
+          mapfile -t FEED_DIRS < <(find "$SITE_DIR" -mindepth 3 -maxdepth 3 -type d | sort)
           for feed_dir in "${FEED_DIRS[@]}"; do
             if [ ! -s "$feed_dir/packages.adb" ]; then
               continue
             fi
 
             rel_path="${feed_dir#"$SITE_DIR"/}"
-            IFS=/ read -r version target subtarget pkgarch <<EOF
+            IFS=/ read -r version target subtarget <<EOF
           $rel_path
           EOF
+            pkgarch="unknown"
+            if [ -s "$feed_dir/feed.json" ]; then
+              pkgarch=$(sed -n 's/.*"pkgarch": "\([^"]*\)".*/\1/p' "$feed_dir/feed.json" | head -n1)
+            fi
             feed_url="$BASE_URL/$rel_path"
             adb_url="$feed_url/packages.adb"
             version_dir="$SITE_DIR/$version"
             target_dir="$version_dir/$target"
             subtarget_dir="$target_dir/$subtarget"
+            version_url="$BASE_URL/$version"
+            target_url="$version_url/$target"
+            subtarget_url="$target_url/$subtarget"
+            openwrt_target_url="https://downloads.openwrt.org/releases/$version/targets/$target/$subtarget/"
 
-            printf -- '- [%s %s/%s %s](%s/)\n' "$version" "$target" "$subtarget" "$pkgarch" "$feed_url" >> "$SITE_DIR/index.md"
+            if ! grep -q "($version_url/)" "$SITE_DIR/index.md"; then
+              printf -- '- [%s](%s/)\n' "$version" "$version_url" >> "$SITE_DIR/index.md"
+            fi
 
             if [ ! -f "$version_dir/index.md" ]; then
               cat > "$version_dir/index.md" <<EOF
@@ -377,11 +413,12 @@ jobs:
 
           # OpenWrt $version
 
+          Choose a target. The target/subtarget pair is what identifies the OpenWrt device family and kernel ABI.
+
           ## Targets
 
           EOF
             fi
-            target_url="$BASE_URL/$version/$target"
             if ! grep -q "($target_url/)" "$version_dir/index.md"; then
               printf -- '- [%s](%s/)\n' "$target" "$target_url" >> "$version_dir/index.md"
             fi
@@ -395,36 +432,20 @@ jobs:
 
           # OpenWrt $version / $target
 
+          Choose a subtarget. OpenWrt device profiles are grouped under target/subtarget, not under package architecture.
+
           ## Subtargets
 
           EOF
             fi
-            subtarget_url="$BASE_URL/$version/$target/$subtarget"
             if ! grep -q "($subtarget_url/)" "$target_dir/index.md"; then
               printf -- '- [%s](%s/)\n' "$subtarget" "$subtarget_url" >> "$target_dir/index.md"
             fi
 
-            if [ ! -f "$subtarget_dir/index.md" ]; then
-              cat > "$subtarget_dir/index.md" <<EOF
+            cat > "$subtarget_dir/index.md" <<EOF
           ---
           layout: default
           title: "OpenWrt $version $target/$subtarget"
-          ---
-
-          # OpenWrt $version / $target / $subtarget
-
-          ## Package architectures
-
-          EOF
-            fi
-            if ! grep -q "($feed_url/)" "$subtarget_dir/index.md"; then
-              printf -- '- [%s](%s/)\n' "$pkgarch" "$feed_url" >> "$subtarget_dir/index.md"
-            fi
-
-            cat > "$feed_dir/index.md" <<EOF
-          ---
-          layout: default
-          title: "$version $target/$subtarget $pkgarch"
           ---
 
           # AmneziaWG feed
@@ -434,6 +455,12 @@ jobs:
           - Subtarget: \`$subtarget\`
           - Package architecture: \`$pkgarch\`
 
+          Device compatibility is determined by the OpenWrt version plus target/subtarget and the kmod kernel ABI. Package architecture is shown here as metadata from the APK repository, not as a separate user-facing choice.
+
+          ## OpenWrt target
+
+          [$openwrt_target_url]($openwrt_target_url)
+
           ## Repository
 
           \`\`\`sh
@@ -442,7 +469,7 @@ jobs:
           apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
           \`\`\`
 
-          ## Files
+          ## Feed files
 
           EOF
 
