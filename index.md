@@ -15,10 +15,10 @@ Install the feed public key before adding the repository:
 
 ```sh
 mkdir -p /etc/apk/keys
-wget -O /etc/apk/keys/awg-openwrt-feed.pub "https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pub"
+wget -O /etc/apk/keys/awg-openwrt-feed.pem "https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem"
 ```
 
-Public key file: [https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pub](https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pub)
+Public key file: [https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem](https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem)
 
 ## Available OpenWrt versions
 

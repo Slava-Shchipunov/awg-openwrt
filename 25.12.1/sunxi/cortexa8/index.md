@@ -20,7 +20,7 @@ Device compatibility is determined by the OpenWrt version plus target/subtarget 
 
 ```sh
 mkdir -p /etc/apk/keys
-wget -O /etc/apk/keys/awg-openwrt-feed.pub "https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pub"
+wget -O /etc/apk/keys/awg-openwrt-feed.pem "https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem"
 echo "https://slava-shchipunov.github.io/awg-openwrt/25.12.1/sunxi/cortexa8/packages.adb" >> /etc/apk/repositories.d/customfeeds.list
 apk update
 apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
