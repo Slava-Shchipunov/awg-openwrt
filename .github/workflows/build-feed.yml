@@ -385,6 +385,8 @@ jobs:
 
           # AmneziaWG OpenWrt Feed
 
+          Index of [(root)]($BASE_URL/)
+
           This GitHub Pages site publishes an APK package feed for OpenWrt 25.x and newer.
 
           OpenWrt 24.10.x and older are not supported by this feed. Use GitHub Releases artifacts for legacy \`.ipk\` packages.
@@ -430,6 +432,8 @@ jobs:
 
           # OpenWrt $version
 
+          Index of [(root)]($BASE_URL/) / [$version]($version_url/)
+
           Choose a target.
 
           ## Targets
@@ -449,6 +453,8 @@ jobs:
 
           # OpenWrt $version / $target
 
+          Index of [(root)]($BASE_URL/) / [$version]($version_url/) / [$target]($target_url/)
+
           Choose a subtarget.
 
           ## Subtargets
@@ -466,6 +472,8 @@ jobs:
           ---
 
           # AmneziaWG feed
+
+          Index of [(root)]($BASE_URL/) / [$version]($version_url/) / [$target]($target_url/) / [$subtarget]($subtarget_url/)
 
           - OpenWrt version: \`$version\`
           - Target: \`$target\`
