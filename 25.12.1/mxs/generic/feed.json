@@ -1,0 +1,7 @@
+{
+  "version": "25.12.1",
+  "target": "mxs",
+  "subtarget": "generic",
+  "pkgarch": "arm_arm926ej-s",
+  "feed": "awg"
+}

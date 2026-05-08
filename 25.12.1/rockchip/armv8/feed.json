@@ -1,0 +1,7 @@
+{
+  "version": "25.12.1",
+  "target": "rockchip",
+  "subtarget": "armv8",
+  "pkgarch": "aarch64_generic",
+  "feed": "awg"
+}

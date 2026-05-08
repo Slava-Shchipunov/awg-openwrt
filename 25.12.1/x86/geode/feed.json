@@ -1,0 +1,7 @@
+{
+  "version": "25.12.1",
+  "target": "x86",
+  "subtarget": "geode",
+  "pkgarch": "i386_pentium-mmx",
+  "feed": "awg"
+}

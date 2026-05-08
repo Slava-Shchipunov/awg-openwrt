@@ -1,0 +1,7 @@
+{
+  "version": "25.12.1",
+  "target": "starfive",
+  "subtarget": "generic",
+  "pkgarch": "riscv64_generic",
+  "feed": "awg"
+}

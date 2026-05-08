@@ -1,0 +1,7 @@
+{
+  "version": "25.12.1",
+  "target": "qualcommax",
+  "subtarget": "ipq50xx",
+  "pkgarch": "aarch64_cortex-a53",
+  "feed": "awg"
+}

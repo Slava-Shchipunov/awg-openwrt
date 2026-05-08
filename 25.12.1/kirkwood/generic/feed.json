@@ -1,0 +1,7 @@
+{
+  "version": "25.12.1",
+  "target": "kirkwood",
+  "subtarget": "generic",
+  "pkgarch": "arm_xscale",
+  "feed": "awg"
+}

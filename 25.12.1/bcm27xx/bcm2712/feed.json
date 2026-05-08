@@ -1,0 +1,7 @@
+{
+  "version": "25.12.1",
+  "target": "bcm27xx",
+  "subtarget": "bcm2712",
+  "pkgarch": "aarch64_cortex-a76",
+  "feed": "awg"
+}

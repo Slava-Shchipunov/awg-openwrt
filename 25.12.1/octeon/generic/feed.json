@@ -1,0 +1,7 @@
+{
+  "version": "25.12.1",
+  "target": "octeon",
+  "subtarget": "generic",
+  "pkgarch": "mips64_octeonplus",
+  "feed": "awg"
+}
