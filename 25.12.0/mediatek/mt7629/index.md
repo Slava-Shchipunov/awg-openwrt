@@ -35,6 +35,7 @@ apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 - [feed.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mediatek/mt7629/feed.json)
 - [index.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mediatek/mt7629/index.json)
 - [kmod-amneziawg-6.12.71.1.0.20260329-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mediatek/mt7629/kmod-amneziawg-6.12.71.1.0.20260329-r1.apk)
+- [luci-i18n-amneziawg-ru-0.260508.61992.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mediatek/mt7629/luci-i18n-amneziawg-ru-0.260508.61992.apk)
 - [luci-i18n-amneziawg-ru-0.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mediatek/mt7629/luci-i18n-amneziawg-ru-0.apk)
 - [luci-proto-amneziawg-2.0.4-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mediatek/mt7629/luci-proto-amneziawg-2.0.4-r1.apk)
 - [packages.adb](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mediatek/mt7629/packages.adb)
