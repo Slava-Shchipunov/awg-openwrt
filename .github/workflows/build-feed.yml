@@ -334,7 +334,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          if ! find gh-pages-content -name packages.adb -type f | grep -q .; then
+          if [ -z "$(find gh-pages-content -name packages.adb -type f -print -quit)" ]; then
             echo "No successful feed artifacts and no existing gh-pages feed content found."
             exit 1
           fi
