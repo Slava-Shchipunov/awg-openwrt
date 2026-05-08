@@ -1,0 +1,7 @@
+{
+  "version": "25.12.3",
+  "target": "bcm4908",
+  "subtarget": "generic",
+  "pkgarch": "aarch64_cortex-a53",
+  "feed": "awg"
+}

@@ -10,3 +10,4 @@ Choose a subtarget. OpenWrt device profiles are grouped under target/subtarget, 
 ## Subtargets
 
 - [chromium](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/ipq806x/chromium/)
+- [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/ipq806x/generic/)
