@@ -180,11 +180,10 @@ jobs:
           mkdir -p "$CANONICAL_AWG_FEED_DIR"
 
           # Build only AWG feed packages from package/feeds/awg into isolated AWG feed directory.
-          # Keep these targets in one make invocation so shared dependencies are not rebuilt
-          # by later package-specific invocations.
+          # luci-proto-amneziawg depends on amneziawg-tools, so building the LuCI
+          # package also produces the tools package without a second explicit target.
           make V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR" \
             package/feeds/awg/kmod-amneziawg/compile \
-            package/feeds/awg/amneziawg-tools/compile \
             package/feeds/awg/luci-proto-amneziawg/compile
 
           # PACKAGE_DIR is inherited by dependency builds; keep the published feed restricted to AWG packages.
