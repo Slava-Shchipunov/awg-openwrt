@@ -398,7 +398,7 @@ jobs:
 
           cat > "$SITE_DIR/_config.yml" <<'EOF'
           title: AmneziaWG OpenWrt Feed
-          description: APK package feed for AmneziaWG on OpenWrt 25.x and newer
+          description: APK package feed for AmneziaWG on OpenWrt 25.12.x and newer
           theme: jekyll-theme-midnight
           EOF
 
@@ -412,7 +412,7 @@ jobs:
 
           This GitHub Pages site publishes an APK package feed for OpenWrt 25.x and newer.
 
-          OpenWrt 24.x and older are not supported by this feed. Use GitHub Releases artifacts for legacy \`.ipk\` packages.
+          OpenWrt 24.10.x and older are not supported by this feed. Use GitHub Releases artifacts for legacy \`.ipk\` packages.
 
           ## Available OpenWrt versions
 
@@ -455,7 +455,7 @@ jobs:
 
           # OpenWrt $version
 
-          Choose a target. The target/subtarget pair is what identifies the OpenWrt device family and kernel ABI.
+          Choose a target.
 
           ## Targets
 
@@ -474,7 +474,7 @@ jobs:
 
           # OpenWrt $version / $target
 
-          Choose a subtarget. OpenWrt device profiles are grouped under target/subtarget, not under package architecture.
+          Choose a subtarget.
 
           ## Subtargets
 
@@ -497,18 +497,21 @@ jobs:
           - Subtarget: \`$subtarget\`
           - Package architecture: \`$pkgarch\`
 
-          Device compatibility is determined by the OpenWrt version plus target/subtarget and the kmod kernel ABI. Package architecture is shown here as metadata from the APK repository, not as a separate user-facing choice.
-
-          ## OpenWrt target
+          ## Upstream OpenWrt target
 
           [$openwrt_target_url]($openwrt_target_url)
 
-          ## Repository
+          ## Configure Feed
 
           \`\`\`sh
           mkdir -p /etc/apk/keys
           wget -O /etc/apk/keys/awg-openwrt-feed.pem "$BASE_URL/keys/awg-openwrt-feed.pem"
           echo "$adb_url" >> /etc/apk/repositories.d/customfeeds.list
+          \`\`\`
+
+          ## Install Packages
+
+          \`\`\`sh
           apk update
           apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
           \`\`\`
