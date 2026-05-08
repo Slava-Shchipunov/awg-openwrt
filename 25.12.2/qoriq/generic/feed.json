@@ -1,7 +1,0 @@
-{
-  "version": "25.12.2",
-  "target": "qoriq",
-  "subtarget": "generic",
-  "pkgarch": "powerpc64_e5500",
-  "feed": "awg"
-}

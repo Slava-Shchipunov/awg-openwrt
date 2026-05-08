@@ -1,7 +1,0 @@
-{
-  "version": "25.12.2",
-  "target": "bcm47xx",
-  "subtarget": "mips74k",
-  "pkgarch": "mipsel_74kc",
-  "feed": "awg"
-}

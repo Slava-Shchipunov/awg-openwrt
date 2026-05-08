@@ -1,7 +1,0 @@
-{
-  "version": "25.12.2",
-  "target": "mediatek",
-  "subtarget": "mt7629",
-  "pkgarch": "arm_cortex-a7",
-  "feed": "awg"
-}

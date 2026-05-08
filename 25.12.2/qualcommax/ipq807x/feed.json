@@ -1,7 +1,0 @@
-{
-  "version": "25.12.2",
-  "target": "qualcommax",
-  "subtarget": "ipq807x",
-  "pkgarch": "aarch64_cortex-a53",
-  "feed": "awg"
-}

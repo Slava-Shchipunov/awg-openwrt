@@ -1,7 +1,0 @@
-{
-  "version": "25.12.2",
-  "target": "mediatek",
-  "subtarget": "mt7623",
-  "pkgarch": "arm_cortex-a7_neon-vfpv4",
-  "feed": "awg"
-}

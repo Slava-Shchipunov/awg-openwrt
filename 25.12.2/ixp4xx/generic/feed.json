@@ -1,7 +1,0 @@
-{
-  "version": "25.12.2",
-  "target": "ixp4xx",
-  "subtarget": "generic",
-  "pkgarch": "armeb_xscale",
-  "feed": "awg"
-}

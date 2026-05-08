@@ -1,7 +1,0 @@
-{
-  "version": "25.12.2",
-  "target": "malta",
-  "subtarget": "be",
-  "pkgarch": "mips_24kc",
-  "feed": "awg"
-}

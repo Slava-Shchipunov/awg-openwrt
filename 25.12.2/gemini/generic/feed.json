@@ -1,7 +1,0 @@
-{
-  "version": "25.12.2",
-  "target": "gemini",
-  "subtarget": "generic",
-  "pkgarch": "arm_fa526",
-  "feed": "awg"
-}

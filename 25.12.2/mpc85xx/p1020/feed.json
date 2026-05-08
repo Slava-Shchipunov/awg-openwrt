@@ -1,7 +1,0 @@
-{
-  "version": "25.12.2",
-  "target": "mpc85xx",
-  "subtarget": "p1020",
-  "pkgarch": "powerpc_8548",
-  "feed": "awg"
-}
