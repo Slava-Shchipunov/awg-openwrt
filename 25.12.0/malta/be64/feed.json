@@ -1,7 +1,0 @@
-{
-  "version": "25.12.0",
-  "target": "malta",
-  "subtarget": "be64",
-  "pkgarch": "mips64_mips64r2",
-  "feed": "awg"
-}

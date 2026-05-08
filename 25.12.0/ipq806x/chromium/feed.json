@@ -1,7 +1,0 @@
-{
-  "version": "25.12.0",
-  "target": "ipq806x",
-  "subtarget": "chromium",
-  "pkgarch": "arm_cortex-a15_neon-vfpv4",
-  "feed": "awg"
-}

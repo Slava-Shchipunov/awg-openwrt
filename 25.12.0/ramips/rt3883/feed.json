@@ -1,7 +1,0 @@
-{
-  "version": "25.12.0",
-  "target": "ramips",
-  "subtarget": "rt3883",
-  "pkgarch": "mipsel_74kc",
-  "feed": "awg"
-}

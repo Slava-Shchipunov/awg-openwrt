@@ -1,7 +1,0 @@
-{
-  "version": "25.12.0",
-  "target": "at91",
-  "subtarget": "sama5",
-  "pkgarch": "arm_cortex-a5_vfpv4",
-  "feed": "awg"
-}

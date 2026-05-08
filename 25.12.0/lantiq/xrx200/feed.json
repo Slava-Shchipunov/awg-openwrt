@@ -1,7 +1,0 @@
-{
-  "version": "25.12.0",
-  "target": "lantiq",
-  "subtarget": "xrx200",
-  "pkgarch": "mips_24kc",
-  "feed": "awg"
-}
