@@ -147,7 +147,10 @@ jobs:
           cp feeds.conf.default feeds.conf
           echo "src-link awg $AWG_FEED_DIR" >> feeds.conf
 
-          ./scripts/feeds update -a
+          # Only base/luci are needed for LuCI dependencies; avoid updating
+          # unrelated feeds such as routing/telephony/video on every matrix job.
+          ./scripts/feeds update base
+          ./scripts/feeds update luci
           ./scripts/feeds update awg
           # Install only AWG feed packages to avoid pulling unrelated package symbols.
           ./scripts/feeds install -p awg kmod-amneziawg
@@ -179,8 +182,8 @@ jobs:
           # Build only AWG feed packages from package/feeds/awg into isolated AWG feed directory.
           # Use compile targets directly for fail-fast behavior on download/prepare failures.
           make package/feeds/awg/kmod-amneziawg/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
-          make package/feeds/awg/luci-proto-amneziawg/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
           make package/feeds/awg/amneziawg-tools/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+          make package/feeds/awg/luci-proto-amneziawg/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
 
           # PACKAGE_DIR is inherited by dependency builds; keep the published feed restricted to AWG packages.
           find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f -name "*.apk" \
