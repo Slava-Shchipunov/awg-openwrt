@@ -1,0 +1,7 @@
+{
+  "version": "25.12.2",
+  "target": "realtek",
+  "subtarget": "rtl930x_nand",
+  "pkgarch": "mips_24kc",
+  "feed": "awg"
+}
