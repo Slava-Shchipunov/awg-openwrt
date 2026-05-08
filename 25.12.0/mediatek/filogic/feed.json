@@ -1,4 +1,7 @@
 {
+  "version": "25.12.0",
+  "target": "mediatek",
+  "subtarget": "filogic",
   "pkgarch": "aarch64_cortex-a53",
   "feed": "awg"
 }

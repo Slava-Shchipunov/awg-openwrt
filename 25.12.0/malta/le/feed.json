@@ -1,0 +1,7 @@
+{
+  "version": "25.12.0",
+  "target": "malta",
+  "subtarget": "le",
+  "pkgarch": "mipsel_24kc",
+  "feed": "awg"
+}

@@ -1,0 +1,7 @@
+{
+  "version": "25.12.0",
+  "target": "pistachio",
+  "subtarget": "generic",
+  "pkgarch": "mipsel_24kc_24kf",
+  "feed": "awg"
+}

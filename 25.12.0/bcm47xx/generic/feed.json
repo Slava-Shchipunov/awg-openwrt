@@ -1,0 +1,7 @@
+{
+  "version": "25.12.0",
+  "target": "bcm47xx",
+  "subtarget": "generic",
+  "pkgarch": "mipsel_mips32",
+  "feed": "awg"
+}
