@@ -350,20 +350,23 @@ jobs:
           find "$SITE_DIR" -name "index.md" -delete
           # Migrate the previous public layout where pkgarch was part of the URL.
           # The current public layout is /<version>/<target>/<subtarget>/.
-          find "$SITE_DIR" -mindepth 4 -maxdepth 4 -type d -exec sh -c '
-            for dir do
-              [ -s "$dir/packages.adb" ] || continue
-              parent=$(dirname "$dir")
-              if [ ! -s "$parent/packages.adb" ]; then
-                cp -a "$dir"/. "$parent"/
-                if [ ! -s "$parent/feed.json" ]; then
-                  pkgarch=$(basename "$dir")
-                  printf '{\n  "pkgarch": "%s",\n  "feed": "awg"\n}\n' "$pkgarch" > "$parent/feed.json"
-                fi
+          while IFS= read -r -d '' dir; do
+            [ -s "$dir/packages.adb" ] || continue
+            parent=$(dirname "$dir")
+            if [ ! -s "$parent/packages.adb" ]; then
+              cp -a "$dir"/. "$parent"/
+              if [ ! -s "$parent/feed.json" ]; then
+                pkgarch=$(basename "$dir")
+                cat > "$parent/feed.json" <<EOF
+          {
+            "pkgarch": "$pkgarch",
+            "feed": "awg"
+          }
+          EOF
               fi
-              rm -rf "$dir"
-            done
-          ' sh {} +
+            fi
+            rm -rf "$dir"
+          done < <(find "$SITE_DIR" -mindepth 4 -maxdepth 4 -type d -print0)
 
           cat > "$SITE_DIR/_config.yml" <<'EOF'
           title: AmneziaWG OpenWrt Feed
