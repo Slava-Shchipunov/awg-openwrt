@@ -414,40 +414,8 @@ jobs:
 
           OpenWrt 24.x and older are not supported by this feed. Use GitHub Releases artifacts for legacy \`.ipk\` packages.
 
-          ## Signing key
-
-          Install the feed public key before adding the repository:
-
-          \`\`\`sh
-          mkdir -p /etc/apk/keys
-          wget -O /etc/apk/keys/awg-openwrt-feed.pem "$BASE_URL/keys/awg-openwrt-feed.pem"
-          \`\`\`
-
-          Public key file: [$BASE_URL/keys/awg-openwrt-feed.pem]($BASE_URL/keys/awg-openwrt-feed.pem)
-
           ## Available OpenWrt versions
 
-          EOF
-
-          mkdir -p "$SITE_DIR/keys"
-          cat > "$SITE_DIR/keys/index.md" <<EOF
-          ---
-          layout: default
-          title: Feed Signing Keys
-          ---
-
-          # Feed signing keys
-
-          Install this public key on OpenWrt before adding the AWG feed:
-
-          \`\`\`sh
-          mkdir -p /etc/apk/keys
-          wget -O /etc/apk/keys/awg-openwrt-feed.pem "$BASE_URL/keys/awg-openwrt-feed.pem"
-          \`\`\`
-
-          ## Files
-
-          - [awg-openwrt-feed.pem]($BASE_URL/keys/awg-openwrt-feed.pem)
           EOF
 
           mapfile -t FEED_DIRS < <(find "$SITE_DIR" -mindepth 3 -maxdepth 3 -type d | sort)
