@@ -399,7 +399,7 @@ jobs:
           cat > "$SITE_DIR/_config.yml" <<'EOF'
           title: AmneziaWG OpenWrt Feed
           description: APK package feed for AmneziaWG on OpenWrt 25.x and newer
-          theme: jekyll-theme-minimal
+          theme: jekyll-theme-midnight
           EOF
 
           cat > "$SITE_DIR/index.md" <<EOF
