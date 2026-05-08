@@ -35,6 +35,7 @@ apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 - [feed.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/apm821xx/sata/feed.json)
 - [index.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/apm821xx/sata/index.json)
 - [kmod-amneziawg-6.12.74.1.0.20260329-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/apm821xx/sata/kmod-amneziawg-6.12.74.1.0.20260329-r1.apk)
+- [luci-i18n-amneziawg-ru-0.260508.65397.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/apm821xx/sata/luci-i18n-amneziawg-ru-0.260508.65397.apk)
 - [luci-i18n-amneziawg-ru-0.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/apm821xx/sata/luci-i18n-amneziawg-ru-0.apk)
 - [luci-proto-amneziawg-2.0.4-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/apm821xx/sata/luci-proto-amneziawg-2.0.4-r1.apk)
 - [packages.adb](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/apm821xx/sata/packages.adb)
