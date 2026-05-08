@@ -77,6 +77,9 @@ jobs:
     # the SDK for every matrix job.
     container:
       image: ghcr.io/openwrt/sdk:${{ matrix.build_env.target }}-${{ matrix.build_env.subtarget }}-${{ matrix.build_env.tag }}
+      # The official SDK image uses a non-root user that cannot write GitHub
+      # Actions command files under /__w/_temp, so checkout fails without this.
+      options: --user root
     strategy:
       matrix:
         build_env: ${{ fromJson(needs.generate-config.outputs.job-config) }}
