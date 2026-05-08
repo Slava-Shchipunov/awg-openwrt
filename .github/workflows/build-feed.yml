@@ -124,10 +124,11 @@ jobs:
       - name: Setup SDK and feeds
         run: |
           set -euo pipefail
-          SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
+          SDK_GLOB="openwrt-sdk-${{ matrix.build_env.tag }}-${{ matrix.build_env.target }}-${{ matrix.build_env.subtarget }}_*"
+          SDK_DIR=$(find . -maxdepth 1 -name "$SDK_GLOB" -type d -print -quit)
 
           if [ -z "$SDK_DIR" ]; then
-            echo "SDK directory not found"
+            echo "SDK directory not found for $SDK_GLOB"
             exit 1
           fi
           SDK_DIR=$(cd "$SDK_DIR" && pwd)
@@ -170,9 +171,10 @@ jobs:
       - name: Build AmneziaWG packages
         run: |
           set -euo pipefail
-          SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
+          SDK_GLOB="openwrt-sdk-${{ matrix.build_env.tag }}-${{ matrix.build_env.target }}-${{ matrix.build_env.subtarget }}_*"
+          SDK_DIR=$(find . -maxdepth 1 -name "$SDK_GLOB" -type d -print -quit)
           if [ -z "$SDK_DIR" ]; then
-            echo "SDK directory not found"
+            echo "SDK directory not found for $SDK_GLOB"
             exit 1
           fi
           SDK_DIR=$(cd "$SDK_DIR" && pwd)
@@ -230,9 +232,10 @@ jobs:
         run: |
           set -euo pipefail
 
-          SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
+          SDK_GLOB="openwrt-sdk-${{ matrix.build_env.tag }}-${{ matrix.build_env.target }}-${{ matrix.build_env.subtarget }}_*"
+          SDK_DIR=$(find . -maxdepth 1 -name "$SDK_GLOB" -type d -print -quit)
           if [ -z "$SDK_DIR" ]; then
-            echo "SDK directory not found"
+            echo "SDK directory not found for $SDK_GLOB"
             exit 1
           fi
           SDK_DIR=$(cd "$SDK_DIR" && pwd)
@@ -263,9 +266,10 @@ jobs:
         run: |
           set -euo pipefail
 
-          SDK_DIR=$(find . -maxdepth 1 -name "openwrt-sdk-*" -type d | head -n1)
+          SDK_GLOB="openwrt-sdk-${{ matrix.build_env.tag }}-${{ matrix.build_env.target }}-${{ matrix.build_env.subtarget }}_*"
+          SDK_DIR=$(find . -maxdepth 1 -name "$SDK_GLOB" -type d -print -quit)
           if [ -z "$SDK_DIR" ]; then
-            echo "SDK directory not found"
+            echo "SDK directory not found for $SDK_GLOB"
             exit 1
           fi
           SDK_DIR=$(cd "$SDK_DIR" && pwd)
