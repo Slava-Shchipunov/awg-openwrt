@@ -1,0 +1,7 @@
+{
+  "version": "25.12.0",
+  "target": "bcm53xx",
+  "subtarget": "generic",
+  "pkgarch": "arm_cortex-a9",
+  "feed": "awg"
+}

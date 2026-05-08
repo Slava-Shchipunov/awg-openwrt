@@ -1,0 +1,7 @@
+{
+  "version": "25.12.0",
+  "target": "sifiveu",
+  "subtarget": "generic",
+  "pkgarch": "riscv64_generic",
+  "feed": "awg"
+}

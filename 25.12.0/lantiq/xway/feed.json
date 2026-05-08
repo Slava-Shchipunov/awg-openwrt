@@ -1,0 +1,7 @@
+{
+  "version": "25.12.0",
+  "target": "lantiq",
+  "subtarget": "xway",
+  "pkgarch": "mips_24kc",
+  "feed": "awg"
+}

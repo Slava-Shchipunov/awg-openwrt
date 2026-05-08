@@ -1,0 +1,7 @@
+{
+  "version": "25.12.0",
+  "target": "stm32",
+  "subtarget": "stm32mp1",
+  "pkgarch": "arm_cortex-a7_neon-vfpv4",
+  "feed": "awg"
+}
