@@ -72,6 +72,9 @@ jobs:
     name: "v${{ matrix.build_env.tag }} - ${{ matrix.build_env.pkgarch }} :: feed"
     runs-on: ubuntu-latest
     needs: generate-config
+    defaults:
+      run:
+        shell: bash
     # Use the official OpenWrt SDK container hosted on GitHub Container Registry.
     # This avoids bootstrapping Ubuntu packages and manually downloading/extracting
     # the SDK for every matrix job.
