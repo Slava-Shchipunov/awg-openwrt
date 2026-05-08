@@ -307,6 +307,7 @@ jobs:
     name: Deploy feed to gh-pages
     runs-on: ubuntu-latest
     needs: build-feed
+    if: ${{ always() }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -323,10 +324,20 @@ jobs:
 
       - name: Download all feed artifacts
         uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           path: gh-pages-content
           pattern: feed-*
           merge-multiple: true
+
+      - name: Check publishable feed content
+        run: |
+          set -euo pipefail
+
+          if ! find gh-pages-content -name packages.adb -type f | grep -q .; then
+            echo "No successful feed artifacts and no existing gh-pages feed content found."
+            exit 1
+          fi
 
       - name: Generate GitHub Pages site
         run: |
