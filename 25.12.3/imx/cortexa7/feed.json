@@ -1,7 +1,0 @@
-{
-  "version": "25.12.3",
-  "target": "imx",
-  "subtarget": "cortexa7",
-  "pkgarch": "arm_cortex-a7_neon-vfpv4",
-  "feed": "awg"
-}

@@ -1,7 +1,0 @@
-{
-  "version": "25.12.3",
-  "target": "armsr",
-  "subtarget": "armv7",
-  "pkgarch": "arm_cortex-a15_neon-vfpv4",
-  "feed": "awg"
-}

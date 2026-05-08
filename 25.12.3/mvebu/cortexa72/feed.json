@@ -1,7 +1,0 @@
-{
-  "version": "25.12.3",
-  "target": "mvebu",
-  "subtarget": "cortexa72",
-  "pkgarch": "aarch64_cortex-a72",
-  "feed": "awg"
-}

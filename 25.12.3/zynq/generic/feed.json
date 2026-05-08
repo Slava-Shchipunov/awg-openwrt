@@ -1,7 +1,0 @@
-{
-  "version": "25.12.3",
-  "target": "zynq",
-  "subtarget": "generic",
-  "pkgarch": "arm_cortex-a9_neon",
-  "feed": "awg"
-}

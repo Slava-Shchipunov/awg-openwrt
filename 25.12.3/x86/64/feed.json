@@ -1,7 +1,0 @@
-{
-  "version": "25.12.3",
-  "target": "x86",
-  "subtarget": "64",
-  "pkgarch": "x86_64",
-  "feed": "awg"
-}

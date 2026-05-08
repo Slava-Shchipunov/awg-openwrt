@@ -1,7 +1,0 @@
-{
-  "version": "25.12.3",
-  "target": "ramips",
-  "subtarget": "rt305x",
-  "pkgarch": "mipsel_24kc",
-  "feed": "awg"
-}
