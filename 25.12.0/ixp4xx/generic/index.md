@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 ixp4xx/generic"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [ixp4xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/ixp4xx/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/ixp4xx/generic/)
+
 - OpenWrt version: `25.12.0`
 - Target: `ixp4xx`
 - Subtarget: `generic`

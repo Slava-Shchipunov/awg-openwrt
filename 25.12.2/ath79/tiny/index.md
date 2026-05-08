@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.2 ath79/tiny"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [ath79](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ath79/) / [tiny](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ath79/tiny/)
+
 - OpenWrt version: `25.12.2`
 - Target: `ath79`
 - Subtarget: `tiny`
@@ -36,5 +38,6 @@ apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 - [index.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ath79/tiny/index.json)
 - [kmod-amneziawg-6.12.74.1.0.20260329-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ath79/tiny/kmod-amneziawg-6.12.74.1.0.20260329-r1.apk)
 - [luci-i18n-amneziawg-ru-0.260508.67875.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ath79/tiny/luci-i18n-amneziawg-ru-0.260508.67875.apk)
+- [luci-i18n-amneziawg-ru-0.260508.70116.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ath79/tiny/luci-i18n-amneziawg-ru-0.260508.70116.apk)
 - [luci-proto-amneziawg-2.0.4-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ath79/tiny/luci-proto-amneziawg-2.0.4-r1.apk)
 - [packages.adb](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ath79/tiny/packages.adb)

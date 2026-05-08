@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 mvebu"
 
 # OpenWrt 25.12.1 / mvebu
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [mvebu](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/mvebu/)
+
 Choose a subtarget.
 
 ## Subtargets

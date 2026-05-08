@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 realtek/rtl838x"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [realtek](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/realtek/) / [rtl838x](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/realtek/rtl838x/)
+
 - OpenWrt version: `25.12.1`
 - Target: `realtek`
 - Subtarget: `rtl838x`

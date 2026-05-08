@@ -1,0 +1,7 @@
+{
+  "version": "25.12.2",
+  "target": "d1",
+  "subtarget": "generic",
+  "pkgarch": "riscv64_generic",
+  "feed": "awg"
+}

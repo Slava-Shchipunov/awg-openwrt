@@ -1,0 +1,7 @@
+{
+  "version": "25.12.2",
+  "target": "at91",
+  "subtarget": "sam9x",
+  "pkgarch": "arm_arm926ej-s",
+  "feed": "awg"
+}

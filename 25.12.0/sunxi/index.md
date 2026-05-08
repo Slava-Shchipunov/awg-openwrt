@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 sunxi"
 
 # OpenWrt 25.12.0 / sunxi
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [sunxi](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/sunxi/)
+
 Choose a subtarget.
 
 ## Subtargets

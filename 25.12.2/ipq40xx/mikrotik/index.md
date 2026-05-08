@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.2 ipq40xx/mikrotik"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [ipq40xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq40xx/) / [mikrotik](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq40xx/mikrotik/)
+
 - OpenWrt version: `25.12.2`
 - Target: `ipq40xx`
 - Subtarget: `mikrotik`
@@ -36,5 +38,6 @@ apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 - [index.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq40xx/mikrotik/index.json)
 - [kmod-amneziawg-6.12.74.1.0.20260329-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq40xx/mikrotik/kmod-amneziawg-6.12.74.1.0.20260329-r1.apk)
 - [luci-i18n-amneziawg-ru-0.260508.67426.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq40xx/mikrotik/luci-i18n-amneziawg-ru-0.260508.67426.apk)
+- [luci-i18n-amneziawg-ru-0.260508.68535.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq40xx/mikrotik/luci-i18n-amneziawg-ru-0.260508.68535.apk)
 - [luci-proto-amneziawg-2.0.4-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq40xx/mikrotik/luci-proto-amneziawg-2.0.4-r1.apk)
 - [packages.adb](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq40xx/mikrotik/packages.adb)

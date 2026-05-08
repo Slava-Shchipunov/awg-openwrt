@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 stm32/stm32mp1"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [stm32](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/stm32/) / [stm32mp1](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/stm32/stm32mp1/)
+
 - OpenWrt version: `25.12.0`
 - Target: `stm32`
 - Subtarget: `stm32mp1`

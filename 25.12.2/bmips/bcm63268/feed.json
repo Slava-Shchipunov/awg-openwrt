@@ -1,0 +1,7 @@
+{
+  "version": "25.12.2",
+  "target": "bmips",
+  "subtarget": "bcm63268",
+  "pkgarch": "mips_mips32",
+  "feed": "awg"
+}

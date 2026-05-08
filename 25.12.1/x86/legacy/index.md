@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 x86/legacy"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [x86](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/x86/) / [legacy](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/x86/legacy/)
+
 - OpenWrt version: `25.12.1`
 - Target: `x86`
 - Subtarget: `legacy`

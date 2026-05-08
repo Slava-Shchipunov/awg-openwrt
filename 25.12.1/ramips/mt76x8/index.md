@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 ramips/mt76x8"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [ramips](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/ramips/) / [mt76x8](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/ramips/mt76x8/)
+
 - OpenWrt version: `25.12.1`
 - Target: `ramips`
 - Subtarget: `mt76x8`

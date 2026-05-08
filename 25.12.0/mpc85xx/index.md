@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 mpc85xx"
 
 # OpenWrt 25.12.0 / mpc85xx
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [mpc85xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mpc85xx/)
+
 Choose a subtarget.
 
 ## Subtargets

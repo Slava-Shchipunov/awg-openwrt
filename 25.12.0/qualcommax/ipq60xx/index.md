@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 qualcommax/ipq60xx"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [qualcommax](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/qualcommax/) / [ipq60xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/qualcommax/ipq60xx/)
+
 - OpenWrt version: `25.12.0`
 - Target: `qualcommax`
 - Subtarget: `ipq60xx`

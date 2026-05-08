@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.2 bmips/bcm6358"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [bmips](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bmips/) / [bcm6358](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bmips/bcm6358/)
+
 - OpenWrt version: `25.12.2`
 - Target: `bmips`
 - Subtarget: `bcm6358`
@@ -36,5 +38,6 @@ apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 - [index.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bmips/bcm6358/index.json)
 - [kmod-amneziawg-6.12.74.1.0.20260329-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bmips/bcm6358/kmod-amneziawg-6.12.74.1.0.20260329-r1.apk)
 - [luci-i18n-amneziawg-ru-0.260508.67457.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bmips/bcm6358/luci-i18n-amneziawg-ru-0.260508.67457.apk)
+- [luci-i18n-amneziawg-ru-0.260508.69387.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bmips/bcm6358/luci-i18n-amneziawg-ru-0.260508.69387.apk)
 - [luci-proto-amneziawg-2.0.4-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bmips/bcm6358/luci-proto-amneziawg-2.0.4-r1.apk)
 - [packages.adb](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bmips/bcm6358/packages.adb)

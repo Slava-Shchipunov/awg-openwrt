@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 qualcommax"
 
 # OpenWrt 25.12.1 / qualcommax
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [qualcommax](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/qualcommax/)
+
 Choose a subtarget.
 
 ## Subtargets

@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.2 at91/sama5"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [at91](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/at91/) / [sama5](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/at91/sama5/)
+
 - OpenWrt version: `25.12.2`
 - Target: `at91`
 - Subtarget: `sama5`
@@ -36,5 +38,6 @@ apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 - [index.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/at91/sama5/index.json)
 - [kmod-amneziawg-6.12.74.1.0.20260329-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/at91/sama5/kmod-amneziawg-6.12.74.1.0.20260329-r1.apk)
 - [luci-i18n-amneziawg-ru-0.260508.67427.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/at91/sama5/luci-i18n-amneziawg-ru-0.260508.67427.apk)
+- [luci-i18n-amneziawg-ru-0.260508.69812.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/at91/sama5/luci-i18n-amneziawg-ru-0.260508.69812.apk)
 - [luci-proto-amneziawg-2.0.4-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/at91/sama5/luci-proto-amneziawg-2.0.4-r1.apk)
 - [packages.adb](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/at91/sama5/packages.adb)

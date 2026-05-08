@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 malta/be"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [malta](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/malta/) / [be](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/malta/be/)
+
 - OpenWrt version: `25.12.1`
 - Target: `malta`
 - Subtarget: `be`

@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 layerscape/armv7"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [layerscape](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/layerscape/) / [armv7](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/layerscape/armv7/)
+
 - OpenWrt version: `25.12.0`
 - Target: `layerscape`
 - Subtarget: `armv7`

@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 mpc85xx/p2020"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [mpc85xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/mpc85xx/) / [p2020](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/mpc85xx/p2020/)
+
 - OpenWrt version: `25.12.1`
 - Target: `mpc85xx`
 - Subtarget: `p2020`

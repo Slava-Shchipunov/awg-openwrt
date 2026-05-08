@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 lantiq"
 
 # OpenWrt 25.12.0 / lantiq
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [lantiq](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/lantiq/)
+
 Choose a subtarget.
 
 ## Subtargets

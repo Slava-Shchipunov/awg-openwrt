@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 armsr"
 
 # OpenWrt 25.12.1 / armsr
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [armsr](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/armsr/)
+
 Choose a subtarget.
 
 ## Subtargets

@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 ath79/mikrotik"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [ath79](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/ath79/) / [mikrotik](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/ath79/mikrotik/)
+
 - OpenWrt version: `25.12.0`
 - Target: `ath79`
 - Subtarget: `mikrotik`

@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.2 bcm27xx/bcm2711"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [bcm27xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bcm27xx/) / [bcm2711](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bcm27xx/bcm2711/)
+
 - OpenWrt version: `25.12.2`
 - Target: `bcm27xx`
 - Subtarget: `bcm2711`
@@ -36,5 +38,6 @@ apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 - [index.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bcm27xx/bcm2711/index.json)
 - [kmod-amneziawg-6.12.74.1.0.20260329-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bcm27xx/bcm2711/kmod-amneziawg-6.12.74.1.0.20260329-r1.apk)
 - [luci-i18n-amneziawg-ru-0.260508.67429.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bcm27xx/bcm2711/luci-i18n-amneziawg-ru-0.260508.67429.apk)
+- [luci-i18n-amneziawg-ru-0.260508.69360.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bcm27xx/bcm2711/luci-i18n-amneziawg-ru-0.260508.69360.apk)
 - [luci-proto-amneziawg-2.0.4-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bcm27xx/bcm2711/luci-proto-amneziawg-2.0.4-r1.apk)
 - [packages.adb](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/bcm27xx/bcm2711/packages.adb)

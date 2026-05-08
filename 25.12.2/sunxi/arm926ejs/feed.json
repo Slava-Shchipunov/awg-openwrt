@@ -1,0 +1,7 @@
+{
+  "version": "25.12.2",
+  "target": "sunxi",
+  "subtarget": "arm926ejs",
+  "pkgarch": "arm_arm926ej-s",
+  "feed": "awg"
+}

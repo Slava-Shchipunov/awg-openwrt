@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 at91/sam9x"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [at91](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/at91/) / [sam9x](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/at91/sam9x/)
+
 - OpenWrt version: `25.12.1`
 - Target: `at91`
 - Subtarget: `sam9x`

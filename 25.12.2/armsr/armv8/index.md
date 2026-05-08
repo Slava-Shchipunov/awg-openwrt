@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.2 armsr/armv8"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [armsr](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/) / [armv8](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/armv8/)
+
 - OpenWrt version: `25.12.2`
 - Target: `armsr`
 - Subtarget: `armv8`
@@ -36,5 +38,6 @@ apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 - [index.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/armv8/index.json)
 - [kmod-amneziawg-6.12.74.1.0.20260329-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/armv8/kmod-amneziawg-6.12.74.1.0.20260329-r1.apk)
 - [luci-i18n-amneziawg-ru-0.260508.67429.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/armv8/luci-i18n-amneziawg-ru-0.260508.67429.apk)
+- [luci-i18n-amneziawg-ru-0.260508.69637.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/armv8/luci-i18n-amneziawg-ru-0.260508.69637.apk)
 - [luci-proto-amneziawg-2.0.4-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/armv8/luci-proto-amneziawg-2.0.4-r1.apk)
 - [packages.adb](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/armv8/packages.adb)

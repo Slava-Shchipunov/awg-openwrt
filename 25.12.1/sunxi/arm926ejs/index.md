@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 sunxi/arm926ejs"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [sunxi](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/sunxi/) / [arm926ejs](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/sunxi/arm926ejs/)
+
 - OpenWrt version: `25.12.1`
 - Target: `sunxi`
 - Subtarget: `arm926ejs`

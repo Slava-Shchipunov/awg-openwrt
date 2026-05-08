@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.1 tegra/generic"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [tegra](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/tegra/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/tegra/generic/)
+
 - OpenWrt version: `25.12.1`
 - Target: `tegra`
 - Subtarget: `generic`

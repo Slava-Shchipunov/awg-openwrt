@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 ath79/tiny"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [ath79](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/ath79/) / [tiny](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/ath79/tiny/)
+
 - OpenWrt version: `25.12.0`
 - Target: `ath79`
 - Subtarget: `tiny`

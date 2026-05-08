@@ -1,0 +1,7 @@
+{
+  "version": "25.12.2",
+  "target": "ramips",
+  "subtarget": "mt7620",
+  "pkgarch": "mipsel_24kc",
+  "feed": "awg"
+}

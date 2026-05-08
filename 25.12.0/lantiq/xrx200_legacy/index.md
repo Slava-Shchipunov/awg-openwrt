@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 lantiq/xrx200_legacy"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [lantiq](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/lantiq/) / [xrx200_legacy](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/lantiq/xrx200_legacy/)
+
 - OpenWrt version: `25.12.0`
 - Target: `lantiq`
 - Subtarget: `xrx200_legacy`

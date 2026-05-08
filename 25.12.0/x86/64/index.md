@@ -5,6 +5,8 @@ title: "OpenWrt 25.12.0 x86/64"
 
 # AmneziaWG feed
 
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [x86](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/x86/) / [64](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/x86/64/)
+
 - OpenWrt version: `25.12.0`
 - Target: `x86`
 - Subtarget: `64`
