@@ -9,6 +9,17 @@ This GitHub Pages site publishes an APK package feed for OpenWrt 25.x and newer.
 
 OpenWrt 24.x and older are not supported by this feed. Use GitHub Releases artifacts for legacy `.ipk` packages.
 
+## Signing key
+
+Install the feed public key before adding the repository:
+
+```sh
+mkdir -p /etc/apk/keys
+wget -O /etc/apk/keys/awg-openwrt-feed.pub "https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pub"
+```
+
+Public key file: [https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pub](https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pub)
+
 ## Available OpenWrt versions
 
 - [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/)
