@@ -11,7 +11,4 @@ OpenWrt 24.x and older are not supported by this feed. Use GitHub Releases artif
 
 ## Available OpenWrt versions
 
-- [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/)
-- [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/)
-- [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/)
 - [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/)

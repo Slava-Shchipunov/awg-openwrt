@@ -1,0 +1,7 @@
+{
+  "version": "25.12.3",
+  "target": "realtek",
+  "subtarget": "rtl839x",
+  "pkgarch": "mips_24kc",
+  "feed": "awg"
+}

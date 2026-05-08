@@ -1,0 +1,13 @@
+---
+layout: default
+title: "OpenWrt 25.12.3 ipq40xx"
+---
+
+# OpenWrt 25.12.3 / ipq40xx
+
+Choose a subtarget. OpenWrt device profiles are grouped under target/subtarget, not under package architecture.
+
+## Subtargets
+
+- [chromium](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/ipq40xx/chromium/)
+- [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/ipq40xx/generic/)
