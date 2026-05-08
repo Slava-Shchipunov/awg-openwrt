@@ -123,8 +123,8 @@ jobs:
 
       - name: Setup SDK and feeds
         env:
-          AWG_FEED_SIGNING_KEY: ${{ secrets.AWG_FEED_SIGNING_KEY }}
-          AWG_FEED_SIGNING_KEY_PUB: ${{ secrets.AWG_FEED_SIGNING_KEY_PUB }}
+          AWG_FEED_APK_PRIVATE_KEY: ${{ secrets.AWG_FEED_APK_PRIVATE_KEY }}
+          AWG_FEED_APK_PUBLIC_KEY: ${{ secrets.AWG_FEED_APK_PUBLIC_KEY }}
         run: |
           set -euo pipefail
           SDK_GLOB="openwrt-sdk-${{ matrix.build_env.tag }}-${{ matrix.build_env.target }}-${{ matrix.build_env.subtarget }}_*"
@@ -139,19 +139,23 @@ jobs:
           WORKSPACE_DIR=$(pwd)
           cd "$SDK_DIR"
 
-          # OpenWrt signs package repository metadata with key-build/key-build.pub.
-          # A GitHub Pages feed must use one stable keypair across all matrix jobs;
-          # otherwise routers would need a different trust root for each target.
-          if [ -z "${AWG_FEED_SIGNING_KEY:-}" ] || [ -z "${AWG_FEED_SIGNING_KEY_PUB:-}" ]; then
-            echo "Missing AWG_FEED_SIGNING_KEY and/or AWG_FEED_SIGNING_KEY_PUB repository secrets."
-            echo "Generate them with: usign -G -s awg-openwrt-feed.key -p awg-openwrt-feed.pub -c awg-openwrt-feed"
+          # OpenWrt 25.x signs APK repository metadata with EC P-256 PEM keys:
+          # private-key.pem/public-key.pem. The older usign key-build files are
+          # for opkg feeds and cannot verify packages.adb signatures.
+          if [ -z "${AWG_FEED_APK_PRIVATE_KEY:-}" ] || [ -z "${AWG_FEED_APK_PUBLIC_KEY:-}" ]; then
+            echo "Missing AWG_FEED_APK_PRIVATE_KEY and/or AWG_FEED_APK_PUBLIC_KEY repository secrets."
+            echo "Generate them with:"
+            echo "openssl ecparam -name prime256v1 -genkey -noout -out awg-openwrt-feed.pem"
+            echo "openssl ec -in awg-openwrt-feed.pem -pubout > awg-openwrt-feed.pub.pem"
             exit 1
           fi
-          printf '%s\n' "$AWG_FEED_SIGNING_KEY" > key-build
-          printf '%s\n' "$AWG_FEED_SIGNING_KEY_PUB" > key-build.pub
-          chmod 600 key-build
-          test -s key-build
-          test -s key-build.pub
+          printf '%s\n' "$AWG_FEED_APK_PRIVATE_KEY" > private-key.pem
+          printf '%s\n' "$AWG_FEED_APK_PUBLIC_KEY" > public-key.pem
+          chmod 600 private-key.pem
+          test -s private-key.pem
+          test -s public-key.pem
+          grep -q "BEGIN .*PRIVATE KEY" private-key.pem
+          grep -q "BEGIN PUBLIC KEY" public-key.pem
 
           # Register isolated custom AWG feed as a local linked feed.
           AWG_FEED_DIR="$WORKSPACE_DIR/.tmp-awg-feed"
@@ -275,10 +279,10 @@ jobs:
           }
           EOF
 
-          # Publish the public part of the stable repository signing key.
+          # Publish the public part of the stable APK repository signing key.
           mkdir -p "$GITHUB_WORKSPACE/feed-publish/keys"
-          cp -a "$SDK_DIR/key-build.pub" "$GITHUB_WORKSPACE/feed-publish/keys/awg-openwrt-feed.pub"
-          test -s "$GITHUB_WORKSPACE/feed-publish/keys/awg-openwrt-feed.pub"
+          cp -a "$SDK_DIR/public-key.pem" "$GITHUB_WORKSPACE/feed-publish/keys/awg-openwrt-feed.pem"
+          test -s "$GITHUB_WORKSPACE/feed-publish/keys/awg-openwrt-feed.pem"
 
       - name: Feed smoke tests
         run: |
@@ -294,7 +298,7 @@ jobs:
           FEED_DIR="$GITHUB_WORKSPACE/feed-publish/${{ matrix.build_env.tag }}/${{ matrix.build_env.target }}/${{ matrix.build_env.subtarget }}"
 
           test -d "$FEED_DIR"
-          test -s "$GITHUB_WORKSPACE/feed-publish/keys/awg-openwrt-feed.pub"
+          test -s "$GITHUB_WORKSPACE/feed-publish/keys/awg-openwrt-feed.pem"
 
           # Ensure expected packages are present as package files.
           ls "$FEED_DIR"/amneziawg-tools*.apk >/dev/null
@@ -371,6 +375,7 @@ jobs:
 
           rm -f "$SITE_DIR/.nojekyll"
           find "$SITE_DIR" -name "index.md" -delete
+          rm -f "$SITE_DIR/keys/awg-openwrt-feed.pub"
           # Migrate the previous public layout where pkgarch was part of the URL.
           # The current public layout is /<version>/<target>/<subtarget>/.
           while IFS= read -r -d '' dir; do
@@ -415,10 +420,10 @@ jobs:
 
           \`\`\`sh
           mkdir -p /etc/apk/keys
-          wget -O /etc/apk/keys/awg-openwrt-feed.pub "$BASE_URL/keys/awg-openwrt-feed.pub"
+          wget -O /etc/apk/keys/awg-openwrt-feed.pem "$BASE_URL/keys/awg-openwrt-feed.pem"
           \`\`\`
 
-          Public key file: [$BASE_URL/keys/awg-openwrt-feed.pub]($BASE_URL/keys/awg-openwrt-feed.pub)
+          Public key file: [$BASE_URL/keys/awg-openwrt-feed.pem]($BASE_URL/keys/awg-openwrt-feed.pem)
 
           ## Available OpenWrt versions
 
@@ -437,12 +442,12 @@ jobs:
 
           \`\`\`sh
           mkdir -p /etc/apk/keys
-          wget -O /etc/apk/keys/awg-openwrt-feed.pub "$BASE_URL/keys/awg-openwrt-feed.pub"
+          wget -O /etc/apk/keys/awg-openwrt-feed.pem "$BASE_URL/keys/awg-openwrt-feed.pem"
           \`\`\`
 
           ## Files
 
-          - [awg-openwrt-feed.pub]($BASE_URL/keys/awg-openwrt-feed.pub)
+          - [awg-openwrt-feed.pem]($BASE_URL/keys/awg-openwrt-feed.pem)
           EOF
 
           mapfile -t FEED_DIRS < <(find "$SITE_DIR" -mindepth 3 -maxdepth 3 -type d | sort)
@@ -534,7 +539,7 @@ jobs:
 
           \`\`\`sh
           mkdir -p /etc/apk/keys
-          wget -O /etc/apk/keys/awg-openwrt-feed.pub "$BASE_URL/keys/awg-openwrt-feed.pub"
+          wget -O /etc/apk/keys/awg-openwrt-feed.pem "$BASE_URL/keys/awg-openwrt-feed.pem"
           echo "$adb_url" >> /etc/apk/repositories.d/customfeeds.list
           apk update
           apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg

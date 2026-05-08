@@ -39,7 +39,7 @@ Feed публикуется workflow `.github/workflows/build-feed.yml` в ве�
 
 ```sh
 mkdir -p /etc/apk/keys
-wget -O /etc/apk/keys/awg-openwrt-feed.pub https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pub
+wget -O /etc/apk/keys/awg-openwrt-feed.pem https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem
 ```
 
 Затем добавьте feed (замените `VERSION`, `TARGET`, `SUBTARGET`):
@@ -61,28 +61,29 @@ apk add amneziawg-tools
 
 Ключи публикуются в стабильном пути:
 
-`https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pub`
+`https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem`
 
 Для доверенной установки добавьте public key в `/etc/apk/keys/`:
 
 ```sh
 mkdir -p /etc/apk/keys
-wget -O /etc/apk/keys/awg-openwrt-feed.pub https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pub
+wget -O /etc/apk/keys/awg-openwrt-feed.pem https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem
 apk update
 ```
 
 Workflow подписывает все matrix jobs одним стабильным keypair из GitHub Secrets:
 
-- `AWG_FEED_SIGNING_KEY`
-- `AWG_FEED_SIGNING_KEY_PUB`
+- `AWG_FEED_APK_PRIVATE_KEY`
+- `AWG_FEED_APK_PUBLIC_KEY`
 
 Сгенерировать keypair можно командой:
 
 ```sh
-usign -G -s awg-openwrt-feed.key -p awg-openwrt-feed.pub -c awg-openwrt-feed
+openssl ecparam -name prime256v1 -genkey -noout -out awg-openwrt-feed.pem
+openssl ec -in awg-openwrt-feed.pem -pubout > awg-openwrt-feed.pub.pem
 ```
 
-В secrets нужно сохранить содержимое файлов `awg-openwrt-feed.key` и `awg-openwrt-feed.pub`. Private key не публикуется; public key публикуется на GitHub Pages.
+В secrets нужно сохранить содержимое файлов `awg-openwrt-feed.pem` и `awg-openwrt-feed.pub.pem`. Private key не публикуется; public key публикуется на GitHub Pages как `keys/awg-openwrt-feed.pem`.
 
 ## ASU / owut
 
