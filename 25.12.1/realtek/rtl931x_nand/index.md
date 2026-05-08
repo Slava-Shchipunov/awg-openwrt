@@ -10,18 +10,21 @@ title: "OpenWrt 25.12.1 realtek/rtl931x_nand"
 - Subtarget: `rtl931x_nand`
 - Package architecture: `mips_24kc`
 
-Device compatibility is determined by the OpenWrt version plus target/subtarget and the kmod kernel ABI. Package architecture is shown here as metadata from the APK repository, not as a separate user-facing choice.
-
-## OpenWrt target
+## Upstream OpenWrt target
 
 [https://downloads.openwrt.org/releases/25.12.1/targets/realtek/rtl931x_nand/](https://downloads.openwrt.org/releases/25.12.1/targets/realtek/rtl931x_nand/)
 
-## Repository
+## Configure Feed
 
 ```sh
 mkdir -p /etc/apk/keys
 wget -O /etc/apk/keys/awg-openwrt-feed.pem "https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem"
 echo "https://slava-shchipunov.github.io/awg-openwrt/25.12.1/realtek/rtl931x_nand/packages.adb" >> /etc/apk/repositories.d/customfeeds.list
+```
+
+## Install Packages
+
+```sh
 apk update
 apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 ```

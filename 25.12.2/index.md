@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2"
 
 # OpenWrt 25.12.2
 
-Choose a target. The target/subtarget pair is what identifies the OpenWrt device family and kernel ABI.
+Choose a target.
 
 ## Targets
 

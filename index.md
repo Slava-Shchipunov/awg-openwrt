@@ -7,18 +7,7 @@ title: AmneziaWG OpenWrt Feed
 
 This GitHub Pages site publishes an APK package feed for OpenWrt 25.x and newer.
 
-OpenWrt 24.x and older are not supported by this feed. Use GitHub Releases artifacts for legacy `.ipk` packages.
-
-## Signing key
-
-Install the feed public key before adding the repository:
-
-```sh
-mkdir -p /etc/apk/keys
-wget -O /etc/apk/keys/awg-openwrt-feed.pem "https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem"
-```
-
-Public key file: [https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem](https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem)
+OpenWrt 24.10.x and older are not supported by this feed. Use GitHub Releases artifacts for legacy `.ipk` packages.
 
 ## Available OpenWrt versions
 

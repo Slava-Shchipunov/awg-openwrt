@@ -10,18 +10,21 @@ title: "OpenWrt 25.12.3 apm821xx/sata"
 - Subtarget: `sata`
 - Package architecture: `powerpc_464fp`
 
-Device compatibility is determined by the OpenWrt version plus target/subtarget and the kmod kernel ABI. Package architecture is shown here as metadata from the APK repository, not as a separate user-facing choice.
-
-## OpenWrt target
+## Upstream OpenWrt target
 
 [https://downloads.openwrt.org/releases/25.12.3/targets/apm821xx/sata/](https://downloads.openwrt.org/releases/25.12.3/targets/apm821xx/sata/)
 
-## Repository
+## Configure Feed
 
 ```sh
 mkdir -p /etc/apk/keys
 wget -O /etc/apk/keys/awg-openwrt-feed.pem "https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem"
 echo "https://slava-shchipunov.github.io/awg-openwrt/25.12.3/apm821xx/sata/packages.adb" >> /etc/apk/repositories.d/customfeeds.list
+```
+
+## Install Packages
+
+```sh
 apk update
 apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 ```

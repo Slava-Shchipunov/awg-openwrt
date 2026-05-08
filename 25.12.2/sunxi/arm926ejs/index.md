@@ -10,18 +10,21 @@ title: "OpenWrt 25.12.2 sunxi/arm926ejs"
 - Subtarget: `arm926ejs`
 - Package architecture: `arm_arm926ej-s`
 
-Device compatibility is determined by the OpenWrt version plus target/subtarget and the kmod kernel ABI. Package architecture is shown here as metadata from the APK repository, not as a separate user-facing choice.
-
-## OpenWrt target
+## Upstream OpenWrt target
 
 [https://downloads.openwrt.org/releases/25.12.2/targets/sunxi/arm926ejs/](https://downloads.openwrt.org/releases/25.12.2/targets/sunxi/arm926ejs/)
 
-## Repository
+## Configure Feed
 
 ```sh
 mkdir -p /etc/apk/keys
 wget -O /etc/apk/keys/awg-openwrt-feed.pem "https://slava-shchipunov.github.io/awg-openwrt/keys/awg-openwrt-feed.pem"
 echo "https://slava-shchipunov.github.io/awg-openwrt/25.12.2/sunxi/arm926ejs/packages.adb" >> /etc/apk/repositories.d/customfeeds.list
+```
+
+## Install Packages
+
+```sh
 apk update
 apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 ```

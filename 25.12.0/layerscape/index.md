@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 layerscape"
 
 # OpenWrt 25.12.0 / layerscape
 
-Choose a subtarget. OpenWrt device profiles are grouped under target/subtarget, not under package architecture.
+Choose a subtarget.
 
 ## Subtargets
 
