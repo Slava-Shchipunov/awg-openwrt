@@ -180,10 +180,12 @@ jobs:
           mkdir -p "$CANONICAL_AWG_FEED_DIR"
 
           # Build only AWG feed packages from package/feeds/awg into isolated AWG feed directory.
-          # Use compile targets directly for fail-fast behavior on download/prepare failures.
-          make package/feeds/awg/kmod-amneziawg/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
-          make package/feeds/awg/amneziawg-tools/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
-          make package/feeds/awg/luci-proto-amneziawg/compile V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR"
+          # Keep these targets in one make invocation so shared dependencies are not rebuilt
+          # by later package-specific invocations.
+          make V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR" \
+            package/feeds/awg/kmod-amneziawg/compile \
+            package/feeds/awg/amneziawg-tools/compile \
+            package/feeds/awg/luci-proto-amneziawg/compile
 
           # PACKAGE_DIR is inherited by dependency builds; keep the published feed restricted to AWG packages.
           find "$CANONICAL_AWG_FEED_DIR" -maxdepth 1 -type f -name "*.apk" \
