@@ -31,7 +31,7 @@ apk update
 apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 ```
 
-<script src="https://slava-shchipunov.github.io/awg-openwrt/assets/copy-code.js"></script>
+<script src="https://slava-shchipunov.github.io/awg-openwrt/assets/copy-code.js?v=2"></script>
 
 ## Feed files
 
