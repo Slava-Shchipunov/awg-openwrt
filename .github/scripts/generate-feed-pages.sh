@@ -162,7 +162,7 @@ apk update
 apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 \`\`\`
 
-<script src="$BASE_URL/assets/copy-code.js"></script>
+<script src="$BASE_URL/assets/copy-code.js?v=2"></script>
 
 ## Feed files
 

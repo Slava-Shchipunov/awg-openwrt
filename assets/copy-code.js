@@ -1,40 +1,31 @@
 (function () {
   function copyText(text) {
-    if (navigator.clipboard && window.isSecureContext) {
-      return navigator.clipboard.writeText(text);
-    }
-
-    var textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.setAttribute('readonly', '');
-    textarea.style.position = 'absolute';
-    textarea.style.left = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    return Promise.resolve();
+    return navigator.clipboard.writeText(text);
   }
 
   function enhanceCodeBlocks() {
     document.querySelectorAll('pre').forEach(function (pre) {
-      if (pre.dataset.copyEnhanced === 'true') {
-        return;
-      }
-
-      var code = pre.querySelector('code');
+      const code = pre.querySelector('code');
       if (!code) {
         return;
       }
 
-      pre.dataset.copyEnhanced = 'true';
+      let wrapper = pre.parentElement;
+      if (!wrapper || !wrapper.classList.contains('highlight')) {
+        wrapper = document.createElement('div');
+        pre.parentNode.insertBefore(wrapper, pre);
+        wrapper.appendChild(pre);
+      }
 
-      var wrapper = document.createElement('div');
+      if (wrapper.dataset.copyEnhanced === 'true') {
+        return;
+      }
+
+      wrapper.dataset.copyEnhanced = 'true';
       wrapper.style.position = 'relative';
-      pre.parentNode.insertBefore(wrapper, pre);
-      wrapper.appendChild(pre);
+      pre.style.position = '';
 
-      var button = document.createElement('button');
+      const button = document.createElement('button');
       button.type = 'button';
       button.textContent = 'Copy';
       button.setAttribute('aria-label', 'Copy code');
@@ -52,6 +43,11 @@
       button.addEventListener('click', function () {
         copyText(code.innerText).then(function () {
           button.textContent = 'Copied';
+          window.setTimeout(function () {
+            button.textContent = 'Copy';
+          }, 1200);
+        }).catch(function () {
+          button.textContent = 'Failed';
           window.setTimeout(function () {
             button.textContent = 'Copy';
           }, 1200);
