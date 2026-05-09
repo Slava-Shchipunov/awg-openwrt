@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 sifiveu/generic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [sifiveu](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/sifiveu/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/sifiveu/generic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [sifiveu](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/sifiveu/)
 
 - OpenWrt version: `25.12.2`
 - Target: `sifiveu`

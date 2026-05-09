@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 rockchip/armv8"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [rockchip](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/rockchip/) / [armv8](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/rockchip/armv8/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [rockchip](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/rockchip/)
 
 - OpenWrt version: `25.12.0`
 - Target: `rockchip`

@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.3 ath79/generic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [ath79](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/ath79/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/ath79/generic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [ath79](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/ath79/)
 
 - OpenWrt version: `25.12.3`
 - Target: `ath79`

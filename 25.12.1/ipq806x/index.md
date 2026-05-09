@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.1 ipq806x"
 
 # OpenWrt 25.12.1 / ipq806x
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [ipq806x](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/ipq806x/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/)
 
 Choose a subtarget.
 

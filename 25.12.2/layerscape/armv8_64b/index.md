@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 layerscape/armv8_64b"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [layerscape](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/layerscape/) / [armv8_64b](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/layerscape/armv8_64b/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [layerscape](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/layerscape/)
 
 - OpenWrt version: `25.12.2`
 - Target: `layerscape`

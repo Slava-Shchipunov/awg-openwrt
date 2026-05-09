@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 omap/generic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [omap](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/omap/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/omap/generic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [omap](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/omap/)
 
 - OpenWrt version: `25.12.0`
 - Target: `omap`

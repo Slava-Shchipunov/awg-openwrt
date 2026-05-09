@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 realtek/rtl839x"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [realtek](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/realtek/) / [rtl839x](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/realtek/rtl839x/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [realtek](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/realtek/)
 
 - OpenWrt version: `25.12.2`
 - Target: `realtek`

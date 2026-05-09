@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 mxs/generic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [mxs](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/mxs/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/mxs/generic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [mxs](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/mxs/)
 
 - OpenWrt version: `25.12.2`
 - Target: `mxs`

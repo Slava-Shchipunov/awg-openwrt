@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.3 lantiq/xway"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [lantiq](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/lantiq/) / [xway](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/lantiq/xway/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [lantiq](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/lantiq/)
 
 - OpenWrt version: `25.12.3`
 - Target: `lantiq`

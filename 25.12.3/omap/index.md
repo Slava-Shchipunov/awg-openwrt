@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.3 omap"
 
 # OpenWrt 25.12.3 / omap
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [omap](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/omap/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/)
 
 Choose a subtarget.
 

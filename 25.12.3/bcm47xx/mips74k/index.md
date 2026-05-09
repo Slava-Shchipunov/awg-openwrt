@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.3 bcm47xx/mips74k"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [bcm47xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/bcm47xx/) / [mips74k](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/bcm47xx/mips74k/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [bcm47xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/bcm47xx/)
 
 - OpenWrt version: `25.12.3`
 - Target: `bcm47xx`

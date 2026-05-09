@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 rockchip"
 
 # OpenWrt 25.12.2 / rockchip
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [rockchip](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/rockchip/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/)
 
 Choose a subtarget.
 

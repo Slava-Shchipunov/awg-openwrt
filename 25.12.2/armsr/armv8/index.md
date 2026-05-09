@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 armsr/armv8"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [armsr](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/) / [armv8](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/armv8/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [armsr](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/armsr/)
 
 - OpenWrt version: `25.12.2`
 - Target: `armsr`

@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 mvebu/cortexa72"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [mvebu](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/mvebu/) / [cortexa72](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/mvebu/cortexa72/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [mvebu](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/mvebu/)
 
 - OpenWrt version: `25.12.2`
 - Target: `mvebu`

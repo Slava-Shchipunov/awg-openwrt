@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.3 realtek/rtl930x_nand"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [realtek](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/realtek/) / [rtl930x_nand](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/realtek/rtl930x_nand/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [realtek](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/realtek/)
 
 - OpenWrt version: `25.12.3`
 - Target: `realtek`

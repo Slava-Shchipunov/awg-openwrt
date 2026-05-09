@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.1 bcm27xx/bcm2709"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [bcm27xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/bcm27xx/) / [bcm2709](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/bcm27xx/bcm2709/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [bcm27xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/bcm27xx/)
 
 - OpenWrt version: `25.12.1`
 - Target: `bcm27xx`

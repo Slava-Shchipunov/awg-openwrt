@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 mediatek/mt7622"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [mediatek](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mediatek/) / [mt7622](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mediatek/mt7622/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [mediatek](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mediatek/)
 
 - OpenWrt version: `25.12.0`
 - Target: `mediatek`

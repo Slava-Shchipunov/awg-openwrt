@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 bmips/bcm6358"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [bmips](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/bmips/) / [bcm6358](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/bmips/bcm6358/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [bmips](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/bmips/)
 
 - OpenWrt version: `25.12.0`
 - Target: `bmips`

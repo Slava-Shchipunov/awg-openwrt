@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 bcm4908/generic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [bcm4908](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/bcm4908/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/bcm4908/generic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [bcm4908](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/bcm4908/)
 
 - OpenWrt version: `25.12.0`
 - Target: `bcm4908`

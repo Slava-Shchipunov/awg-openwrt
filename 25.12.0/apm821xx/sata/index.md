@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 apm821xx/sata"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [apm821xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/apm821xx/) / [sata](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/apm821xx/sata/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [apm821xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/apm821xx/)
 
 - OpenWrt version: `25.12.0`
 - Target: `apm821xx`

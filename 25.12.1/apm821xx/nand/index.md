@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.1 apm821xx/nand"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [apm821xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/apm821xx/) / [nand](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/apm821xx/nand/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [apm821xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/apm821xx/)
 
 - OpenWrt version: `25.12.1`
 - Target: `apm821xx`

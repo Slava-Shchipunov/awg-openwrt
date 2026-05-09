@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 mvebu/cortexa53"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [mvebu](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mvebu/) / [cortexa53](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mvebu/cortexa53/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [mvebu](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/mvebu/)
 
 - OpenWrt version: `25.12.0`
 - Target: `mvebu`

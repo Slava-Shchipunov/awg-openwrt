@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 pistachio/generic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [pistachio](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/pistachio/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/pistachio/generic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [pistachio](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/pistachio/)
 
 - OpenWrt version: `25.12.2`
 - Target: `pistachio`

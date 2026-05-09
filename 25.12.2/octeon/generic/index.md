@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 octeon/generic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [octeon](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/octeon/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/octeon/generic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [octeon](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/octeon/)
 
 - OpenWrt version: `25.12.2`
 - Target: `octeon`

@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 gemini/generic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [gemini](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/gemini/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/gemini/generic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [gemini](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/gemini/)
 
 - OpenWrt version: `25.12.0`
 - Target: `gemini`

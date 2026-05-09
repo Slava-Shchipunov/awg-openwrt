@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.1 ipq806x/generic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [ipq806x](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/ipq806x/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/ipq806x/generic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [ipq806x](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/ipq806x/)
 
 - OpenWrt version: `25.12.1`
 - Target: `ipq806x`

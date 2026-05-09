@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.3 imx/cortexa7"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [imx](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/imx/) / [cortexa7](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/imx/cortexa7/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [imx](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/imx/)
 
 - OpenWrt version: `25.12.3`
 - Target: `imx`

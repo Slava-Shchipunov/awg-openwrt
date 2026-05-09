@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 pistachio"
 
 # OpenWrt 25.12.0 / pistachio
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [pistachio](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/pistachio/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/)
 
 Choose a subtarget.
 

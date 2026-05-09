@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.3 ramips"
 
 # OpenWrt 25.12.3 / ramips
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/) / [ramips](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/ramips/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/)
 
 Choose a subtarget.
 

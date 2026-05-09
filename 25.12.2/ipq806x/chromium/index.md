@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 ipq806x/chromium"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [ipq806x](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq806x/) / [chromium](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq806x/chromium/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [ipq806x](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ipq806x/)
 
 - OpenWrt version: `25.12.2`
 - Target: `ipq806x`

@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 ramips/rt3883"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [ramips](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ramips/) / [rt3883](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ramips/rt3883/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [ramips](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/ramips/)
 
 - OpenWrt version: `25.12.2`
 - Target: `ramips`

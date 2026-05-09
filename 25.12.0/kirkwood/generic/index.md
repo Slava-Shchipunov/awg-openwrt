@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 kirkwood/generic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [kirkwood](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/kirkwood/) / [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/kirkwood/generic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [kirkwood](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/kirkwood/)
 
 - OpenWrt version: `25.12.0`
 - Target: `kirkwood`

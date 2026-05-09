@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.0 bmips"
 
 # OpenWrt 25.12.0 / bmips
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/) / [bmips](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/bmips/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.0](https://slava-shchipunov.github.io/awg-openwrt/25.12.0/)
 
 Choose a subtarget.
 

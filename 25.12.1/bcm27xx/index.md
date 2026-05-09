@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.1 bcm27xx"
 
 # OpenWrt 25.12.1 / bcm27xx
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/) / [bcm27xx](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/bcm27xx/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.1](https://slava-shchipunov.github.io/awg-openwrt/25.12.1/)
 
 Choose a subtarget.
 

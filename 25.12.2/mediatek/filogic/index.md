@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 mediatek/filogic"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [mediatek](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/mediatek/) / [filogic](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/mediatek/filogic/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [mediatek](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/mediatek/)
 
 - OpenWrt version: `25.12.2`
 - Target: `mediatek`

@@ -5,7 +5,7 @@ title: "OpenWrt 25.12.2 qualcommax/ipq807x"
 
 # AmneziaWG feed
 
-Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [qualcommax](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/qualcommax/) / [ipq807x](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/qualcommax/ipq807x/)
+Index of [(root)](https://slava-shchipunov.github.io/awg-openwrt/) / [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/) / [qualcommax](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/qualcommax/)
 
 - OpenWrt version: `25.12.2`
 - Target: `qualcommax`
