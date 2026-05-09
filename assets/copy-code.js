@@ -28,7 +28,11 @@
       }
 
       pre.dataset.copyEnhanced = 'true';
-      pre.style.position = 'relative';
+
+      var wrapper = document.createElement('div');
+      wrapper.style.position = 'relative';
+      pre.parentNode.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
 
       var button = document.createElement('button');
       button.type = 'button';
@@ -54,7 +58,7 @@
         });
       });
 
-      pre.appendChild(button);
+      wrapper.appendChild(button);
     });
   }
 
