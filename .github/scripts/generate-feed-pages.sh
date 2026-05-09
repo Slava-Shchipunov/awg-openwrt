@@ -92,7 +92,7 @@ title: "OpenWrt $version"
 
 # OpenWrt $version
 
-Index of [(root)]($BASE_URL/) / [$version]($version_url/)
+Index of [(root)]($BASE_URL/)
 
 Choose a target.
 
@@ -113,7 +113,7 @@ title: "OpenWrt $version $target"
 
 # OpenWrt $version / $target
 
-Index of [(root)]($BASE_URL/) / [$version]($version_url/) / [$target]($target_url/)
+Index of [(root)]($BASE_URL/) / [$version]($version_url/)
 
 Choose a subtarget.
 
@@ -133,7 +133,7 @@ title: "OpenWrt $version $target/$subtarget"
 
 # AmneziaWG feed
 
-Index of [(root)]($BASE_URL/) / [$version]($version_url/) / [$target]($target_url/) / [$subtarget]($subtarget_url/)
+Index of [(root)]($BASE_URL/) / [$version]($version_url/) / [$target]($target_url/)
 
 - OpenWrt version: \`$version\`
 - Target: \`$target\`
