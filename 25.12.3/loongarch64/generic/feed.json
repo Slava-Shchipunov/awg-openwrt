@@ -1,0 +1,7 @@
+{
+  "version": "25.12.3",
+  "target": "loongarch64",
+  "subtarget": "generic",
+  "pkgarch": "loongarch64_generic",
+  "feed": "awg"
+}
