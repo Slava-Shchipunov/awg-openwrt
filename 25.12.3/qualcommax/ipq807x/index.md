@@ -31,6 +31,8 @@ apk update
 apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 ```
 
+<script src="https://slava-shchipunov.github.io/awg-openwrt/assets/copy-code.js"></script>
+
 ## Feed files
 
 - [amneziawg-tools-1.0.20260223-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/qualcommax/ipq807x/amneziawg-tools-1.0.20260223-r1.apk)
