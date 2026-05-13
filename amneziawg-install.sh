@@ -370,9 +370,6 @@ configure_amneziawg_interface() {
     service network restart
 }
 
-detect_package_manager
-check_repo
-
 ASK_FOR_TRANSLATION=1
 ASK_FOR_INTERFACE_CONFIG=1
 
@@ -385,6 +382,9 @@ while getopts ":ehn" opt; do
     esac
 done
 shift "$((OPTIND-1))"
+
+detect_package_manager
+check_repo
 
 install_awg_packages
 
