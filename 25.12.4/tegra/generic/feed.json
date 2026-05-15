@@ -1,0 +1,7 @@
+{
+  "version": "25.12.4",
+  "target": "tegra",
+  "subtarget": "generic",
+  "pkgarch": "arm_cortex-a9_vfpv3-d16",
+  "feed": "awg"
+}

@@ -1,0 +1,7 @@
+{
+  "version": "25.12.4",
+  "target": "ath79",
+  "subtarget": "generic",
+  "pkgarch": "mips_24kc",
+  "feed": "awg"
+}
