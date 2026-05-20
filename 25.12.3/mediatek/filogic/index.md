@@ -41,5 +41,6 @@ apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 - [kmod-amneziawg-6.12.85.1.0.20260329-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/mediatek/filogic/kmod-amneziawg-6.12.85.1.0.20260329-r1.apk)
 - [luci-i18n-amneziawg-ru-0.260509.07610.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/mediatek/filogic/luci-i18n-amneziawg-ru-0.260509.07610.apk)
 - [luci-i18n-amneziawg-ru-0.260520.28437.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/mediatek/filogic/luci-i18n-amneziawg-ru-0.260520.28437.apk)
+- [luci-i18n-amneziawg-ru-0.260520.30009.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/mediatek/filogic/luci-i18n-amneziawg-ru-0.260520.30009.apk)
 - [luci-proto-amneziawg-2.0.4-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/mediatek/filogic/luci-proto-amneziawg-2.0.4-r1.apk)
 - [packages.adb](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/mediatek/filogic/packages.adb)
