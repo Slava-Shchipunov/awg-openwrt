@@ -7,10 +7,13 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/amnezia-vpn/amneziawg-linux-kernel-module.git
-# Version: latest stable release tag
-# TODO: при следующем обновлении убрать -2
-PKG_SOURCE_VERSION:=v$(PKG_VERSION)-2
-PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE_VERSION:=v$(PKG_VERSION)
+
+PKG_LICENSE:=GPL-2.0
+PKG_LICENSE_FILES:=COPYING
+
+PKG_BUILD_PARALLEL:=1
+
 MAKE_PATH:=src
 
 include $(INCLUDE_DIR)/package.mk
@@ -28,18 +31,17 @@ define KernelPackage/amneziawg
 		+kmod-crypto-lib-curve25519
 endef
 
-define Build/Prepare
-	$(call Build/Prepare/Default)
-	mkdir -p $(PKG_BUILD_DIR)/$(MAKE_PATH)/kernel
-	$(CP) $(LINUX_DIR)/* $(PKG_BUILD_DIR)/$(MAKE_PATH)/kernel/
+define KernelPackage/amneziawg/description
+	AmneziaWG VPN kernel module.
 endef
 
+MAKE_OPTS:= \
+	M="$(PKG_BUILD_DIR)/$(MAKE_PATH)" \
+	WIREGUARD_VERSION="$(PKG_VERSION)"
+
 define Build/Compile
-	$(MAKE_VARS) $(MAKE) -C "$(LINUX_DIR)" \
-		$(KERNEL_MAKE_FLAGS) \
-		M="$(PKG_BUILD_DIR)/$(MAKE_PATH)" \
-		EXTRA_CFLAGS="$(BUILDFLAGS)" \
-		WIREGUARD_VERSION="$(WIREGUARD_VERSION)" \
+	+$(KERNEL_MAKE) $(PKG_JOBS) \
+		$(MAKE_OPTS) \
 		modules
 endef
 

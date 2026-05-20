@@ -1,18 +1,18 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amneziawg-tools
+
 PKG_VERSION:=1.0.20260223
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=https://github.com/amnezia-vpn/amneziawg-tools.git
-# Version: latest stable release tag
 PKG_SOURCE_VERSION:=v$(PKG_VERSION)
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
 
-PKG_BUILD_DIR=$(BUILD_DIR)/$(PKG_NAME)-$(PKG_VERSION)
+PKG_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -33,11 +33,15 @@ define Package/amneziawg-tools
 endef
 
 define Package/amneziawg-tools/description
-  Amnezia VPN — simple and free app to run a self-hosted VPN with
-	high privacy requirements.
+  AmneziaWG is a novel VPN that runs inside the Linux Kernel and utilizes
+  state-of-the-art cryptography. It aims to be faster, simpler, leaner, and
+  more useful than IPSec, while avoiding the massive headache. It intends to
+  be considerably more performant than OpenVPN.  AmneziaWG is designed as a
+  general purpose VPN for running on embedded interfaces and super computers
+  alike, fit for many different circumstances. It uses UDP.
 
   This package provides the userspace control program for AmneziaWG,
-  `awg`, a netifd protocol helper, and a re-resolve watchdog script.
+  `awg(8)`, a netifd protocol helper, and a re-resolve watchdog script.
 endef
 
 define Package/amneziawg-tools/install

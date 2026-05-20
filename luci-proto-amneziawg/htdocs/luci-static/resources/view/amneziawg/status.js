@@ -3,10 +3,11 @@
 'require rpc';
 'require poll';
 'require dom';
+'require uci';
 'require ui';
 
 
-var callgetAwgInstances = rpc.declare({
+var callGetAwgInstances = rpc.declare({
 	object: 'luci.amneziawg',
 	method: 'getAwgInstances'
 });
@@ -27,7 +28,15 @@ function timestampToStr(timestamp) {
 	else
 		ago = _('over a day ago');
 
-	return (new Date(timestamp * 1000)).toUTCString() + ' (' + ago + ')';
+	const date = new Date(timestamp * 1000);
+	const sys = uci.get('system', '@system[0]');
+
+	return new Intl.DateTimeFormat(undefined, {
+		dateStyle: 'medium',
+		timeStyle: (!sys?.clock_timestyle) ? 'long' : 'full',
+		hourCycle: (!sys?.clock_hourcycle) ? undefined : sys.clock_hourcycle,
+		timeZone: sys?.zonename?.replaceAll(' ', '_') || 'UTC',
+	}).format(date) + ' (' + ago + ')';
 }
 
 function handleInterfaceDetails(iface) {
@@ -115,6 +124,12 @@ function renderPeerTable(instanceName, peers) {
 }
 
 return view.extend({
+	load() {
+		return Promise.all([
+			uci.load('system'),
+		])
+	},
+
 	renderIfaces: function(ifaces) {
 		var res = [
 			E('h2', [ _('AmneziaWG Status') ])
@@ -128,7 +143,7 @@ return view.extend({
 					'click': ui.createHandlerFn(this, handleInterfaceDetails, ifaces[instanceName])
 				}, [
 					E('span', { 'class': 'ifacebadge' }, [
-						E('img', { 'src': L.resource('icons', 'amneziawg.svg') }),
+						E('img', { 'src': L.resource('icons', 'amneziawg.svg'), 'style': 'width:32px;height:32px' }),
 						'\xa0',
 						instanceName
 					]),
@@ -153,7 +168,7 @@ return view.extend({
 
 	render: function() {
 		poll.add(L.bind(function () {
-			return callgetAwgInstances().then(L.bind(function(ifaces) {
+			return callGetAwgInstances().then(L.bind(function(ifaces) {
 				dom.content(
 					document.querySelector('#view'),
 					this.renderIfaces(ifaces)

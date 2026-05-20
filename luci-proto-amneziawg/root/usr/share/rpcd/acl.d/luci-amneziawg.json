@@ -7,7 +7,7 @@
 					"getAwgInstances"
 				]
 			},
-			"uci": [ "ddns", "system", "network" ]
+			"uci": [ "ddns", "system" ]
 		},
 		"write": {
 			"ubus": {
