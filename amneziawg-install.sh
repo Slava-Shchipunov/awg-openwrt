@@ -5,6 +5,16 @@
 PKG_MANAGER=""
 PKG_EXT=""
 
+usage() {
+    cat <<EOF
+Usage: ${0##*/} [-h] [-e] [-n]
+    -h    show this help
+    -e    do not install 'luci-i18n-amneziawg-ru' package
+    -n    do not configure the amneziawg interface
+EOF
+    exit 0
+}
+
 detect_package_manager() {
     if command -v apk >/dev/null 2>&1; then
         PKG_MANAGER="apk"
@@ -211,7 +221,7 @@ install_awg_packages() {
     fi
 
     # Устанавливаем русскую локализацию только для AWG 2.0
-    if [ "$AWG_VERSION" = "2.0" ]; then
+    if [ "$AWG_VERSION" = "2.0" ] && [ $ASK_FOR_TRANSLATION = 1 ]; then
         printf "\033[32;1mУстанавливаем пакет с русской локализацией? Install Russian language pack? (y/n) [n]: \033[0m\n"
         read INSTALL_RU_LANG
         INSTALL_RU_LANG=${INSTALL_RU_LANG:-n}
@@ -360,10 +370,27 @@ configure_amneziawg_interface() {
     service network restart
 }
 
+ASK_FOR_TRANSLATION=1
+ASK_FOR_INTERFACE_CONFIG=1
+
+while getopts ":ehn" opt; do
+    case "$opt" in
+        h) usage ;;
+        e) ASK_FOR_TRANSLATION=0 ;;
+        n) ASK_FOR_INTERFACE_CONFIG=0 ;;
+        \?) echo "Unknown option -$OPTARG" >&2; usage ;;
+    esac
+done
+shift "$((OPTIND-1))"
+
 detect_package_manager
 check_repo
 
 install_awg_packages
+
+if [ "$ASK_FOR_INTERFACE_CONFIG" = 0 ]; then
+    exit 0
+fi
 
 printf "\033[32;1mDo you want to configure the amneziawg interface? (y/n): \033[0m\n"
 read IS_SHOULD_CONFIGURE_AWG_INTERFACE
