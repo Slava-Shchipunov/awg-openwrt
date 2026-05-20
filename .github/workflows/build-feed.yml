@@ -179,11 +179,10 @@ jobs:
           CANONICAL_AWG_FEED_DIR="$SDK_DIR/bin/packages/${{ matrix.build_env.pkgarch }}/awg"
           mkdir -p "$CANONICAL_AWG_FEED_DIR"
 
-          # Build only AWG feed packages from package/feeds/awg into isolated AWG feed directory.
-          # luci-proto-amneziawg depends on amneziawg-tools, so building the LuCI
-          # package also produces the tools package without a second explicit target.
+          # Build the top-level AWG LuCI package into the isolated feed directory.
+          # Its dependency graph produces amneziawg-tools and kmod-amneziawg too;
+          # the checks below fail fast if any expected package is missing.
           make V=s PACKAGE_DIR="$CANONICAL_AWG_FEED_DIR" \
-            package/feeds/awg/kmod-amneziawg/compile \
             package/feeds/awg/luci-proto-amneziawg/compile
 
           # PACKAGE_DIR is inherited by dependency builds; keep the published feed restricted to AWG packages.
