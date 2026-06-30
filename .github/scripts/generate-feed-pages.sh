@@ -11,7 +11,6 @@ rm -f "$SITE_DIR/.nojekyll"
 find "$SITE_DIR" -name "index.md" -delete
 rm -f "$SITE_DIR/keys/awg-openwrt-feed.pub"
 
-# Migrate the previous public layout where pkgarch was part of the URL.
 # The current public layout is /<version>/<target>/<subtarget>/.
 while IFS= read -r -d '' dir; do
   [ -s "$dir/packages.adb" ] || continue
