@@ -10,6 +10,14 @@ const filterSubtargetsStr = process.argv[4] || ''; // Фильтр по subtarge
 const filterTargets = filterTargetsStr ? filterTargetsStr.split(',').map(t => t.trim()).filter(t => t) : [];
 const filterSubtargets = filterSubtargetsStr ? filterSubtargetsStr.split(',').map(s => s.trim()).filter(s => s) : [];
 
+const excludedBuilds = [
+  {
+    target: 'microchipsw',
+    subtarget: 'lan969x',
+    reason: 'OpenWrt 25.12.x SDK fails while packaging kmod-crypto-xxhash: xxhash.ko is built into the kernel for this specialized target',
+  },
+];
+
 if (!version) {
   core.setFailed('Version argument is required');
   process.exit(1);
@@ -105,6 +113,14 @@ async function main() {
                               filterTargets.includes(target) && filterSubtargets.includes(subtarget);
         
         if (!isAutomatic && !isManualMatch) {
+          continue;
+        }
+
+        const excludedBuild = excludedBuilds.find(
+          item => item.target === target && item.subtarget === subtarget
+        );
+        if (excludedBuild) {
+          core.warning(`Skipping ${target}/${subtarget}: ${excludedBuild.reason}`);
           continue;
         }
 

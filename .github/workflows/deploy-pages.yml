@@ -3,8 +3,48 @@ name: Deploy OpenWrt Feed Pages
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  noop:
+  deploy-pages:
+    name: Regenerate GitHub Pages site
     runs-on: ubuntu-latest
     steps:
-      - run: echo "placeholder"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Restore existing GitHub Pages content
+        run: |
+          set -euo pipefail
+
+          mkdir -p gh-pages-content
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git fetch --depth=1 origin gh-pages
+            git --work-tree=gh-pages-content checkout FETCH_HEAD -- .
+          fi
+
+      - name: Check existing feed content
+        run: |
+          set -euo pipefail
+
+          if [ -z "$(find gh-pages-content -name packages.adb -type f -print -quit)" ]; then
+            echo "No existing gh-pages feed content found."
+            exit 1
+          fi
+
+      - name: Generate GitHub Pages site
+        run: |
+          set -euo pipefail
+
+          bash .github/scripts/generate-feed-pages.sh \
+            "$GITHUB_WORKSPACE/gh-pages-content" \
+            "https://slava-shchipunov.github.io/awg-openwrt"
+
+      - name: Publish to GitHub Pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: gh-pages-content
+          enable_jekyll: true
