@@ -15,3 +15,4 @@ OpenWrt 24.10.x and older are not supported by this feed. Use GitHub Releases ar
 - [25.12.2](https://slava-shchipunov.github.io/awg-openwrt/25.12.2/)
 - [25.12.3](https://slava-shchipunov.github.io/awg-openwrt/25.12.3/)
 - [25.12.4](https://slava-shchipunov.github.io/awg-openwrt/25.12.4/)
+- [25.12.5](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/)

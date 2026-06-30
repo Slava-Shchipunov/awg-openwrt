@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "architecture": "aarch64_generic",
+  "packages": {
+    "amneziawg-tools": "1.0.20260618-r1",
+    "kmod-amneziawg": "6.12.94.1.0.20260611-r1",
+    "luci-i18n-amneziawg-ru": "0.260630.83878",
+    "luci-proto-amneziawg": "2.0.4-r1"
+  }
+}

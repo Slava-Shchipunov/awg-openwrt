@@ -1,0 +1,7 @@
+{
+  "version": "25.12.5",
+  "target": "omap",
+  "subtarget": "generic",
+  "pkgarch": "arm_cortex-a8_vfpv3",
+  "feed": "awg"
+}

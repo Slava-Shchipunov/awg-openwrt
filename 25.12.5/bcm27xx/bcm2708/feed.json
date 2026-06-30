@@ -1,0 +1,7 @@
+{
+  "version": "25.12.5",
+  "target": "bcm27xx",
+  "subtarget": "bcm2708",
+  "pkgarch": "arm_arm1176jzf-s_vfp",
+  "feed": "awg"
+}

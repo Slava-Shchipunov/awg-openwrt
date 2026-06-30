@@ -1,0 +1,7 @@
+{
+  "version": "25.12.5",
+  "target": "siflower",
+  "subtarget": "sf21",
+  "pkgarch": "riscv64_generic",
+  "feed": "awg"
+}

@@ -1,0 +1,7 @@
+{
+  "version": "25.12.5",
+  "target": "mvebu",
+  "subtarget": "cortexa9",
+  "pkgarch": "arm_cortex-a9_vfpv3-d16",
+  "feed": "awg"
+}

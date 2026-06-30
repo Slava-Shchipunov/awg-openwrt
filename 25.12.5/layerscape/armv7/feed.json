@@ -1,0 +1,7 @@
+{
+  "version": "25.12.5",
+  "target": "layerscape",
+  "subtarget": "armv7",
+  "pkgarch": "arm_cortex-a7_neon-vfpv4",
+  "feed": "awg"
+}

@@ -1,0 +1,7 @@
+{
+  "version": "25.12.5",
+  "target": "apm821xx",
+  "subtarget": "nand",
+  "pkgarch": "powerpc_464fp",
+  "feed": "awg"
+}

@@ -1,0 +1,7 @@
+{
+  "version": "25.12.5",
+  "target": "x86",
+  "subtarget": "legacy",
+  "pkgarch": "i386_pentium-mmx",
+  "feed": "awg"
+}

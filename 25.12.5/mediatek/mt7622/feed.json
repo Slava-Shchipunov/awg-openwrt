@@ -1,0 +1,7 @@
+{
+  "version": "25.12.5",
+  "target": "mediatek",
+  "subtarget": "mt7622",
+  "pkgarch": "aarch64_cortex-a53",
+  "feed": "awg"
+}

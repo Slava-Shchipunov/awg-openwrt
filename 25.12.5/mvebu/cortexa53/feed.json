@@ -1,0 +1,7 @@
+{
+  "version": "25.12.5",
+  "target": "mvebu",
+  "subtarget": "cortexa53",
+  "pkgarch": "aarch64_cortex-a53",
+  "feed": "awg"
+}
