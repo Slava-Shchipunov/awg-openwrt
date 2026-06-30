@@ -5,7 +5,7 @@
 ## Custom package feed (GitHub Pages)
 
 Репозиторий также публикует полноценный OpenWRT package feed
-для ASU / owut / apk на OpenWrt 25.x и новее.
+для apk на OpenWrt 25.x и новее.
 
 Подробная документация:
 [`docs/custom-feed.md`](docs/custom-feed.md)
@@ -48,10 +48,13 @@ sh <(wget -O - https://raw.githubusercontent.com/Slava-Shchipunov/awg-openwrt/re
 12. AWG-2.0 [24.10.4](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.4)
 13. AWG-2.0 [24.10.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.5)
 14. AWG-2.0 [24.10.6](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.6)
-15. AWG-2.0 [25.12.0](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.0)
-16. AWG-2.0 [25.12.1](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.1)
-17. AWG-2.0 [25.12.2](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.2)
-18. AWG-2.0 [25.12.3](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.3)
+14. AWG-2.0 [24.10.7](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.7)
+16. AWG-2.0 [25.12.0](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.0)
+17. AWG-2.0 [25.12.1](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.1)
+18. AWG-2.0 [25.12.2](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.2)
+19. AWG-2.0 [25.12.3](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.3)
+20. AWG-2.0 [25.12.4](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.4)
+21. AWG-2.0 [25.12.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.5)
 
 Также запускал сборку для версии [22.03.7](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v22.03.7), но там для двух платформ сборка завершилась ошибкой. Так как это достаточно старая версия OpenWRT, я не стал разбираться, в чем проблема.
 
@@ -133,10 +136,13 @@ At the moment I have collected packages for all devices for OpenWRT versions:
 12. AWG-2.0 [24.10.4](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.4)
 13. AWG-2.0 [24.10.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.5)
 14. AWG-2.0 [24.10.6](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.6)
+14. AWG-2.0 [24.10.7](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.7)
 15. AWG-2.0 [25.12.0](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.0)
 16. AWG-2.0 [25.12.1](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.1)
 17. AWG-2.0 [25.12.2](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.2)
 18. AWG-2.0 [25.12.3](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.3)
+20. AWG-2.0 [25.12.4](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.4)
+21. AWG-2.0 [25.12.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.5)
 
 I also ran the build for version [22.03.7](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v22.03.7), but the build ended with an error for two platforms. Since this is a fairly old version of OpenWRT, I did not bother to figure out what the problem was.
 
