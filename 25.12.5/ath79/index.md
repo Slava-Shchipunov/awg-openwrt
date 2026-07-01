@@ -14,3 +14,4 @@ Choose a subtarget.
 - [generic](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/ath79/generic/)
 - [mikrotik](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/ath79/mikrotik/)
 - [nand](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/ath79/nand/)
+- [tiny](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/ath79/tiny/)

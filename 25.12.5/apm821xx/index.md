@@ -12,3 +12,4 @@ Choose a subtarget.
 ## Subtargets
 
 - [nand](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/apm821xx/nand/)
+- [sata](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/apm821xx/sata/)
