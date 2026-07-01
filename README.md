@@ -4,11 +4,10 @@
 
 ## Custom package feed (GitHub Pages)
 
-Репозиторий также публикует полноценный OpenWRT package feed
+Репозиторий также публикует полноценный [OpenWRT package feed](https://slava-shchipunov.github.io/awg-openwrt/)
 для apk на OpenWrt 25.x и новее.
 
-Подробная документация:
-[`docs/custom-feed.md`](docs/custom-feed.md)
+[Подробная документация](docs/custom-feed.md)
 
 ## Автоматическая настройка AmneziaWG для OpenWRT версии 23.05.0 и более новых
 
