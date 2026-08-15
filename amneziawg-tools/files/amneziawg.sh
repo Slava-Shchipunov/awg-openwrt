@@ -44,6 +44,8 @@ awg_rekey_timeout:RekeyTimeout
 awg_reject_after_time:RejectAfterTime
 awg_keepalive_timeout:KeepaliveTimeout
 awg_max_handshake_attempts:MaxHandshakeAttempts
+awg_random_trailers:RandomTrailers
+awg_disable_cookies:DisableCookies
 "
 
 proto_amneziawg_init_config() {
@@ -75,6 +77,9 @@ proto_amneziawg_init_config() {
 	proto_config_add_string "awg_reject_after_time"
 	proto_config_add_string "awg_keepalive_timeout"
 	proto_config_add_string "awg_max_handshake_attempts"
+	# AmneziaWG 3.1 parameters, boolean `on'/`off' (awg also accepts 1/0)
+	proto_config_add_string "awg_random_trailers"
+	proto_config_add_string "awg_disable_cookies"
 # shellcheck disable=SC2034
 	available=1
 # shellcheck disable=SC2034

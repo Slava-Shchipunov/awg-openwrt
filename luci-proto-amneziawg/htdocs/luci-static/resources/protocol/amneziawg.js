@@ -80,6 +80,20 @@ function rangesOverlap(a, b) {
 	return (a.lo <= b.hi && b.lo <= a.hi);
 }
 
+/* Maps the boolean spellings accepted by awg (on/off, yes/no, true/false,
+   numbers) to the canonical `on'/`off' used in UCI and exported configs. */
+function normalizeBoolValue(value) {
+	const v = String(value ?? '').trim().toLowerCase();
+
+	if (/^(on|true|yes|1)$/.test(v))
+		return 'on';
+
+	if (/^(off|false|no|0)$/.test(v))
+		return 'off';
+
+	return v;
+}
+
 /* Builds a validator for `uint,range' typed options. */
 function validateRange(max) {
 	return function(section_id, value) {
@@ -187,6 +201,18 @@ const awgOptions = [
 		name: 'awg_max_handshake_attempts', key: 'MaxHandshakeAttempts', title: _('Max Handshake Attempts'),
 		descr: _('AmneziaWG 3.0. Number of handshake retries before giving up. A single value or a <em>low-high</em> range. Default is 18.'),
 		validate: validateU16Range, placeholder: '18'
+	},
+
+	/* AmneziaWG 3.1 */
+	{
+		name: 'awg_random_trailers', key: 'RandomTrailers', title: _('Random Trailers'),
+		descr: _('AmneziaWG 3.1. Appends a random amount of random bytes to each outgoing packet so packet sizes vary from packet to packet. Requires AmneziaWG 3.1 on both sides.'),
+		bool: true
+	},
+	{
+		name: 'awg_disable_cookies', key: 'DisableCookies', title: _('Disable Cookies'),
+		descr: _('AmneziaWG 3.1. Never send cookie reply packets (the WireGuard under-load handshake responses), removing a reply that active probing could trigger. Weakens denial-of-service protection.'),
+		bool: true
 	}
 ];
 
@@ -357,8 +383,14 @@ return network.registerProtocol('amneziawg', {
 		catch(e) {}
 
 		for (let awgOption of awgOptions) {
-			o = s.taboption('amneziawg', form.Value, awgOption.name, awgOption.title, awgOption.descr);
+			o = s.taboption('amneziawg', awgOption.bool ? form.ListValue : form.Value, awgOption.name, awgOption.title, awgOption.descr);
 			o.optional = true;
+
+			if (awgOption.bool) {
+				o.value('', _('Default (off)'));
+				o.value('on', _('On'));
+				o.value('off', _('Off'));
+			}
 
 			if (awgOption.datatype)
 				o.datatype = awgOption.datatype;
@@ -539,6 +571,9 @@ return network.registerProtocol('amneziawg', {
 
 						if (aval && (awgOption.validate === validateU16Range || awgOption.validate === validateHeader))
 							aval = normalizeRangeValue(aval);
+
+						if (aval && awgOption.bool)
+							aval = normalizeBoolValue(aval);
 
 						s.getOption(awgOption.name).getUIElement(s.section).setValue(aval);
 					}

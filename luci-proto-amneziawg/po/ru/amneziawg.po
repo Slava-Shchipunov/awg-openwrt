@@ -264,3 +264,36 @@ msgstr ""
 
 msgid "Download peer configuration file"
 msgstr "Скачать файл конфигурации пира"
+
+msgid "Random Trailers"
+msgstr "Random Trailers"
+
+msgid ""
+"AmneziaWG 3.1. Appends a random amount of random bytes to each outgoing "
+"packet so packet sizes vary from packet to packet. Requires AmneziaWG 3.1 "
+"on both sides."
+msgstr ""
+"AmneziaWG 3.1. Добавляет случайное количество случайных байтов в конец "
+"каждого исходящего пакета, чтобы размер пакетов менялся от пакета к пакету. "
+"Требует AmneziaWG 3.1 с обеих сторон."
+
+msgid "Disable Cookies"
+msgstr "Disable Cookies"
+
+msgid ""
+"AmneziaWG 3.1. Never send cookie reply packets (the WireGuard under-load "
+"handshake responses), removing a reply that active probing could trigger. "
+"Weakens denial-of-service protection."
+msgstr ""
+"AmneziaWG 3.1. Никогда не отправлять cookie-ответы (ответы WireGuard на "
+"рукопожатия под нагрузкой), убирая отклик, который можно вызвать активным "
+"зондированием. Ослабляет защиту от DoS-атак."
+
+msgid "Default (off)"
+msgstr "По умолчанию (выкл.)"
+
+msgid "On"
+msgstr "Вкл."
+
+msgid "Off"
+msgstr "Выкл."

@@ -80,6 +80,11 @@ jobs:
     steps:
       - name: Checkout AWG source code
         uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Update AWG submodules to latest upstream
+        run: git submodule update --remote --recursive
 
       - name: Install Python dependencies
         run: |

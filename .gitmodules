@@ -1,0 +1,8 @@
+[submodule "amneziawg-tools/src"]
+	path = amneziawg-tools/src
+	url = https://github.com/amnezia-vpn/amneziawg-tools.git
+	branch = master
+[submodule "kmod-amneziawg/src"]
+	path = kmod-amneziawg/src
+	url = https://github.com/amnezia-vpn/amneziawg-linux-kernel-module.git
+	branch = master

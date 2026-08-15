@@ -1,12 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=amneziawg-tools
-PKG_VERSION:=3.0.20260730
+PKG_VERSION:=3.1.20260812
 PKG_RELEASE:=1
 
-PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL:=https://github.com/amnezia-vpn/amneziawg-tools.git
-PKG_SOURCE_VERSION:=v$(PKG_VERSION)
+# Sources are bundled as a git submodule in ./src (amneziawg-tools, tracking
+# upstream `master'); the default prepare step copies ./src into the build
+# directory, no download occurs at build time. Refresh with
+# `git submodule update --remote'. PKG_VERSION reflects the newest upstream
+# release and is only cosmetic since the actual sources come from ./src.
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
