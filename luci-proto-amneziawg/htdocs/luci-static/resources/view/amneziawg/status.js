@@ -3,6 +3,7 @@
 'require rpc';
 'require poll';
 'require dom';
+'require uci';
 'require ui';
 
 
@@ -27,7 +28,26 @@ function timestampToStr(timestamp) {
 	else
 		ago = _('over a day ago');
 
-	return (new Date(timestamp * 1000)).toUTCString() + ' (' + ago + ')';
+	const date = new Date(timestamp * 1000);
+	const sys = uci.get('system', '@system[0]');
+
+	return new Intl.DateTimeFormat(undefined, {
+		dateStyle: 'medium',
+		timeStyle: (!sys?.clock_timestyle) ? 'long' : 'full',
+		hourCycle: (!sys?.clock_hourcycle) ? undefined : sys.clock_hourcycle,
+		timeZone: sys?.zonename?.replaceAll(' ', '_') || 'UTC',
+	}).format(date) + ' (' + ago + ')';
+}
+
+/* Since AmneziaWG 3.0 the keep alive interval may also be a `low-high' range,
+   in which case the actual interval is randomized within these bounds. */
+function keepAliveToStr(interval) {
+	if (!interval || interval == 'off' || interval == '0')
+		return E('em', _('none'));
+
+	return (String(interval).indexOf('-') > 0)
+		? _('every %s seconds', 'AmneziaWG keep alive interval range').format(interval)
+		: _('every %ds', 'AmneziaWG keep alive interval').format(+interval);
 }
 
 function handleInterfaceDetails(iface) {
@@ -57,7 +77,7 @@ function handlePeerDetails(peer) {
 			_('Received Data'), '%1024mB'.format(peer.transfer_rx),
 			_('Transmitted Data'), '%1024mB'.format(peer.transfer_tx),
 			_('Latest Handshake'), timestampToStr(+peer.latest_handshake),
-			_('Keep-Alive'), (peer.persistent_keepalive != 'off') ? _('every %ds', 'AmneziaWG keep alive interval').format(+peer.persistent_keepalive) : E('em', _('none')),
+			_('Keep-Alive'), keepAliveToStr(peer.persistent_keepalive),
 		]),
 		E('div', { 'class': 'right' }, [
 			E('button', {
@@ -115,6 +135,12 @@ function renderPeerTable(instanceName, peers) {
 }
 
 return view.extend({
+	load() {
+		return Promise.all([
+			uci.load('system'),
+		])
+	},
+
 	renderIfaces: function(ifaces) {
 		var res = [
 			E('h2', [ _('AmneziaWG Status') ])
@@ -128,7 +154,7 @@ return view.extend({
 					'click': ui.createHandlerFn(this, handleInterfaceDetails, ifaces[instanceName])
 				}, [
 					E('span', { 'class': 'ifacebadge' }, [
-						E('img', { 'src': L.resource('icons', 'amneziawg.svg') }),
+						E('img', { 'src': L.resource('icons', 'amneziawg.svg'), 'style': 'width:32px;height:32px' }),
 						'\xa0',
 						instanceName
 					]),

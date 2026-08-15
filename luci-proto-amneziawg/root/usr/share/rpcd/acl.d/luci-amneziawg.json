@@ -14,7 +14,8 @@
 				"luci.amneziawg": [
 					"generateKeyPair",
 					"getPublicAndPrivateKeyFromPrivate",
-					"generatePsk"
+					"generatePsk",
+					"generateHeaderProtectionKey"
 				]
 			}
 		}

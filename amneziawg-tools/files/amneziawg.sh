@@ -16,6 +16,36 @@ fi
 	init_proto "$@"
 }
 
+# AmneziaWG obfuscation parameters, in `<uci option>:<configuration file key>'
+# notation. The values are copied verbatim into the [Interface] section of the
+# generated configuration file, so keeping this single list in sync with
+# luci-proto-amneziawg is all that is needed to support a new parameter.
+AWG_PARAMS="
+awg_jc:Jc
+awg_jmin:Jmin
+awg_jmax:Jmax
+awg_s1:S1
+awg_s2:S2
+awg_s3:S3
+awg_s4:S4
+awg_h1:H1
+awg_h2:H2
+awg_h3:H3
+awg_h4:H4
+awg_i1:I1
+awg_i2:I2
+awg_i3:I3
+awg_i4:I4
+awg_i5:I5
+awg_header_protection_key:HeaderProtectionKey
+awg_content_padding_addition:ContentPaddingAddition
+awg_rekey_after_time:RekeyAfterTime
+awg_rekey_timeout:RekeyTimeout
+awg_reject_after_time:RejectAfterTime
+awg_keepalive_timeout:KeepaliveTimeout
+awg_max_handshake_attempts:MaxHandshakeAttempts
+"
+
 proto_amneziawg_init_config() {
 	proto_config_add_string "private_key"
 	proto_config_add_int "listen_port"
@@ -37,6 +67,14 @@ proto_amneziawg_init_config() {
 	proto_config_add_string "awg_i3"
 	proto_config_add_string "awg_i4"
 	proto_config_add_string "awg_i5"
+	# AmneziaWG 3.0 parameters
+	proto_config_add_string "awg_header_protection_key"
+	proto_config_add_string "awg_content_padding_addition"
+	proto_config_add_string "awg_rekey_after_time"
+	proto_config_add_string "awg_rekey_timeout"
+	proto_config_add_string "awg_reject_after_time"
+	proto_config_add_string "awg_keepalive_timeout"
+	proto_config_add_string "awg_max_handshake_attempts"
 # shellcheck disable=SC2034
 	available=1
 # shellcheck disable=SC2034
@@ -50,7 +88,7 @@ proto_amneziawg_is_kernel_mode() {
 		if [ -e /sys/module/amneziawg ]; then
 			return 0
 		else
-			if ! command -v "${WG_QUICK_USERSPACE_IMPLEMENTATION:-amneziawg-go}" >/dev/null; then
+			if ! command -v "${AWG_QUICK_USERSPACE_IMPLEMENTATION:-amneziawg-go}" >/dev/null; then
 				ret=$?
 				echo "Please install either kernel module (kmod-amneziawg package) or user-space implementation in /usr/bin/amneziawg-go."
 				exit $ret
@@ -118,6 +156,7 @@ proto_amneziawg_setup_peer() {
 		fi
 		echo "Endpoint=${endpoint}" >> "${awg_cfg}"
 	fi
+	# Since AmneziaWG 3.0 this may also be a `min-max' range, e.g. `25-30'
 	if [ "${persistent_keepalive}" ]; then
 		echo "PersistentKeepalive=${persistent_keepalive}" >> "${awg_cfg}"
 	fi
@@ -142,11 +181,28 @@ proto_amneziawg_setup_peer() {
 	fi
 }
 
+proto_amneziawg_write_params() {
+	local config="$1"
+
+	local param
+	local option
+	local value
+
+	for param in ${AWG_PARAMS}; do
+		option="${param%%:*}"
+		config_get value "${config}" "${option}"
+
+		[ -n "${value}" ] && echo "${param##*:}=${value}" >> "${awg_cfg}"
+	done
+
+	return 0
+}
+
 ensure_key_is_generated() {
 	local private_key
-	private_key="$(uci get network."$1".private_key)"
+	private_key="$(uci -q get network."$1".private_key)"
 
-	if [ "$private_key" == "generate" ]; then
+	if [ "$private_key" = "generate" ]; then
 		local ucitmp
 		oldmask="$(umask)"
 		umask 077
@@ -173,24 +229,6 @@ proto_amneziawg_setup() {
 	local nohostroute
 	local tunlink
 
-	# AmneziaWG specific parameters
-	local awg_jc
-	local awg_jmin
-	local awg_jmax
-	local awg_s1
-	local awg_s2
-	local awg_s3
-	local awg_s4
-	local awg_h1
-	local awg_h2
-	local awg_h3
-	local awg_h4
-	local awg_i1
-	local awg_i2
-	local awg_i3
-	local awg_i4
-	local awg_i5
-
 	ensure_key_is_generated "${config}"
 
 	config_load network
@@ -202,23 +240,6 @@ proto_amneziawg_setup() {
 	config_get ip6prefix "${config}" "ip6prefix"
 	config_get nohostroute "${config}" "nohostroute"
 	config_get tunlink "${config}" "tunlink"
-
-	config_get awg_jc "${config}" "awg_jc"
-	config_get awg_jmin "${config}" "awg_jmin"
-	config_get awg_jmax "${config}" "awg_jmax"
-	config_get awg_s1 "${config}" "awg_s1"
-	config_get awg_s2 "${config}" "awg_s2"
-	config_get awg_s3 "${config}" "awg_s3"
-	config_get awg_s4 "${config}" "awg_s4"
-	config_get awg_h1 "${config}" "awg_h1"
-	config_get awg_h2 "${config}" "awg_h2"
-	config_get awg_h3 "${config}" "awg_h3"
-	config_get awg_h4 "${config}" "awg_h4"
-	config_get awg_i1 "${config}" "awg_i1"
-	config_get awg_i2 "${config}" "awg_i2"
-	config_get awg_i3 "${config}" "awg_i3"
-	config_get awg_i4 "${config}" "awg_i4"
-	config_get awg_i5 "${config}" "awg_i5"
 
 	if proto_amneziawg_is_kernel_mode; then
 		logger -t "amneziawg" "info: using kernel-space kmod-amneziawg for ${AWG}"
@@ -246,55 +267,7 @@ proto_amneziawg_setup() {
 	if [ "${fwmark}" ]; then
 		echo "FwMark=${fwmark}" >> "${awg_cfg}"
 	fi
-	# AmneziaWG parameters
-	if [ "${awg_jc}" ]; then
-		echo "Jc=${awg_jc}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_jmin}" ]; then
-		echo "Jmin=${awg_jmin}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_jmax}" ]; then
-		echo "Jmax=${awg_jmax}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_s1}" ]; then
-		echo "S1=${awg_s1}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_s2}" ]; then
-		echo "S2=${awg_s2}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_s3}" ]; then
-		echo "S3=${awg_s3}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_s4}" ]; then
-		echo "S4=${awg_s4}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_h1}" ]; then
-		echo "H1=${awg_h1}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_h2}" ]; then
-		echo "H2=${awg_h2}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_h3}" ]; then
-		echo "H3=${awg_h3}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_h4}" ]; then
-		echo "H4=${awg_h4}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_i1}" ]; then
-		echo "I1=${awg_i1}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_i2}" ]; then
-		echo "I2=${awg_i2}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_i3}" ]; then
-		echo "I3=${awg_i3}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_i4}" ]; then
-		echo "I4=${awg_i4}" >> "${awg_cfg}"
-	fi
-	if [ "${awg_i5}" ]; then
-		echo "I5=${awg_i5}" >> "${awg_cfg}"
-	fi
+	proto_amneziawg_write_params "${config}"
 	config_foreach proto_amneziawg_setup_peer "amneziawg_${config}"
 
 	# Apply configuration file

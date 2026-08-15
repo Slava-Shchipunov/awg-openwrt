@@ -13,6 +13,10 @@ msgctxt "AmneziaWG keep alive interval"
 msgid "every %ds"
 msgstr "каждые %dс"
 
+msgctxt "AmneziaWG keep alive interval range"
+msgid "every %s seconds"
+msgstr "каждые %s с"
+
 msgctxt "Tooltip displaying full AmneziaWG peer public key"
 msgid "Public key: %h"
 msgstr "Публичный ключ: %h"
