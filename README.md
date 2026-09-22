@@ -3,37 +3,34 @@
 # Пакеты amneziawg для роутеров с прошивкой OpenWRT
 
 ## AWG 3.1
-
-Пакеты собираются из AmneziaWG 3.1: модуль ядра `v3.1.20260812`, утилиты `v3.1.20260812`.
-
 В дополнение к параметрам 2.0 доступны:
 
 | Параметр                    | Опция UCI                         | Описание                                     |
 | --------------------------- | --------------------------------- | -------------------------------------------- |
-| `HeaderProtectionKey`       | `awg_header_protection_key`       | Base64-ключ для обфускации заголовков пакетов |
-| `ContentPaddingAddition`    | `awg_content_padding_addition`    | Дополнительное дополнение транспортных пакетов |
-| `RekeyAfterTime`            | `awg_rekey_after_time`            | Время до пересогласования сессии, сек        |
-| `RekeyTimeout`              | `awg_rekey_timeout`               | Пауза между попытками рукопожатия, сек       |
-| `RejectAfterTime`           | `awg_reject_after_time`           | Время жизни сессии, сек                      |
-| `KeepaliveTimeout`          | `awg_keepalive_timeout`           | Простой до отправки keepalive, сек           |
-| `MaxHandshakeAttempts`      | `awg_max_handshake_attempts`      | Количество попыток рукопожатия               |
+| `HeaderProtectionKey`       | `awg_header_protection_key`       | Ключ для шифрования и обфускации заголовков пакетов |
+| `ContentPaddingAddition`    | `awg_content_padding_addition`    | Случайный паддинг полезной нагрузки Transport-пакетов |
+| `RekeyAfterTime`            | `awg_rekey_after_time`            | Время до запуска повторного согласования сессии, сек |
+| `RekeyTimeout`              | `awg_rekey_timeout`               | Таймаут рукопожатия, после которого выполняется новая попытка, сек |
+| `RejectAfterTime`           | `awg_reject_after_time`           | Время, после которого данные текущей сессии перестают приниматься и запускается новое рукопожатие, сек |
+| `KeepaliveTimeout` | `awg_keepalive_timeout` | Время с момента последней отправки данных до отправки keepalive, сек |
+| `MaxHandshakeAttempts`      | `awg_max_handshake_attempts`      | Ограничение числа повторных попыток рукопожатия после таймаутов |
 
-Параметры `H1`—`H4`, `PersistentKeepalive` и все перечисленные выше принимают
-как одно значение, так и диапазон вида `10-20` — конкретное значение выбирается
-случайно в заданных пределах.
+Параметры `H1`—`H4`, `PersistentKeepalive`, `ContentPaddingAddition`, `RekeyAfterTime`, `RekeyTimeout`, `RejectAfterTime`, `KeepaliveTimeout` и `MaxHandshakeAttempts` принимают как одно значение, так и диапазон вида `10-20` — конкретное значение выбирается случайно в заданных пределах.
+
+`HeaderProtectionKey` — общий для обеих сторон 32-байтовый ключ, представленный в конфигурации в формате Base64. Это не диапазон. При включённой защите заголовков каждый из параметров `S1`—`S4` должен быть не меньше 12. Использование нестандартных значений `H1`—`H4` вместе с защитой заголовков технически разрешено, но не рекомендуется.
 
 В 3.1 добавлены два переключателя:
 
 | Параметр         | Опция UCI             | Описание                                                       |
 | ---------------- | --------------------- | -------------------------------------------------------------- |
-| `RandomTrailers` | `awg_random_trailers` | Дописывает в конец каждого пакета случайное число байт          |
-| `DisableCookies` | `awg_disable_cookies` | Не отвечать cookie-сообщениями на рукопожатия под нагрузкой      |
+| `RandomTrailers` | `awg_random_trailers` | Добавляет к пакетам дополнение случайной длины                 |
+| `DisableCookies` | `awg_disable_cookies` | Запрещает отправку сообщений `Handshake Cookie Reply`          |
 
-`RandomTrailers` меняет размеры пакетов, поэтому должен быть включён на обеих
-сторонах туннеля: сторона с выключенным параметром отбросит рукопожатие с
-«лишними» байтами. Для транспортных пакетов он действует, только если не задан
-`ContentPaddingAddition`. `DisableCookies` влияет лишь на исходящие ответы и
-заодно отключает встроенную защиту от флуда рукопожатиями.
+`RandomTrailers` меняет размеры пакетов, поэтому должен быть включён на обеих сторонах туннеля: сторона с выключенным параметром отбросит рукопожатие с «лишними» байтами. Для Transport-пакетов `ContentPaddingAddition` имеет приоритет: если он задан, `RandomTrailers` для них не применяется.
+
+Для handshake-сообщений `RandomTrailers` добавляет случайные байты, а для Transport-пакетов — нулевые байты перед шифрованием.
+
+`DisableCookies` влияет только на отправку `Handshake Cookie Reply`. Обработка полученных cookie продолжает работать. Включение параметра отключает исходящую часть встроенной защиты WireGuard от DoS-атак через поток рукопожатий.
 
 ## Custom package feed (GitHub Pages)
 
@@ -132,36 +129,49 @@ AWG 2.0 можно собрать под определённую платфор
 
 ## AWG 3.1
 
-Packages are built from AmneziaWG 3.1: kernel module `v3.1.20260812`, tools `v3.1.20260812`.
+Packages are built from AmneziaWG 3.1: kernel module `v3.1.20260906`, tools `v3.1.20260812`.
 
 In addition to the 2.0 parameters the following are available:
 
 | Parameter                   | UCI option                        | Description                              |
 | --------------------------- | --------------------------------- | ---------------------------------------- |
-| `HeaderProtectionKey`       | `awg_header_protection_key`       | Base64 key used to obfuscate packet headers |
-| `ContentPaddingAddition`    | `awg_content_padding_addition`    | Extra padding for transport packets      |
-| `RekeyAfterTime`            | `awg_rekey_after_time`            | Seconds before a session is renegotiated |
-| `RekeyTimeout`              | `awg_rekey_timeout`               | Seconds between handshake retries        |
-| `RejectAfterTime`           | `awg_reject_after_time`           | Session lifetime in seconds              |
-| `KeepaliveTimeout`          | `awg_keepalive_timeout`           | Idle seconds before a keepalive is sent  |
-| `MaxHandshakeAttempts`      | `awg_max_handshake_attempts`      | Handshake attempts before giving up      |
+| `HeaderProtectionKey`       | `awg_header_protection_key`       | Key used to encrypt and obfuscate packet headers |
+| `ContentPaddingAddition`    | `awg_content_padding_addition`    | Additional randomized padding for Transport packets |
+| `RekeyAfterTime`            | `awg_rekey_after_time`            | Seconds before session renegotiation starts |
+| `RekeyTimeout`              | `awg_rekey_timeout`               | Handshake timeout before another attempt is made |
+| `RejectAfterTime`           | `awg_reject_after_time`           | Seconds before current-session data is rejected and a new handshake is started |
+| `KeepaliveTimeout`          | `awg_keepalive_timeout`           | Delay before sending a keepalive after data is received if nothing was sent |
+| `MaxHandshakeAttempts`      | `awg_max_handshake_attempts`      | Limit on handshake retries after timeouts |
 
-`H1`—`H4`, `PersistentKeepalive` and all of the above accept either a single
-value or a range such as `10-20`, in which case the effective value is picked
-randomly within those bounds.
+`H1`—`H4`, `PersistentKeepalive`, `ContentPaddingAddition`, `RekeyAfterTime`,
+`RekeyTimeout`, `RejectAfterTime`, `KeepaliveTimeout` and
+`MaxHandshakeAttempts` accept either a single value or a range such as `10-20`,
+in which case the effective value is picked randomly within those bounds.
+
+`HeaderProtectionKey` is a shared 32-byte key represented as Base64 in the
+configuration. It is not a range and must be identical on both ends. When
+header protection is enabled, each of `S1`—`S4` must be at least 12. Using
+non-default `H1`—`H4` values together with header protection is technically
+allowed, but not recommended.
 
 Two switches were added in 3.1:
 
 | Parameter        | UCI option            | Description                                             |
 | ---------------- | --------------------- | ------------------------------------------------------- |
-| `RandomTrailers` | `awg_random_trailers` | Appends a random number of bytes to every packet        |
-| `DisableCookies` | `awg_disable_cookies` | Do not answer handshakes with cookie messages under load |
+| `RandomTrailers` | `awg_random_trailers` | Appends padding of a random length to messages          |
+| `DisableCookies` | `awg_disable_cookies` | Disables sending `Handshake Cookie Reply` messages      |
 
 `RandomTrailers` changes packet sizes, so it has to be enabled on both ends of
 the tunnel: a peer with the option off drops handshakes carrying the extra
-bytes. For transport packets it only applies when `ContentPaddingAddition` is
-not set. `DisableCookies` affects outgoing replies only and also turns off the
-built-in handshake flood protection.
+bytes. For Transport packets, `ContentPaddingAddition` takes precedence: when
+it is set, `RandomTrailers` does not apply to them.
+
+For handshake messages, `RandomTrailers` appends random bytes. For Transport
+packets, it appends zero bytes before encryption.
+
+`DisableCookies` only affects sending `Handshake Cookie Reply` messages;
+received cookies are still processed. Enabling it disables the outgoing part
+of WireGuard's built-in protection against handshake-flood DoS attacks.
 
 ## Automatic configuration of AmneziaWG for OpenWRT version 23.05.0 and newer
 
