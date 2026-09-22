@@ -356,7 +356,7 @@ configure_amneziawg_interface() {
         uci commit firewall
     fi
 
-    if ! uci show firewall | grep -q "@forwarding.*name='${ZONE_NAME}'"; then
+    if ! uci show firewall | grep -q "@forwarding.*name='${ZONE_NAME}-lan'"; then
         printf "\033[32;1mConfigured forwarding\033[0m\n"
         uci add firewall forwarding
         uci set firewall.@forwarding[-1]=forwarding
