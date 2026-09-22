@@ -6,7 +6,7 @@
 'require ui';
 
 
-var callgetAwgInstances = rpc.declare({
+const callgetAwgInstances = rpc.declare({
 	object: 'luci.amneziawg',
 	method: 'getAwgInstances'
 });
@@ -15,8 +15,8 @@ function timestampToStr(timestamp) {
 	if (timestamp < 1)
 		return _('Never', 'No AmneziaWG peer handshake yet');
 
-	var seconds = (Date.now() / 1000) - timestamp;
-	var ago;
+	const seconds = (Date.now() / 1000) - timestamp;
+	let ago;
 
 	if (seconds < 60)
 		ago = _('%ds ago').format(seconds);
@@ -69,7 +69,7 @@ function handlePeerDetails(peer) {
 }
 
 function renderPeerTable(instanceName, peers) {
-	var t = new L.ui.Table(
+	const t = new L.ui.Table(
 		[
 			_('Peer'),
 			_('Endpoint'),
@@ -116,11 +116,11 @@ function renderPeerTable(instanceName, peers) {
 
 return view.extend({
 	renderIfaces: function(ifaces) {
-		var res = [
+		const res = [
 			E('h2', [ _('AmneziaWG Status') ])
 		];
 
-		for (var instanceName in ifaces) {
+		for (const instanceName in ifaces) {
 			res.push(
 				E('h3', [ _('Instance "%h"', 'AmneziaWG instance heading').format(instanceName) ]),
 				E('p', {
