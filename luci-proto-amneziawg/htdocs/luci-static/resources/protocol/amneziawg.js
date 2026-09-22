@@ -446,10 +446,8 @@ return network.registerProtocol('amneziawg', {
 			ev.dataTransfer.dropEffect = 'copy';
 		};
 
-		ss.handleDropConfig = function(mode, ev) {
-			const file = ev.dataTransfer.files[0],
-			    nodes = ev.currentTarget,
-			    input = nodes.querySelector('textarea'),
+		ss.handleConfigFile = function(mode, nodes, file, ev) {
+			const input = nodes.querySelector('textarea'),
 			    reader = new FileReader();
 
 			if (file) {
@@ -460,6 +458,10 @@ return network.registerProtocol('amneziawg', {
 
 				reader.readAsText(file);
 			}
+		};
+
+		ss.handleDropConfig = function(mode, ev) {
+			ss.handleConfigFile(mode, ev.currentTarget, ev.dataTransfer.files[0], ev);
 
 			ev.stopPropagation();
 			ev.preventDefault();
@@ -706,18 +708,24 @@ return network.registerProtocol('amneziawg', {
 		ss.handleConfigImport = function(mode) {
 			const mapNode = ss.getActiveModalMap(),
 			    headNode = mapNode.parentNode.querySelector('h4'),
-			    parent = this.map;
+			    parent = this.map,
+			    fileInput = E('input', {
+				    'type': 'file',
+				    'accept': '.conf,text/plain,application/octet-stream',
+				    'style': 'max-width:100%'
+			    });
 
 			const nodes = E('div', {
 				'dragover': this.handleDragConfig,
 				'drop': this.handleDropConfig.bind(this, mode)
 			}, [
 				E([], (mode == 'full') ? [
-					E('p', _('Drag or paste a valid <em>*.conf</em> file below to configure the local AmneziaWG interface.'))
+					E('p', _('Select, drag or paste a valid <em>*.conf</em> file below to configure the local AmneziaWG interface.'))
 				] : [
-					E('p', _('Paste or drag a AmneziaWG configuration (commonly <em>wg0.conf</em>) from another system below to create a matching peer entry allowing that system to connect to the local AmneziaWG interface.')),
+					E('p', _('Select, paste or drag a AmneziaWG configuration (commonly <em>wg0.conf</em>) from another system below to create a matching peer entry allowing that system to connect to the local AmneziaWG interface.')),
 					E('p', _('To configure fully the local AmneziaWG interface from an existing (e.g. provider supplied) configuration file, use the <strong><a class="full-import" href="#">configuration import</a></strong> instead.'))
 				]),
+				E('p', [ fileInput ]),
 				E('p', [
 					E('textarea', {
 						'placeholder': (mode == 'full')
@@ -731,6 +739,10 @@ return network.registerProtocol('amneziawg', {
 					'style': 'display:none'
 				}, [''])
 			]);
+
+			fileInput.addEventListener('change', function(ev) {
+				ss.handleConfigFile(mode, nodes, ev.currentTarget.files[0], ev);
+			});
 
 			const cancelFn = function() {
 				nodes.parentNode.removeChild(nodes.nextSibling);
