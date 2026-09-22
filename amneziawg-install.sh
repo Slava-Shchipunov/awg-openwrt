@@ -135,16 +135,19 @@ install_awg_packages() {
     PKGPOSTFIX_BASE="_v${VERSION}_${PKGARCH}_${TARGET}_${SUBTARGET}"
     BASE_URL="https://github.com/Slava-Shchipunov/awg-openwrt/releases/download/"
 
-    # Определяем версию AWG протокола (2.0 для OpenWRT >= 23.05.6 и >= 24.10.3)
+    # Определяем версию AWG протокола по версии OpenWRT
     AWG_VERSION="1.0"
     MAJOR_VERSION=$(echo "$VERSION" | cut -d '.' -f 1)
-    MINOR_VERSION=$(echo "$VERSION" | cut -d '.' -f 2)
     PATCH_VERSION=$(echo "$VERSION" | cut -d '.' -f 3)
 
-    if [ "$MAJOR_VERSION" -gt 24 ] || \
-       [ "$MAJOR_VERSION" -eq 24 -a "$MINOR_VERSION" -gt 10 ] || \
-       [ "$MAJOR_VERSION" -eq 24 -a "$MINOR_VERSION" -eq 10 -a "$PATCH_VERSION" -ge 3 ] || \
-       [ "$MAJOR_VERSION" -eq 23 -a "$MINOR_VERSION" -eq 5 -a "$PATCH_VERSION" -ge 6 ]; then
+    if [ "$MAJOR_VERSION" -gt 25 ] || \
+       [ "$MAJOR_VERSION" -eq 25 -a "$PATCH_VERSION" -ge 5 ] || \
+       [ "$MAJOR_VERSION" -eq 24 -a "$PATCH_VERSION" -ge 8 ]; then
+        AWG_VERSION="3.1"
+        LUCI_PACKAGE_NAME="luci-proto-amneziawg"
+    elif [ "$MAJOR_VERSION" -gt 24 ] || \
+       [ "$MAJOR_VERSION" -eq 24 -a "$PATCH_VERSION" -ge 3 ] || \
+       [ "$MAJOR_VERSION" -eq 23 -a "$PATCH_VERSION" -ge 6 ]; then
         AWG_VERSION="2.0"
         LUCI_PACKAGE_NAME="luci-proto-amneziawg"
     else
@@ -220,8 +223,8 @@ install_awg_packages() {
         fi
     fi
 
-    # Устанавливаем русскую локализацию только для AWG 2.0
-    if [ "$AWG_VERSION" = "2.0" ] && [ $ASK_FOR_TRANSLATION = 1 ]; then
+    # Устанавливаем русскую локализацию для AWG 2.0 и новее
+    if [ "$AWG_VERSION" != "1.0" ] && [ "$ASK_FOR_TRANSLATION" = 1 ]; then
         printf "\033[32;1mУстанавливаем пакет с русской локализацией? Install Russian language pack? (y/n) [n]: \033[0m\n"
         read INSTALL_RU_LANG
         INSTALL_RU_LANG=${INSTALL_RU_LANG:-n}
@@ -268,6 +271,8 @@ configure_amneziawg_interface() {
         fi
     done
 
+    read -r -p "Enter DNS server(s), IPv4 and/or IPv6, separated by commas or spaces (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_DNS
+
     read -r -p "Enter the public key (from [Peer]):"$'\n' AWG_PUBLIC_KEY_INT
     read -r -p "If use PresharedKey, Enter this (from [Peer]). If your don't use leave blank:"$'\n' AWG_PRESHARED_KEY_INT
     read -r -p "Enter Endpoint host without port (Domain or IP) (from [Peer]):"$'\n' AWG_ENDPOINT_INT
@@ -277,6 +282,13 @@ configure_amneziawg_interface() {
     if [ "$AWG_ENDPOINT_PORT_INT" = '51820' ]; then
         echo $AWG_ENDPOINT_PORT_INT
     fi
+
+    if [ "$AWG_VERSION" = "3.1" ]; then
+        read -r -p "Enter PersistentKeepalive value or range (from [Peer]) [optional, leave blank to use 25]:"$'\n' AWG_PERSISTENT_KEEPALIVE
+    else
+        read -r -p "Enter PersistentKeepalive value (from [Peer]) [optional, leave blank to use 25]:"$'\n' AWG_PERSISTENT_KEEPALIVE
+    fi
+    AWG_PERSISTENT_KEEPALIVE=${AWG_PERSISTENT_KEEPALIVE:-25}
 
     read -r -p "Enter Jc value (from [Interface]):"$'\n' AWG_JC
     read -r -p "Enter Jmin value (from [Interface]):"$'\n' AWG_JMIN
@@ -288,8 +300,8 @@ configure_amneziawg_interface() {
     read -r -p "Enter H3 value (from [Interface]):"$'\n' AWG_H3
     read -r -p "Enter H4 value (from [Interface]):"$'\n' AWG_H4
 
-    # AWG 2.0 новые параметры
-    if [ "$AWG_VERSION" = "2.0" ]; then
+    # AWG 2.0 и более новые параметры
+    if [ "$AWG_VERSION" != "1.0" ]; then
         read -r -p "Enter S3 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_S3
         read -r -p "Enter S4 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_S4
         read -r -p "Enter I1 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_I1
@@ -299,47 +311,99 @@ configure_amneziawg_interface() {
         read -r -p "Enter I5 value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_I5
     fi
 
-    uci set network.${INTERFACE_NAME}=interface
-    uci set network.${INTERFACE_NAME}.proto=$PROTO
-    uci set network.${INTERFACE_NAME}.private_key=$AWG_PRIVATE_KEY_INT
-    uci set network.${INTERFACE_NAME}.listen_port='51821'
-    uci set network.${INTERFACE_NAME}.addresses=$AWG_IP
+    # AWG 3.1 параметры
+    if [ "$AWG_VERSION" = "3.1" ]; then
+        read -r -p "Enter HeaderProtectionKey value (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_HEADER_PROTECTION_KEY
+        read -r -p "Enter ContentPaddingAddition value or range (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_CONTENT_PADDING_ADDITION
+        read -r -p "Enter RekeyAfterTime value or range (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_REKEY_AFTER_TIME
+        read -r -p "Enter RekeyTimeout value or range (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_REKEY_TIMEOUT
+        read -r -p "Enter RejectAfterTime value or range (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_REJECT_AFTER_TIME
+        read -r -p "Enter KeepaliveTimeout value or range (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_KEEPALIVE_TIMEOUT
+        read -r -p "Enter MaxHandshakeAttempts value or range (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_MAX_HANDSHAKE_ATTEMPTS
 
-    uci set network.${INTERFACE_NAME}.awg_jc=$AWG_JC
-    uci set network.${INTERFACE_NAME}.awg_jmin=$AWG_JMIN
-    uci set network.${INTERFACE_NAME}.awg_jmax=$AWG_JMAX
-    uci set network.${INTERFACE_NAME}.awg_s1=$AWG_S1
-    uci set network.${INTERFACE_NAME}.awg_s2=$AWG_S2
-    uci set network.${INTERFACE_NAME}.awg_h1=$AWG_H1
-    uci set network.${INTERFACE_NAME}.awg_h2=$AWG_H2
-    uci set network.${INTERFACE_NAME}.awg_h3=$AWG_H3
-    uci set network.${INTERFACE_NAME}.awg_h4=$AWG_H4
+        while true; do
+            read -r -p "Enter RandomTrailers value (from [Interface]) [on/off, optional, leave blank to skip]:"$'\n' AWG_RANDOM_TRAILERS
+            case "$AWG_RANDOM_TRAILERS" in
+                ""|0|1) break ;;
+                on|On|ON|true|True|TRUE|yes|Yes|YES|y|Y) AWG_RANDOM_TRAILERS=1; break ;;
+                off|Off|OFF|false|False|FALSE|no|No|NO|n|N) AWG_RANDOM_TRAILERS=0; break ;;
+                *) echo "Invalid value. Enter on, off, or leave blank" ;;
+            esac
+        done
 
-    # Устанавливаем новые параметры для AWG 2.0 (только если они заданы)
-    if [ "$AWG_VERSION" = "2.0" ]; then
-        [ -n "$AWG_S3" ] && uci set network.${INTERFACE_NAME}.awg_s3=$AWG_S3
-        [ -n "$AWG_S4" ] && uci set network.${INTERFACE_NAME}.awg_s4=$AWG_S4
-        [ -n "$AWG_I1" ] && uci set network.${INTERFACE_NAME}.awg_i1=$AWG_I1
-        [ -n "$AWG_I2" ] && uci set network.${INTERFACE_NAME}.awg_i2=$AWG_I2
-        [ -n "$AWG_I3" ] && uci set network.${INTERFACE_NAME}.awg_i3=$AWG_I3
-        [ -n "$AWG_I4" ] && uci set network.${INTERFACE_NAME}.awg_i4=$AWG_I4
-        [ -n "$AWG_I5" ] && uci set network.${INTERFACE_NAME}.awg_i5=$AWG_I5
+        while true; do
+            read -r -p "Enter DisableCookies value (from [Interface]) [on/off, optional, leave blank to skip]:"$'\n' AWG_DISABLE_COOKIES
+            case "$AWG_DISABLE_COOKIES" in
+                ""|0|1) break ;;
+                on|On|ON|true|True|TRUE|yes|Yes|YES|y|Y) AWG_DISABLE_COOKIES=1; break ;;
+                off|Off|OFF|false|False|FALSE|no|No|NO|n|N) AWG_DISABLE_COOKIES=0; break ;;
+                *) echo "Invalid value. Enter on, off, or leave blank" ;;
+            esac
+        done
     fi
 
-    if ! uci show network | grep -q ${CONFIG_NAME}; then
-        uci add network ${CONFIG_NAME}
+    uci set "network.${INTERFACE_NAME}=interface"
+    uci set "network.${INTERFACE_NAME}.proto=${PROTO}"
+    uci set "network.${INTERFACE_NAME}.private_key=${AWG_PRIVATE_KEY_INT}"
+    uci set "network.${INTERFACE_NAME}.listen_port=51821"
+    uci set "network.${INTERFACE_NAME}.addresses=${AWG_IP}"
+
+    uci -q delete "network.${INTERFACE_NAME}.dns"
+    if [ -n "$AWG_DNS" ]; then
+        AWG_DNS_LIST=$(printf '%s\n' "$AWG_DNS" | tr ',' ' ')
+        for AWG_DNS_SERVER in $AWG_DNS_LIST; do
+            uci add_list "network.${INTERFACE_NAME}.dns=${AWG_DNS_SERVER}"
+        done
     fi
 
-    uci set network.@${CONFIG_NAME}[0]=$CONFIG_NAME
-    uci set network.@${CONFIG_NAME}[0].name="${INTERFACE_NAME}_client"
-    uci set network.@${CONFIG_NAME}[0].public_key=$AWG_PUBLIC_KEY_INT
-    uci set network.@${CONFIG_NAME}[0].preshared_key=$AWG_PRESHARED_KEY_INT
-    uci set network.@${CONFIG_NAME}[0].route_allowed_ips='1'
-    uci set network.@${CONFIG_NAME}[0].persistent_keepalive='25'
-    uci set network.@${CONFIG_NAME}[0].endpoint_host=$AWG_ENDPOINT_INT
-    uci set network.@${CONFIG_NAME}[0].allowed_ips='0.0.0.0/0'
-    uci add_list network.@${CONFIG_NAME}[0].allowed_ips='::/0'
-    uci set network.@${CONFIG_NAME}[0].endpoint_port=$AWG_ENDPOINT_PORT_INT
+    uci set "network.${INTERFACE_NAME}.awg_jc=${AWG_JC}"
+    uci set "network.${INTERFACE_NAME}.awg_jmin=${AWG_JMIN}"
+    uci set "network.${INTERFACE_NAME}.awg_jmax=${AWG_JMAX}"
+    uci set "network.${INTERFACE_NAME}.awg_s1=${AWG_S1}"
+    uci set "network.${INTERFACE_NAME}.awg_s2=${AWG_S2}"
+    uci set "network.${INTERFACE_NAME}.awg_h1=${AWG_H1}"
+    uci set "network.${INTERFACE_NAME}.awg_h2=${AWG_H2}"
+    uci set "network.${INTERFACE_NAME}.awg_h3=${AWG_H3}"
+    uci set "network.${INTERFACE_NAME}.awg_h4=${AWG_H4}"
+
+    # Устанавливаем необязательные параметры AWG 2.0 и новее
+    if [ "$AWG_VERSION" != "1.0" ]; then
+        [ -n "$AWG_S3" ] && uci set "network.${INTERFACE_NAME}.awg_s3=${AWG_S3}"
+        [ -n "$AWG_S4" ] && uci set "network.${INTERFACE_NAME}.awg_s4=${AWG_S4}"
+        [ -n "$AWG_I1" ] && uci set "network.${INTERFACE_NAME}.awg_i1=${AWG_I1}"
+        [ -n "$AWG_I2" ] && uci set "network.${INTERFACE_NAME}.awg_i2=${AWG_I2}"
+        [ -n "$AWG_I3" ] && uci set "network.${INTERFACE_NAME}.awg_i3=${AWG_I3}"
+        [ -n "$AWG_I4" ] && uci set "network.${INTERFACE_NAME}.awg_i4=${AWG_I4}"
+        [ -n "$AWG_I5" ] && uci set "network.${INTERFACE_NAME}.awg_i5=${AWG_I5}"
+    fi
+
+    # Устанавливаем необязательные параметры AWG 3.1
+    if [ "$AWG_VERSION" = "3.1" ]; then
+        [ -n "$AWG_HEADER_PROTECTION_KEY" ] && uci set "network.${INTERFACE_NAME}.awg_header_protection_key=${AWG_HEADER_PROTECTION_KEY}"
+        [ -n "$AWG_CONTENT_PADDING_ADDITION" ] && uci set "network.${INTERFACE_NAME}.awg_content_padding_addition=${AWG_CONTENT_PADDING_ADDITION}"
+        [ -n "$AWG_REKEY_AFTER_TIME" ] && uci set "network.${INTERFACE_NAME}.awg_rekey_after_time=${AWG_REKEY_AFTER_TIME}"
+        [ -n "$AWG_REKEY_TIMEOUT" ] && uci set "network.${INTERFACE_NAME}.awg_rekey_timeout=${AWG_REKEY_TIMEOUT}"
+        [ -n "$AWG_REJECT_AFTER_TIME" ] && uci set "network.${INTERFACE_NAME}.awg_reject_after_time=${AWG_REJECT_AFTER_TIME}"
+        [ -n "$AWG_KEEPALIVE_TIMEOUT" ] && uci set "network.${INTERFACE_NAME}.awg_keepalive_timeout=${AWG_KEEPALIVE_TIMEOUT}"
+        [ -n "$AWG_MAX_HANDSHAKE_ATTEMPTS" ] && uci set "network.${INTERFACE_NAME}.awg_max_handshake_attempts=${AWG_MAX_HANDSHAKE_ATTEMPTS}"
+        [ -n "$AWG_RANDOM_TRAILERS" ] && uci set "network.${INTERFACE_NAME}.awg_random_trailers=${AWG_RANDOM_TRAILERS}"
+        [ -n "$AWG_DISABLE_COOKIES" ] && uci set "network.${INTERFACE_NAME}.awg_disable_cookies=${AWG_DISABLE_COOKIES}"
+    fi
+
+    if ! uci show network | grep -Fq "$CONFIG_NAME"; then
+        uci add network "$CONFIG_NAME"
+    fi
+
+    uci set "network.@${CONFIG_NAME}[0]=${CONFIG_NAME}"
+    uci set "network.@${CONFIG_NAME}[0].name=${INTERFACE_NAME}_client"
+    uci set "network.@${CONFIG_NAME}[0].public_key=${AWG_PUBLIC_KEY_INT}"
+    uci set "network.@${CONFIG_NAME}[0].preshared_key=${AWG_PRESHARED_KEY_INT}"
+    uci set "network.@${CONFIG_NAME}[0].route_allowed_ips=1"
+    uci set "network.@${CONFIG_NAME}[0].persistent_keepalive=${AWG_PERSISTENT_KEEPALIVE}"
+    uci set "network.@${CONFIG_NAME}[0].endpoint_host=${AWG_ENDPOINT_INT}"
+    uci set "network.@${CONFIG_NAME}[0].allowed_ips=0.0.0.0/0"
+    uci add_list "network.@${CONFIG_NAME}[0].allowed_ips=::/0"
+    uci set "network.@${CONFIG_NAME}[0].endpoint_port=${AWG_ENDPOINT_PORT_INT}"
     uci commit network
 
     if ! uci show firewall | grep -q "@zone.*name='${ZONE_NAME}'"; then

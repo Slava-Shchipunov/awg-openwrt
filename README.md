@@ -48,12 +48,13 @@ sh <(wget -O - https://raw.githubusercontent.com/Slava-Shchipunov/awg-openwrt/re
 13. AWG-2.0 [24.10.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.5)
 14. AWG-2.0 [24.10.6](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.6)
 14. AWG-2.0 [24.10.7](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.7)
+14. AWG-3.1 [24.10.8](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.8)
 16. AWG-2.0 [25.12.0](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.0)
 17. AWG-2.0 [25.12.1](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.1)
 18. AWG-2.0 [25.12.2](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.2)
 19. AWG-2.0 [25.12.3](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.3)
 20. AWG-2.0 [25.12.4](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.4)
-21. AWG-2.0 [25.12.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.5)
+21. AWG-3.1 [25.12.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.5)
 
 Также запускал сборку для версии [22.03.7](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v22.03.7), но там для двух платформ сборка завершилась ошибкой. Так как это достаточно старая версия OpenWRT, я не стал разбираться, в чем проблема.
 
@@ -87,6 +88,36 @@ AWG 2.0 можно собрать под определённую платфор
 5. В открывшемся списке указать версию Openwrt (например, 24.10.3), список target, разделенных запятыми (например, stm32,ramips), список subtarget, разделенных запятыми (например, stm32mp1,mt7621). Сборка будет произведена только для существующих пар target/subtarget
 6. Нажать зеленую кнопку Run workflow
    Сборка под одно устройство займет около 10-15 минут. При этом должен создаться релиз с указанной версией OpenWRT
+
+## AWG 3.1
+В дополнение к параметрам 2.0 доступны:
+
+| Параметр                    | Опция UCI                         | Описание                                     |
+| --------------------------- | --------------------------------- | -------------------------------------------- |
+| `HeaderProtectionKey`       | `awg_header_protection_key`       | Ключ для шифрования и обфускации заголовков пакетов |
+| `ContentPaddingAddition`    | `awg_content_padding_addition`    | Случайный паддинг полезной нагрузки Transport-пакетов |
+| `RekeyAfterTime`            | `awg_rekey_after_time`            | Время до запуска повторного согласования сессии, сек |
+| `RekeyTimeout`              | `awg_rekey_timeout`               | Таймаут рукопожатия, после которого выполняется новая попытка, сек |
+| `RejectAfterTime`           | `awg_reject_after_time`           | Время, после которого данные текущей сессии перестают приниматься и запускается новое рукопожатие, сек |
+| `KeepaliveTimeout` | `awg_keepalive_timeout` | Время с момента последней отправки данных до отправки keepalive, сек |
+| `MaxHandshakeAttempts`      | `awg_max_handshake_attempts`      | Ограничение числа повторных попыток рукопожатия после таймаутов |
+
+Параметры `H1`—`H4`, `PersistentKeepalive`, `ContentPaddingAddition`, `RekeyAfterTime`, `RekeyTimeout`, `RejectAfterTime`, `KeepaliveTimeout` и `MaxHandshakeAttempts` принимают как одно значение, так и диапазон вида `10-20` — конкретное значение выбирается случайно в заданных пределах.
+
+`HeaderProtectionKey` — общий для обеих сторон 32-байтовый ключ, представленный в конфигурации в формате Base64. Это не диапазон. При включённой защите заголовков каждый из параметров `S1`—`S4` должен быть не меньше 12. Использование нестандартных значений `H1`—`H4` вместе с защитой заголовков технически разрешено, но не рекомендуется.
+
+В 3.1 добавлены два переключателя:
+
+| Параметр         | Опция UCI             | Описание                                                       |
+| ---------------- | --------------------- | -------------------------------------------------------------- |
+| `RandomTrailers` | `awg_random_trailers` | Добавляет к пакетам дополнение случайной длины                 |
+| `DisableCookies` | `awg_disable_cookies` | Запрещает отправку сообщений `Handshake Cookie Reply`          |
+
+`RandomTrailers` меняет размеры пакетов, поэтому должен быть включён на обеих сторонах туннеля: сторона с выключенным параметром отбросит рукопожатие с «лишними» байтами. Для Transport-пакетов `ContentPaddingAddition` имеет приоритет: если он задан, `RandomTrailers` для них не применяется.
+
+Для handshake-сообщений `RandomTrailers` добавляет случайные байты, а для Transport-пакетов — нулевые байты перед шифрованием.
+
+`DisableCookies` влияет только на отправку `Handshake Cookie Reply`. Обработка полученных cookie продолжает работать. Включение параметра отключает исходящую часть встроенной защиты WireGuard от DoS-атак через поток рукопожатий.
 
 ## 🙏 Благодарности
 
@@ -136,12 +167,13 @@ At the moment I have collected packages for all devices for OpenWRT versions:
 13. AWG-2.0 [24.10.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.5)
 14. AWG-2.0 [24.10.6](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.6)
 14. AWG-2.0 [24.10.7](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.7)
+14. AWG-3.1 [24.10.8](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v24.10.8)
 15. AWG-2.0 [25.12.0](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.0)
 16. AWG-2.0 [25.12.1](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.1)
 17. AWG-2.0 [25.12.2](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.2)
 18. AWG-2.0 [25.12.3](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.3)
 20. AWG-2.0 [25.12.4](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.4)
-21. AWG-2.0 [25.12.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.5)
+21. AWG-3.1 [25.12.5](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v25.12.5)
 
 I also ran the build for version [22.03.7](https://github.com/Slava-Shchipunov/awg-openwrt/releases/tag/v22.03.7), but the build ended with an error for two platforms. Since this is a fairly old version of OpenWRT, I did not bother to figure out what the problem was.
 
@@ -174,3 +206,49 @@ AWG 2.0 can be built for a specific platform as follows:
 5. In the opened list, specify the OpenWRT version (for example, 24.10.3), a list of targets separated by commas (for example, stm32,ramips), a list of subtargets separated by commas (for example, stm32mp1,mt7621). The build will be performed only for existing target/subtarget pairs
 6. Click the green Run workflow button
    Building for one device will take about 10-15 minutes. A release with the specified OpenWRT version should be created
+
+## AWG 3.1
+
+Packages are built from AmneziaWG 3.1: kernel module `v3.1.20260906`, tools `v3.1.20260812`.
+
+In addition to the 2.0 parameters the following are available:
+
+| Parameter                   | UCI option                        | Description                              |
+| --------------------------- | --------------------------------- | ---------------------------------------- |
+| `HeaderProtectionKey`       | `awg_header_protection_key`       | Key used to encrypt and obfuscate packet headers |
+| `ContentPaddingAddition`    | `awg_content_padding_addition`    | Additional randomized padding for Transport packets |
+| `RekeyAfterTime`            | `awg_rekey_after_time`            | Seconds before session renegotiation starts |
+| `RekeyTimeout`              | `awg_rekey_timeout`               | Handshake timeout before another attempt is made |
+| `RejectAfterTime`           | `awg_reject_after_time`           | Seconds before current-session data is rejected and a new handshake is started |
+| `KeepaliveTimeout`          | `awg_keepalive_timeout`           | Delay before sending a keepalive after data is received if nothing was sent |
+| `MaxHandshakeAttempts`      | `awg_max_handshake_attempts`      | Limit on handshake retries after timeouts |
+
+`H1`—`H4`, `PersistentKeepalive`, `ContentPaddingAddition`, `RekeyAfterTime`,
+`RekeyTimeout`, `RejectAfterTime`, `KeepaliveTimeout` and
+`MaxHandshakeAttempts` accept either a single value or a range such as `10-20`,
+in which case the effective value is picked randomly within those bounds.
+
+`HeaderProtectionKey` is a shared 32-byte key represented as Base64 in the
+configuration. It is not a range and must be identical on both ends. When
+header protection is enabled, each of `S1`—`S4` must be at least 12. Using
+non-default `H1`—`H4` values together with header protection is technically
+allowed, but not recommended.
+
+Two switches were added in 3.1:
+
+| Parameter        | UCI option            | Description                                             |
+| ---------------- | --------------------- | ------------------------------------------------------- |
+| `RandomTrailers` | `awg_random_trailers` | Appends padding of a random length to messages          |
+| `DisableCookies` | `awg_disable_cookies` | Disables sending `Handshake Cookie Reply` messages      |
+
+`RandomTrailers` changes packet sizes, so it has to be enabled on both ends of
+the tunnel: a peer with the option off drops handshakes carrying the extra
+bytes. For Transport packets, `ContentPaddingAddition` takes precedence: when
+it is set, `RandomTrailers` does not apply to them.
+
+For handshake messages, `RandomTrailers` appends random bytes. For Transport
+packets, it appends zero bytes before encryption.
+
+`DisableCookies` only affects sending `Handshake Cookie Reply` messages;
+received cookies are still processed. Enabling it disables the outgoing part
+of WireGuard's built-in protection against handshake-flood DoS attacks.

@@ -9,26 +9,26 @@
 'require validation';
 'require uqr';
 
-var generateKey = rpc.declare({
+const generateKey = rpc.declare({
 	object: 'luci.amneziawg',
 	method: 'generateKeyPair',
 	expect: { keys: {} }
 });
 
-var getPublicAndPrivateKeyFromPrivate = rpc.declare({
+const getPublicAndPrivateKeyFromPrivate = rpc.declare({
 	object: 'luci.amneziawg',
 	method: 'getPublicAndPrivateKeyFromPrivate',
 	params: ['privkey'],
 	expect: { keys: {} }
 });
 
-var generatePsk = rpc.declare({
+const generatePsk = rpc.declare({
 	object: 'luci.amneziawg',
 	method: 'generatePsk',
 	expect: { psk: '' }
 });
 
-var qrIcon = '<svg viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M0 0h29v29H0z"/><path d="M4 4h1v1H4zM5 4h1v1H5zM6 4h1v1H6zM7 4h1v1H7zM8 4h1v1H8zM9 4h1v1H9zM10 4h1v1h-1zM12 4h1v1h-1zM13 4h1v1h-1zM14 4h1v1h-1zM15 4h1v1h-1zM16 4h1v1h-1zM18 4h1v1h-1zM19 4h1v1h-1zM20 4h1v1h-1zM21 4h1v1h-1zM22 4h1v1h-1zM23 4h1v1h-1zM24 4h1v1h-1zM4 5h1v1H4zM10 5h1v1h-1zM12 5h1v1h-1zM14 5h1v1h-1zM16 5h1v1h-1zM18 5h1v1h-1zM24 5h1v1h-1zM4 6h1v1H4zM6 6h1v1H6zM7 6h1v1H7zM8 6h1v1H8zM10 6h1v1h-1zM12 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM21 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM4 7h1v1H4zM6 7h1v1H6zM7 7h1v1H7zM8 7h1v1H8zM10 7h1v1h-1zM12 7h1v1h-1zM13 7h1v1h-1zM14 7h1v1h-1zM15 7h1v1h-1zM18 7h1v1h-1zM20 7h1v1h-1zM21 7h1v1h-1zM22 7h1v1h-1zM24 7h1v1h-1zM4 8h1v1H4zM6 8h1v1H6zM7 8h1v1H7zM8 8h1v1H8zM10 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM21 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM4 9h1v1H4zM10 9h1v1h-1zM12 9h1v1h-1zM13 9h1v1h-1zM15 9h1v1h-1zM18 9h1v1h-1zM24 9h1v1h-1zM4 10h1v1H4zM5 10h1v1H5zM6 10h1v1H6zM7 10h1v1H7zM8 10h1v1H8zM9 10h1v1H9zM10 10h1v1h-1zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM19 10h1v1h-1zM20 10h1v1h-1zM21 10h1v1h-1zM22 10h1v1h-1zM23 10h1v1h-1zM24 10h1v1h-1zM13 11h1v1h-1zM14 11h1v1h-1zM15 11h1v1h-1zM16 11h1v1h-1zM4 12h1v1H4zM5 12h1v1H5zM8 12h1v1H8zM9 12h1v1H9zM10 12h1v1h-1zM13 12h1v1h-1zM15 12h1v1h-1zM19 12h1v1h-1zM21 12h1v1h-1zM22 12h1v1h-1zM23 12h1v1h-1zM24 12h1v1h-1zM5 13h1v1H5zM6 13h1v1H6zM8 13h1v1H8zM11 13h1v1h-1zM13 13h1v1h-1zM14 13h1v1h-1zM15 13h1v1h-1zM16 13h1v1h-1zM19 13h1v1h-1zM22 13h1v1h-1zM4 14h1v1H4zM5 14h1v1H5zM9 14h1v1H9zM10 14h1v1h-1zM11 14h1v1h-1zM15 14h1v1h-1zM18 14h1v1h-1zM19 14h1v1h-1zM20 14h1v1h-1zM21 14h1v1h-1zM22 14h1v1h-1zM23 14h1v1h-1zM7 15h1v1H7zM8 15h1v1H8zM9 15h1v1H9zM11 15h1v1h-1zM12 15h1v1h-1zM13 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM20 15h1v1h-1zM21 15h1v1h-1zM23 15h1v1h-1zM4 16h1v1H4zM6 16h1v1H6zM10 16h1v1h-1zM11 16h1v1h-1zM13 16h1v1h-1zM14 16h1v1h-1zM16 16h1v1h-1zM17 16h1v1h-1zM18 16h1v1h-1zM22 16h1v1h-1zM23 16h1v1h-1zM24 16h1v1h-1zM12 17h1v1h-1zM16 17h1v1h-1zM17 17h1v1h-1zM18 17h1v1h-1zM4 18h1v1H4zM5 18h1v1H5zM6 18h1v1H6zM7 18h1v1H7zM8 18h1v1H8zM9 18h1v1H9zM10 18h1v1h-1zM14 18h1v1h-1zM16 18h1v1h-1zM17 18h1v1h-1zM21 18h1v1h-1zM22 18h1v1h-1zM23 18h1v1h-1zM4 19h1v1H4zM10 19h1v1h-1zM12 19h1v1h-1zM13 19h1v1h-1zM15 19h1v1h-1zM16 19h1v1h-1zM19 19h1v1h-1zM21 19h1v1h-1zM23 19h1v1h-1zM24 19h1v1h-1zM4 20h1v1H4zM6 20h1v1H6zM7 20h1v1H7zM8 20h1v1H8zM10 20h1v1h-1zM12 20h1v1h-1zM13 20h1v1h-1zM15 20h1v1h-1zM18 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1zM22 20h1v1h-1zM23 20h1v1h-1zM24 20h1v1h-1zM4 21h1v1H4zM6 21h1v1H6zM7 21h1v1H7zM8 21h1v1H8zM10 21h1v1h-1zM13 21h1v1h-1zM15 21h1v1h-1zM16 21h1v1h-1zM19 21h1v1h-1zM21 21h1v1h-1zM23 21h1v1h-1zM24 21h1v1h-1zM4 22h1v1H4zM6 22h1v1H6zM7 22h1v1H7zM8 22h1v1H8zM10 22h1v1h-1zM13 22h1v1h-1zM15 22h1v1h-1zM18 22h1v1h-1zM19 22h1v1h-1zM20 22h1v1h-1zM21 22h1v1h-1zM22 22h1v1h-1zM4 23h1v1H4zM10 23h1v1h-1zM12 23h1v1h-1zM13 23h1v1h-1zM14 23h1v1h-1zM17 23h1v1h-1zM18 23h1v1h-1zM20 23h1v1h-1zM22 23h1v1h-1zM4 24h1v1H4zM5 24h1v1H5zM6 24h1v1H6zM7 24h1v1H7zM8 24h1v1H8zM9 24h1v1H9zM10 24h1v1h-1zM12 24h1v1h-1zM13 24h1v1h-1zM14 24h1v1h-1zM16 24h1v1h-1zM17 24h1v1h-1zM18 24h1v1h-1zM22 24h1v1h-1zM24 24h1v1h-1z"/></svg>';
+const qrIcon = '<svg viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M0 0h29v29H0z"/><path d="M4 4h1v1H4zM5 4h1v1H5zM6 4h1v1H6zM7 4h1v1H7zM8 4h1v1H8zM9 4h1v1H9zM10 4h1v1h-1zM12 4h1v1h-1zM13 4h1v1h-1zM14 4h1v1h-1zM15 4h1v1h-1zM16 4h1v1h-1zM18 4h1v1h-1zM19 4h1v1h-1zM20 4h1v1h-1zM21 4h1v1h-1zM22 4h1v1h-1zM23 4h1v1h-1zM24 4h1v1h-1zM4 5h1v1H4zM10 5h1v1h-1zM12 5h1v1h-1zM14 5h1v1h-1zM16 5h1v1h-1zM18 5h1v1h-1zM24 5h1v1h-1zM4 6h1v1H4zM6 6h1v1H6zM7 6h1v1H7zM8 6h1v1H8zM10 6h1v1h-1zM12 6h1v1h-1zM18 6h1v1h-1zM20 6h1v1h-1zM21 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM4 7h1v1H4zM6 7h1v1H6zM7 7h1v1H7zM8 7h1v1H8zM10 7h1v1h-1zM12 7h1v1h-1zM13 7h1v1h-1zM14 7h1v1h-1zM15 7h1v1h-1zM18 7h1v1h-1zM20 7h1v1h-1zM21 7h1v1h-1zM22 7h1v1h-1zM24 7h1v1h-1zM4 8h1v1H4zM6 8h1v1H6zM7 8h1v1H7zM8 8h1v1H8zM10 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM21 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM4 9h1v1H4zM10 9h1v1h-1zM12 9h1v1h-1zM13 9h1v1h-1zM15 9h1v1h-1zM18 9h1v1h-1zM24 9h1v1h-1zM4 10h1v1H4zM5 10h1v1H5zM6 10h1v1H6zM7 10h1v1H7zM8 10h1v1H8zM9 10h1v1H9zM10 10h1v1h-1zM12 10h1v1h-1zM14 10h1v1h-1zM16 10h1v1h-1zM18 10h1v1h-1zM19 10h1v1h-1zM20 10h1v1h-1zM21 10h1v1h-1zM22 10h1v1h-1zM23 10h1v1h-1zM24 10h1v1h-1zM13 11h1v1h-1zM14 11h1v1h-1zM15 11h1v1h-1zM16 11h1v1h-1zM4 12h1v1H4zM5 12h1v1H5zM8 12h1v1H8zM9 12h1v1H9zM10 12h1v1h-1zM13 12h1v1h-1zM15 12h1v1h-1zM19 12h1v1h-1zM21 12h1v1h-1zM22 12h1v1h-1zM23 12h1v1h-1zM24 12h1v1h-1zM5 13h1v1H5zM6 13h1v1H6zM8 13h1v1H8zM11 13h1v1h-1zM13 13h1v1h-1zM14 13h1v1h-1zM15 13h1v1h-1zM16 13h1v1h-1zM19 13h1v1h-1zM22 13h1v1h-1zM4 14h1v1H4zM5 14h1v1H5zM9 14h1v1H9zM10 14h1v1h-1zM11 14h1v1h-1zM15 14h1v1h-1zM18 14h1v1h-1zM19 14h1v1h-1zM20 14h1v1h-1zM21 14h1v1h-1zM22 14h1v1h-1zM23 14h1v1h-1zM7 15h1v1H7zM8 15h1v1H8zM9 15h1v1H9zM11 15h1v1h-1zM12 15h1v1h-1zM13 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM20 15h1v1h-1zM21 15h1v1h-1zM23 15h1v1h-1zM4 16h1v1H4zM6 16h1v1H6zM10 16h1v1h-1zM11 16h1v1h-1zM13 16h1v1h-1zM14 16h1v1h-1zM16 16h1v1h-1zM17 16h1v1h-1zM18 16h1v1h-1zM22 16h1v1h-1zM23 16h1v1h-1zM24 16h1v1h-1zM12 17h1v1h-1zM16 17h1v1h-1zM17 17h1v1h-1zM18 17h1v1h-1zM4 18h1v1H4zM5 18h1v1H5zM6 18h1v1H6zM7 18h1v1H7zM8 18h1v1H8zM9 18h1v1H9zM10 18h1v1h-1zM14 18h1v1h-1zM16 18h1v1h-1zM17 18h1v1h-1zM21 18h1v1h-1zM22 18h1v1h-1zM23 18h1v1h-1zM4 19h1v1H4zM10 19h1v1h-1zM12 19h1v1h-1zM13 19h1v1h-1zM15 19h1v1h-1zM16 19h1v1h-1zM19 19h1v1h-1zM21 19h1v1h-1zM23 19h1v1h-1zM24 19h1v1h-1zM4 20h1v1H4zM6 20h1v1H6zM7 20h1v1H7zM8 20h1v1H8zM10 20h1v1h-1zM12 20h1v1h-1zM13 20h1v1h-1zM15 20h1v1h-1zM18 20h1v1h-1zM19 20h1v1h-1zM20 20h1v1h-1zM22 20h1v1h-1zM23 20h1v1h-1zM24 20h1v1h-1zM4 21h1v1H4zM6 21h1v1H6zM7 21h1v1H7zM8 21h1v1H8zM10 21h1v1h-1zM13 21h1v1h-1zM15 21h1v1h-1zM16 21h1v1h-1zM19 21h1v1h-1zM21 21h1v1h-1zM23 21h1v1h-1zM24 21h1v1h-1zM4 22h1v1H4zM6 22h1v1H6zM7 22h1v1H7zM8 22h1v1H8zM10 22h1v1h-1zM13 22h1v1h-1zM15 22h1v1h-1zM18 22h1v1h-1zM19 22h1v1h-1zM20 22h1v1h-1zM21 22h1v1h-1zM22 22h1v1h-1zM4 23h1v1H4zM10 23h1v1h-1zM12 23h1v1h-1zM13 23h1v1h-1zM14 23h1v1h-1zM17 23h1v1h-1zM18 23h1v1h-1zM20 23h1v1h-1zM22 23h1v1h-1zM4 24h1v1H4zM5 24h1v1H5zM6 24h1v1H6zM7 24h1v1H7zM8 24h1v1H8zM9 24h1v1H9zM10 24h1v1h-1zM12 24h1v1h-1zM13 24h1v1h-1zM14 24h1v1h-1zM16 24h1v1h-1zM17 24h1v1h-1zM18 24h1v1h-1zM22 24h1v1h-1zM24 24h1v1h-1z"/></svg>';
 
 function validateBase64(section_id, value) {
 	if (value.length == 0)
@@ -43,7 +43,99 @@ function validateBase64(section_id, value) {
 	return true;
 }
 
-var stubValidator = {
+function rangeValidator(max) {
+	return function(section_id, value) {
+		if (value.length == 0)
+			return true;
+
+		const m = value.match(/^(\d+)(?:-(\d+))?$/);
+
+		if (!m || +m[1] > max || (m[2] != null && (+m[2] > max || +m[2] < +m[1])))
+			return _('Expecting a value or a range (e.g. 10-20) between 0 and %d').format(max);
+
+		return true;
+	};
+}
+
+const validateU16Range = rangeValidator(65535);
+const validateU32Range = rangeValidator(4294967295);
+
+function parseRange(value) {
+	const m = value.match(/^(\d+)(?:-(\d+))?$/);
+
+	return m ? [ +m[1], +(m[2] != null ? m[2] : m[1]) ] : null;
+}
+
+function validateHeaderRanges(values) {
+	const ranges = values.map(function(value, index) {
+		return parseRange(value || String(index + 1));
+	});
+
+	for (let i = 0; i < ranges.length; i++) {
+		if (!ranges[i])
+			continue;
+
+		for (let j = i + 1; j < ranges.length; j++) {
+			if (ranges[j] && ranges[i][0] <= ranges[j][1] && ranges[j][0] <= ranges[i][1])
+				return _('H1-H4 ranges must not overlap');
+		}
+	}
+
+	return true;
+}
+
+function headerRangeValidator(index) {
+	return function(section_id, value) {
+		const result = validateU32Range(section_id, value);
+
+		if (result !== true)
+			return result;
+
+		const values = [ 'awg_h1', 'awg_h2', 'awg_h3', 'awg_h4' ].map(function(option) {
+			return this.section.formvalue(section_id, option) || '';
+		}, this);
+
+		values[index] = value;
+		return validateHeaderRanges(values);
+	};
+}
+
+function validateHeaderProtectionPaddings(values) {
+	for (let i = 0; i < values.length; i++) {
+		if (!/^[0-9]+$/.test(values[i] || '') || +values[i] < 12 || +values[i] > 65535)
+			return _('Header Protection requires S1-S4 to be between 12 and 65535');
+	}
+
+	return true;
+}
+
+function validateHeaderProtectionKey(section_id, value) {
+	const result = validateBase64(section_id, value);
+
+	if (result !== true || value.length == 0)
+		return result;
+
+	const values = [ 'awg_s1', 'awg_s2', 'awg_s3', 'awg_s4' ].map(function(option) {
+		return this.section.formvalue(section_id, option) || '';
+	}, this);
+
+	return validateHeaderProtectionPaddings(values);
+}
+
+function parseFlag(value) {
+	if (/^on$/i.test(value || ''))
+		return '1';
+
+	if (/^off$/i.test(value || ''))
+		return '0';
+
+	if (/^\d+$/.test(value || ''))
+		return /[1-9]/.test(value) ? '1' : '0';
+
+	return null;
+}
+
+const stubValidator = {
 	factory: validation,
 	apply: function(type, value, args) {
 		if (value != null)
@@ -93,12 +185,12 @@ function buildSVGQRCode(data, code) {
 	}
 }
 
-var cbiKeyPairGenerate = form.DummyValue.extend({
+const cbiKeyPairGenerate = form.DummyValue.extend({
 	cfgvalue: function(section_id, value) {
 		return E('button', {
 			'class': 'btn',
 			'click': ui.createHandlerFn(this, function(section_id, ev) {
-				var prv = this.section.getUIElement(section_id, 'private_key'),
+				const prv = this.section.getUIElement(section_id, 'private_key'),
 				    pub = this.section.getUIElement(section_id, 'public_key'),
 				    map = this.map;
 
@@ -146,7 +238,7 @@ return network.registerProtocol('amneziawg', {
 	},
 
 	renderFormOptions: function(s) {
-		var o, ss, ss2;
+		let o;
 
 		// -- general ---------------------------------------------------------------------
 
@@ -155,14 +247,12 @@ return network.registerProtocol('amneziawg', {
 		o.validate = validateBase64;
 		o.rmempty = false;
 
-		var serverName = this.getIfname();
-
 		o = s.taboption('general', form.Value, 'public_key', _('Public Key'), _('Base64-encoded public key of this interface for sharing.'));
 		o.rmempty = false;
 		o.write = function() {/* write nothing */};
 
 		o.load = function(section_id) {
-			var privKey = s.formvalue(section_id, 'private_key') || uci.get('network', section_id, 'private_key');
+			const privKey = s.formvalue(section_id, 'private_key') || uci.get('network', section_id, 'private_key');
 
 			return getPublicAndPrivateKeyFromPrivate(privKey).then(
 				function(keypair) {
@@ -251,23 +341,23 @@ return network.registerProtocol('amneziawg', {
         o.placeholder = '0';
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Value, 'awg_h1', _('H1'), _('Handshake initiation packet type header.'));
-        o.datatype = 'string';
+        o = s.taboption('amneziawg', form.Value, 'awg_h1', _('H1'), _('Handshake initiation packet type header. A range such as <code>10-20</code> is also accepted. H1-H4 ranges must not overlap.'));
+        o.validate = headerRangeValidator(0);
         o.placeholder = '1';
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Value, 'awg_h2', _('H2'), _('Handshake response packet type header.'));
-        o.datatype = 'string';
+        o = s.taboption('amneziawg', form.Value, 'awg_h2', _('H2'), _('Handshake response packet type header. A range such as <code>10-20</code> is also accepted.'));
+        o.validate = headerRangeValidator(1);
         o.placeholder = '2';
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Value, 'awg_h3', _('H3'), _('Handshake cookie packet type header.'));
-        o.datatype = 'string';
+        o = s.taboption('amneziawg', form.Value, 'awg_h3', _('H3'), _('Handshake cookie packet type header. A range such as <code>10-20</code> is also accepted.'));
+        o.validate = headerRangeValidator(2);
         o.placeholder = '3';
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Value, 'awg_h4', _('H4'), _('Transport packet type header.'));
-        o.datatype = 'string';
+        o = s.taboption('amneziawg', form.Value, 'awg_h4', _('H4'), _('Transport packet type header. A range such as <code>10-20</code> is also accepted.'));
+        o.validate = headerRangeValidator(3);
         o.placeholder = '4';
         o.optional = true;
 		
@@ -291,6 +381,47 @@ return network.registerProtocol('amneziawg', {
         o.datatype = 'string';
         o.optional = true;
 
+        o = s.taboption('amneziawg', form.Value, 'awg_header_protection_key', _('Header Protection Key'), _('Optional. 32-byte key encoded in Base64, used to encrypt and obfuscate packet headers. Must match on both sides and requires S1-S4 to be at least 12.'));
+        o.validate = validateHeaderProtectionKey;
+        o.password = true;
+        o.optional = true;
+
+        o = s.taboption('amneziawg', form.Value, 'awg_content_padding_addition', _('Content Padding Addition'), _('Extra bytes appended to transport packets. A range such as <code>10-20</code> is also accepted.'));
+        o.validate = validateU16Range;
+        o.placeholder = '0';
+        o.optional = true;
+
+        o = s.taboption('amneziawg', form.Value, 'awg_rekey_after_time', _('Rekey After Time'), _('Seconds before a session is renegotiated. A range such as <code>110-130</code> is also accepted.'));
+        o.validate = validateU16Range;
+        o.placeholder = '120';
+        o.optional = true;
+
+        o = s.taboption('amneziawg', form.Value, 'awg_rekey_timeout', _('Rekey Timeout'), _('Seconds between handshake retries. A range such as <code>5-7</code> is also accepted.'));
+        o.validate = validateU16Range;
+        o.placeholder = '5';
+        o.optional = true;
+
+        o = s.taboption('amneziawg', form.Value, 'awg_reject_after_time', _('Reject After Time'), _('Seconds after which incoming data for the current session is rejected and a new handshake is initiated. A range such as <code>170-190</code> is also accepted.'));
+        o.validate = validateU16Range;
+        o.placeholder = '180';
+        o.optional = true;
+
+        o = s.taboption('amneziawg', form.Value, 'awg_keepalive_timeout', _('Keepalive Timeout'), _('Seconds to wait after receiving authenticated data when no authenticated packet is sent before sending a keepalive. A range such as <code>8-12</code> is also accepted.'));
+        o.validate = validateU16Range;
+        o.placeholder = '10';
+        o.optional = true;
+
+        o = s.taboption('amneziawg', form.Value, 'awg_max_handshake_attempts', _('Max Handshake Attempts'), _('Maximum number of handshake retries after timeouts. A range such as <code>15-20</code> is also accepted.'));
+        o.validate = validateU16Range;
+        o.placeholder = '18';
+        o.optional = true;
+
+        o = s.taboption('amneziawg', form.Flag, 'awg_random_trailers', _('Random Trailers'), _('Append random-length trailers to handshake and transport packets: random bytes for handshakes and zero bytes for transport. Must be enabled on both sides. Content Padding Addition takes priority for transport packets.'));
+        o.optional = true;
+
+        o = s.taboption('amneziawg', form.Flag, 'awg_disable_cookies', _('Disable Cookies'), _('Do not send Handshake Cookie Reply messages. Received cookies are still processed.'));
+        o.optional = true;
+
 		// -- peers -----------------------------------------------------------------------
 
 		try {
@@ -301,7 +432,7 @@ return network.registerProtocol('amneziawg', {
 		o = s.taboption('peers', form.SectionValue, '_peers', form.GridSection, 'amneziawg_%s'.format(s.section));
 		o.depends('proto', 'amneziawg');
 
-		ss = o.subsection;
+		const ss = o.subsection;
 		ss.anonymous = true;
 		ss.addremove = true;
 		ss.addbtntitle = _('Add peer');
@@ -315,10 +446,8 @@ return network.registerProtocol('amneziawg', {
 			ev.dataTransfer.dropEffect = 'copy';
 		};
 
-		ss.handleDropConfig = function(mode, ev) {
-			var file = ev.dataTransfer.files[0],
-			    nodes = ev.currentTarget,
-			    input = nodes.querySelector('textarea'),
+		ss.handleConfigFile = function(mode, nodes, file, ev) {
+			const input = nodes.querySelector('textarea'),
 			    reader = new FileReader();
 
 			if (file) {
@@ -329,19 +458,23 @@ return network.registerProtocol('amneziawg', {
 
 				reader.readAsText(file);
 			}
+		};
+
+		ss.handleDropConfig = function(mode, ev) {
+			ss.handleConfigFile(mode, ev.currentTarget, ev.dataTransfer.files[0], ev);
 
 			ev.stopPropagation();
 			ev.preventDefault();
 		};
 
 		ss.parseConfig = function(data) {
-			var lines = String(data).split(/(\r?\n)+/),
-			    section = null,
-			    config = { peers: [] },
+			const lines = String(data).split(/(\r?\n)+/),
+			    config = { peers: [] };
+			let section = null,
 			    s;
 
-			for (var i = 0; i < lines.length; i++) {
-				var line = lines[i].replace(/#.*$/, '').trim();
+			for (let i = 0; i < lines.length; i++) {
+				const line = lines[i].replace(/#.*$/, '').trim();
 
 				if (line.match(/^\[(\w+)\]$/)) {
 					section = RegExp.$1.toLowerCase();
@@ -352,7 +485,7 @@ return network.registerProtocol('amneziawg', {
 						s = config;
 				}
 				else if (section && line.match(/^(\w+)\s*=\s*(.+)$/)) {
-					var key = RegExp.$1,
+					const key = RegExp.$1,
 					    val = RegExp.$2.trim();
 
 					if (val.length)
@@ -363,7 +496,7 @@ return network.registerProtocol('amneziawg', {
 			if (config.interface_address) {
 				config.interface_address = config.interface_address.split(/[, ]+/);
 
-				for (var i = 0; i < config.interface_address.length; i++)
+				for (let i = 0; i < config.interface_address.length; i++)
 					if (!stubValidator.apply('ipaddr', config.interface_address[i]))
 						return _('Address setting is invalid');
 			}
@@ -371,7 +504,7 @@ return network.registerProtocol('amneziawg', {
 			if (config.interface_dns) {
 				config.interface_dns = config.interface_dns.split(/[, ]+/);
 
-				for (var i = 0; i < config.interface_dns.length; i++)
+				for (let i = 0; i < config.interface_dns.length; i++)
 					if (!stubValidator.apply('ipaddr', config.interface_dns[i], ['nomask']))
 						return _('DNS setting is invalid');
 			}
@@ -382,8 +515,49 @@ return network.registerProtocol('amneziawg', {
 			if (!stubValidator.apply('port', config.interface_listenport || '0'))
 				return _('ListenPort setting is invalid');
 
-			for (var i = 0; i < config.peers.length; i++) {
-				var pconf = config.peers[i];
+			if (config.interface_headerprotectionkey && validateBase64(null, config.interface_headerprotectionkey) !== true)
+				return _('HeaderProtectionKey setting is invalid');
+
+			const headerValues = [
+				config.interface_h1 || '1',
+				config.interface_h2 || '2',
+				config.interface_h3 || '3',
+				config.interface_h4 || '4'
+			];
+
+			for (let i = 0; i < headerValues.length; i++)
+				if (validateU32Range(null, headerValues[i]) !== true)
+					return _('H1-H4 setting is invalid');
+
+			if (validateHeaderRanges(headerValues) !== true)
+				return _('H1-H4 ranges must not overlap');
+
+			if (config.interface_headerprotectionkey && validateHeaderProtectionPaddings([
+				config.interface_s1,
+				config.interface_s2,
+				config.interface_s3,
+				config.interface_s4
+			]) !== true)
+				return _('Header Protection requires S1-S4 to be between 12 and 65535');
+
+			const flags = [
+				[ 'interface_randomtrailers', 'RandomTrailers' ],
+				[ 'interface_disablecookies', 'DisableCookies' ]
+			];
+
+			for (let i = 0; i < flags.length; i++) {
+				const key = flags[i][0];
+
+				if (config[key] != null) {
+					config[key] = parseFlag(config[key]);
+
+					if (config[key] == null)
+						return _('%s setting is invalid').format(flags[i][1]);
+				}
+			}
+
+			for (let i = 0; i < config.peers.length; i++) {
+				const pconf = config.peers[i];
 
 				if (pconf.peer_publickey != null && validateBase64(null, pconf.peer_publickey) !== true)
 					return _('PublicKey setting is invalid');
@@ -394,7 +568,7 @@ return network.registerProtocol('amneziawg', {
 				if (pconf.peer_allowedips) {
 					pconf.peer_allowedips = pconf.peer_allowedips.split(/[, ]+/);
 
-					for (var j = 0; j < pconf.peer_allowedips.length; j++)
+					for (let j = 0; j < pconf.peer_allowedips.length; j++)
 						if (!stubValidator.apply('ipaddr', pconf.peer_allowedips[j]))
 							return _('AllowedIPs setting is invalid');
 				}
@@ -403,7 +577,7 @@ return network.registerProtocol('amneziawg', {
 				}
 
 				if (pconf.peer_endpoint) {
-					var host_port = pconf.peer_endpoint.match(/^\[([a-fA-F0-9:]+)\]:(\d+)$/) || pconf.peer_endpoint.match(/^(.+):(\d+)$/);
+					const host_port = pconf.peer_endpoint.match(/^\[([a-fA-F0-9:]+)\]:(\d+)$/) || pconf.peer_endpoint.match(/^(.+):(\d+)$/);
 
 					if (!host_port || !stubValidator.apply('host', host_port[1]) || !stubValidator.apply('port', host_port[2]))
 						return _('Endpoint setting is invalid');
@@ -414,7 +588,7 @@ return network.registerProtocol('amneziawg', {
 				if (pconf.peer_persistentkeepalive == 'off' || pconf.peer_persistentkeepalive == '0')
 					delete pconf.peer_persistentkeepalive;
 
-				if (!stubValidator.apply('port', pconf.peer_persistentkeepalive || '0'))
+				if (validateU16Range(null, pconf.peer_persistentkeepalive || '0') !== true)
 					return _('PersistentKeepAlive setting is invalid');
 			}
 
@@ -422,7 +596,7 @@ return network.registerProtocol('amneziawg', {
 		};
 
 		ss.handleApplyConfig = function(mode, nodes, comment, ev) {
-			var input = nodes.querySelector('textarea').value,
+			const input = nodes.querySelector('textarea').value,
 			    error = nodes.querySelector('.alert-message'),
 			    cancel = nodes.nextElementSibling.querySelector('.btn'),
 			    config = this.parseConfig(input);
@@ -434,7 +608,7 @@ return network.registerProtocol('amneziawg', {
 			}
 
 			if (mode == 'full') {
-				var prv = s.formvalue(s.section, 'private_key');
+				const prv = s.formvalue(s.section, 'private_key');
 
 				if (prv && prv != config.interface_privatekey && !confirm(_('Overwrite the current settings with the imported configuration?')))
 					return;
@@ -460,13 +634,22 @@ return network.registerProtocol('amneziawg', {
 					s.getOption('awg_i3').getUIElement(s.section).setValue(config.interface_i3 || '');
 					s.getOption('awg_i4').getUIElement(s.section).setValue(config.interface_i4 || '');
 					s.getOption('awg_i5').getUIElement(s.section).setValue(config.interface_i5 || '');
+					s.getOption('awg_header_protection_key').getUIElement(s.section).setValue(config.interface_headerprotectionkey || '');
+					s.getOption('awg_content_padding_addition').getUIElement(s.section).setValue(config.interface_contentpaddingaddition || '');
+					s.getOption('awg_rekey_after_time').getUIElement(s.section).setValue(config.interface_rekeyaftertime || '');
+					s.getOption('awg_rekey_timeout').getUIElement(s.section).setValue(config.interface_rekeytimeout || '');
+					s.getOption('awg_reject_after_time').getUIElement(s.section).setValue(config.interface_rejectaftertime || '');
+					s.getOption('awg_keepalive_timeout').getUIElement(s.section).setValue(config.interface_keepalivetimeout || '');
+					s.getOption('awg_max_handshake_attempts').getUIElement(s.section).setValue(config.interface_maxhandshakeattempts || '');
+					s.getOption('awg_random_trailers').getUIElement(s.section).setValue(config.interface_randomtrailers || '0');
+					s.getOption('awg_disable_cookies').getUIElement(s.section).setValue(config.interface_disablecookies || '0');
 
 					if (config.interface_dns)
 						s.getOption('dns').getUIElement(s.section).setValue(config.interface_dns);
 
-					for (var i = 0; i < config.peers.length; i++) {
-						var pconf = config.peers[i];
-						var sid = uci.add('network', 'amneziawg_' + s.section);
+					for (let i = 0; i < config.peers.length; i++) {
+						const pconf = config.peers[i];
+						const sid = uci.add('network', 'amneziawg_' + s.section);
 
 						uci.sections('network', 'amneziawg_' + s.section, function(peer) {
 							if (peer.public_key == pconf.peer_publickey)
@@ -492,8 +675,8 @@ return network.registerProtocol('amneziawg', {
 			}
 			else {
 				return getPublicAndPrivateKeyFromPrivate(config.interface_privatekey).then(function(keypair) {
-					var sid = uci.add('network', 'amneziawg_' + s.section);
-					var pub = s.formvalue(s.section, 'public_key');
+					const sid = uci.add('network', 'amneziawg_' + s.section);
+					const pub = s.formvalue(s.section, 'public_key');
 
 					uci.sections('network', 'amneziawg_' + s.section, function(peer) {
 						if (peer.public_key == keypair.pub)
@@ -504,8 +687,8 @@ return network.registerProtocol('amneziawg', {
 					uci.set('network', sid, 'public_key', keypair.pub);
 					uci.set('network', sid, 'private_key', keypair.priv);
 
-					for (var i = 0; i < config.peers.length; i++) {
-						var pconf = config.peers[i];
+					for (let i = 0; i < config.peers.length; i++) {
+						const pconf = config.peers[i];
 
 						if (pconf.peer_publickey == pub) {
 							uci.set('network', sid, 'preshared_key', pconf.peer_presharedkey);
@@ -523,20 +706,35 @@ return network.registerProtocol('amneziawg', {
 		};
 
 		ss.handleConfigImport = function(mode) {
-			var mapNode = ss.getActiveModalMap(),
+			const mapNode = ss.getActiveModalMap(),
 			    headNode = mapNode.parentNode.querySelector('h4'),
-			    parent = this.map;
+			    parent = this.map,
+			    fileInput = E('input', {
+				    'type': 'file',
+				    'accept': '.conf,text/plain,application/octet-stream',
+				    'style': 'display:none'
+			    }),
+			    fileButton = E('button', {
+				    'class': 'btn',
+				    'type': 'button',
+				    'click': function(ev) {
+					    ev.preventDefault();
+					    fileInput.value = '';
+					    fileInput.click();
+				    }
+			    }, [ _('Select file…') ]);
 
-			var nodes = E('div', {
+			const nodes = E('div', {
 				'dragover': this.handleDragConfig,
 				'drop': this.handleDropConfig.bind(this, mode)
 			}, [
 				E([], (mode == 'full') ? [
-					E('p', _('Drag or paste a valid <em>*.conf</em> file below to configure the local AmneziaWG interface.'))
+					E('p', _('Select, drag or paste a valid <em>*.conf</em> file below to configure the local AmneziaWG interface.'))
 				] : [
-					E('p', _('Paste or drag a AmneziaWG configuration (commonly <em>wg0.conf</em>) from another system below to create a matching peer entry allowing that system to connect to the local AmneziaWG interface.')),
+					E('p', _('Select, paste or drag a AmneziaWG configuration (commonly <em>wg0.conf</em>) from another system below to create a matching peer entry allowing that system to connect to the local AmneziaWG interface.')),
 					E('p', _('To configure fully the local AmneziaWG interface from an existing (e.g. provider supplied) configuration file, use the <strong><a class="full-import" href="#">configuration import</a></strong> instead.'))
 				]),
+				E('p', [ fileButton, fileInput ]),
 				E('p', [
 					E('textarea', {
 						'placeholder': (mode == 'full')
@@ -551,7 +749,11 @@ return network.registerProtocol('amneziawg', {
 				}, [''])
 			]);
 
-			var cancelFn = function() {
+			fileInput.addEventListener('change', function(ev) {
+				ss.handleConfigFile(mode, nodes, ev.currentTarget.files[0], ev);
+			});
+
+			const cancelFn = function() {
 				nodes.parentNode.removeChild(nodes.nextSibling);
 				nodes.parentNode.removeChild(nodes);
 				mapNode.classList.remove('hidden');
@@ -561,7 +763,7 @@ return network.registerProtocol('amneziawg', {
 				window.removeEventListener('drop', handleWindowDragDropIgnore);
 			};
 
-			var a = nodes.querySelector('a.full-import');
+			const a = nodes.querySelector('a.full-import');
 
 			if (a) {
 				a.addEventListener('click', ui.createHandlerFn(this, function(mode) {
@@ -596,7 +798,7 @@ return network.registerProtocol('amneziawg', {
 		};
 
 		ss.renderSectionAdd = function(/* ... */) {
-			var nodes = this.super('renderSectionAdd', arguments);
+			const nodes = this.super('renderSectionAdd', arguments);
 
 			nodes.appendChild(E('button', {
 				'class': 'btn',
@@ -621,14 +823,14 @@ return network.registerProtocol('amneziawg', {
 		o.optional = true;
 		o.width = '30%';
 		o.textvalue = function(section_id) {
-			var dis = ss.getOption('disabled'),
+			const dis = ss.getOption('disabled'),
 			    pub = ss.getOption('public_key'),
 			    prv = ss.getOption('private_key'),
 			    psk = ss.getOption('preshared_key'),
 			    name = this.cfgvalue(section_id),
 			    key = pub.cfgvalue(section_id);
 
-			var desc = [
+			const desc = [
 				E('p', [
 					name ? E('span', [ name ]) : E('em', [ _('Untitled peer') ])
 				])
@@ -677,7 +879,7 @@ return network.registerProtocol('amneziawg', {
 		};
 
 		function handleKeyChange(ev, section_id, value) {
-			var prv = this.section.getUIElement(section_id, 'private_key'),
+			const prv = this.section.getUIElement(section_id, 'private_key'),
 			    btn = this.map.findElement('.btn.qr-code');
 
 			btn.disabled = (!prv.isValid() || !prv.getValue());
@@ -708,7 +910,7 @@ return network.registerProtocol('amneziawg', {
 			return E('button', {
 				'class': 'btn',
 				'click': ui.createHandlerFn(this, function(section_id, ev) {
-					var psk = this.section.getUIElement(section_id, 'preshared_key'),
+					const psk = this.section.getUIElement(section_id, 'preshared_key'),
 					    map = this.map;
 
 					return generatePsk().then(function(key) {
@@ -722,10 +924,10 @@ return network.registerProtocol('amneziawg', {
 		o = ss.option(form.DynamicList, 'allowed_ips', _('Allowed IPs'), _("Optional. IP addresses and prefixes that this peer is allowed to use inside the tunnel. Usually the peer's tunnel IP addresses and the networks the peer routes through the tunnel."));
 		o.datatype = 'ipaddr';
 		o.textvalue = function(section_id) {
-			var ips = L.toArray(this.cfgvalue(section_id)),
+			const ips = L.toArray(this.cfgvalue(section_id)),
 			    list = [];
 
-			for (var i = 0; i < ips.length; i++) {
+			for (let i = 0; i < ips.length; i++) {
 				if (i > 7) {
 					list.push(E('em', {
 						'class': 'ifacebadge cbi-tooltip-container'
@@ -761,7 +963,7 @@ return network.registerProtocol('amneziawg', {
 		o.placeholder = 'vpn.example.com';
 		o.datatype = 'host';
 		o.textvalue = function(section_id) {
-			var host = this.cfgvalue(section_id),
+			const host = this.cfgvalue(section_id),
 			    port = this.section.cfgvalue(section_id, 'endpoint_port');
 
 			return (host && port)
@@ -778,9 +980,9 @@ return network.registerProtocol('amneziawg', {
 		o.placeholder = '51820';
 		o.datatype = 'port';
 
-		o = ss.option(form.Value, 'persistent_keepalive', _('Persistent Keep Alive'), _('Optional. Seconds between keep alive messages. Default is 0 (disabled). Recommended value if this device is behind a NAT is 25.'));
+		o = ss.option(form.Value, 'persistent_keepalive', _('Persistent Keep Alive'), _('Optional. Seconds between keep alive messages. Default is 0 (disabled). Recommended value if this device is behind a NAT is 25. A range such as <code>20-30</code> is also accepted.'));
 		o.modalonly = true;
-		o.datatype = 'range(0,65535)';
+		o.validate = validateU16Range;
 		o.placeholder = '0';
 
 
@@ -791,7 +993,7 @@ return network.registerProtocol('amneziawg', {
 		o.modalonly = true;
 
 		o.createPeerConfig = function(section_id, endpoint, ips, eips, dns) {
-			var pub = s.formvalue(s.section, 'public_key'),
+			const pub = s.formvalue(s.section, 'public_key'),
 			    port = s.formvalue(s.section, 'listen_port') || '51820',
 				jc = s.formvalue(s.section, 'awg_jc'),
 				jmin = s.formvalue(s.section, 'awg_jmin'),
@@ -809,6 +1011,15 @@ return network.registerProtocol('amneziawg', {
 				i3 = s.formvalue(s.section, 'awg_i3'),
 				i4 = s.formvalue(s.section, 'awg_i4'),
 				i5 = s.formvalue(s.section, 'awg_i5'),
+				hpk = s.formvalue(s.section, 'awg_header_protection_key'),
+				cpa = s.formvalue(s.section, 'awg_content_padding_addition'),
+				rat = s.formvalue(s.section, 'awg_rekey_after_time'),
+				rt = s.formvalue(s.section, 'awg_rekey_timeout'),
+				rjat = s.formvalue(s.section, 'awg_reject_after_time'),
+				kt = s.formvalue(s.section, 'awg_keepalive_timeout'),
+				mha = s.formvalue(s.section, 'awg_max_handshake_attempts'),
+				rtr = s.formvalue(s.section, 'awg_random_trailers'),
+				dc = s.formvalue(s.section, 'awg_disable_cookies'),
 			    prv = this.section.formvalue(section_id, 'private_key'),
 			    psk = this.section.formvalue(section_id, 'preshared_key'),
 			    eport = this.section.formvalue(section_id, 'endpoint_port'),
@@ -841,6 +1052,15 @@ return network.registerProtocol('amneziawg', {
 				i3 ? 'I3 = ' + i3 : '# I3 not defined',
 				i4 ? 'I4 = ' + i4 : '# I4 not defined',
 				i5 ? 'I5 = ' + i5 : '# I5 not defined',
+				hpk ? 'HeaderProtectionKey = ' + hpk : '# HeaderProtectionKey not defined',
+				cpa ? 'ContentPaddingAddition = ' + cpa : '# ContentPaddingAddition not defined',
+				rat ? 'RekeyAfterTime = ' + rat : '# RekeyAfterTime not defined',
+				rt ? 'RekeyTimeout = ' + rt : '# RekeyTimeout not defined',
+				rjat ? 'RejectAfterTime = ' + rjat : '# RejectAfterTime not defined',
+				kt ? 'KeepaliveTimeout = ' + kt : '# KeepaliveTimeout not defined',
+				mha ? 'MaxHandshakeAttempts = ' + mha : '# MaxHandshakeAttempts not defined',
+				rtr == '1' ? 'RandomTrailers = on' : '# RandomTrailers not defined',
+				dc == '1' ? 'DisableCookies = on' : '# DisableCookies not defined',
 				'',
 				'[Peer]',
 				'PublicKey = ' + pub,
@@ -852,7 +1072,7 @@ return network.registerProtocol('amneziawg', {
 		};
 
 		o.handleGenerateQR = function(section_id, ev) {
-			var mapNode = ss.getActiveModalMap(),
+			const mapNode = ss.getActiveModalMap(),
 			    headNode = mapNode.parentNode.querySelector('h4'),
 			    configGenerator = this.createPeerConfig.bind(this, section_id),
 			    parent = this.map,
@@ -866,7 +1086,7 @@ return network.registerProtocol('amneziawg', {
 				L.resolveDefault(uci.load('system')),
 				parent.save(null, true)
 			]).then(function(data) {
-				var hostnames = [];
+				const hostnames = [];
 
 				uci.sections('ddns', 'service', function(s) {
 					if (typeof(s?.lookup_host) == 'string' && s?.enabled == '1')
@@ -878,37 +1098,36 @@ return network.registerProtocol('amneziawg', {
 						hostnames.push(s.hostname);
 				});
 
-				for (var i = 0; i < data[0].length; i++)
+				for (let i = 0; i < data[0].length; i++)
 					hostnames.push.apply(hostnames, data[0][i].getIPAddrs().map(function(ip) { return ip.split('/')[0] }));
 
-				for (var i = 0; i < data[1].length; i++)
+				for (let i = 0; i < data[1].length; i++)
 					hostnames.push.apply(hostnames, data[1][i].getIP6Addrs().map(function(ip) { return ip.split('/')[0] }));
 
-				var ips = [ '0.0.0.0/0', '::/0' ];
+				const ips = [ '0.0.0.0/0', '::/0' ];
 
-				var dns = [];
+				const dns = [];
 
-				var lan = data[2];
+				const lan = data[2];
 				if (lan) {
-					var lanIp = lan.getIPAddr();
+					const lanIp = lan.getIPAddr();
 					if (lanIp) {
 						dns.unshift(lanIp)
 					}
 				}
 
-				var qrm, qrs, qro;
-
-				qrm = new form.JSONMap({ config: { endpoint: hostnames[0], allowed_ips: ips, addresses: eips, dns_servers: dns } }, null, _('The generated configuration can be imported into a WireGuard client application to set up a connection towards this device.'));
+				const qrm = new form.JSONMap({ config: { endpoint: hostnames[0], allowed_ips: ips, addresses: eips, dns_servers: dns } }, null, _('The generated configuration can be imported into a WireGuard client application to set up a connection towards this device.'));
 				qrm.parent = parent;
 
-				qrs = qrm.section(form.NamedSection, 'config');
+				const qrs = qrm.section(form.NamedSection, 'config');
+				let qro;
 
 				function handleConfigChange(ev, section_id, value) {
-					var code = this.map.findElement('.qr-code'),
+					const code = this.map.findElement('.qr-code'),
 					    conf = this.map.findElement('.client-config'),
 					    endpoint = this.section.getUIElement(section_id, 'endpoint'),
-					    ips = this.section.getUIElement(section_id, 'allowed_ips');
-					    eips = this.section.getUIElement(section_id, 'addresses');
+					    ips = this.section.getUIElement(section_id, 'allowed_ips'),
+					    eips = this.section.getUIElement(section_id, 'addresses'),
 					    dns = this.section.getUIElement(section_id, 'dns_servers');
 
 					if (this.isValid(section_id)) {
@@ -943,9 +1162,9 @@ return network.registerProtocol('amneziawg', {
 
 				qro = qrs.option(form.DummyValue, 'output');
 				qro.renderWidget = function() {
-					var peer_config = configGenerator(hostnames[0], ips, eips, dns);
+					const peer_config = configGenerator(hostnames[0], ips, eips, dns);
 
-					var node = E('div', {
+					const node = E('div', {
 						'style': 'display:flex;flex-wrap:wrap;align-items:center;gap:.5em;width:100%'
 					}, [
 						E('div', {
@@ -958,7 +1177,7 @@ return network.registerProtocol('amneziawg', {
 							'class': 'client-config',
 							'style': 'flex:1;white-space:pre;overflow:auto',
 							'click': function(ev) {
-								var sel = window.getSelection(),
+								const sel = window.getSelection(),
 								    range = document.createRange();
 
 								range.selectNodeContents(ev.currentTarget);
@@ -1009,7 +1228,7 @@ return network.registerProtocol('amneziawg', {
 		};
 
 		o.cfgvalue = function(section_id, value) {
-			var privkey = this.section.cfgvalue(section_id, 'private_key');
+			const privkey = this.section.cfgvalue(section_id, 'private_key');
 
 			return E('button', {
 				'class': 'btn qr-code',
