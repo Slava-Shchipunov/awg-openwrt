@@ -34,6 +34,9 @@ msgstr "Вставьте или перетащите имеющийся файл
 msgid "Paste or drag AmneziaWG peer configuration (wg0.conf) file…"
 msgstr "Вставьте или перетащите файл конфигурации узла AmneziaWG (wg0.conf)…"
 
+msgid "Select file…"
+msgstr "Выбрать файл…"
+
 msgid "Recommended. IP addresses of the AmneziaWG interface."
 msgstr "Рекомендуется. IP-адреса интерфейса AmneziaWG."
 

@@ -712,8 +712,17 @@ return network.registerProtocol('amneziawg', {
 			    fileInput = E('input', {
 				    'type': 'file',
 				    'accept': '.conf,text/plain,application/octet-stream',
-				    'style': 'max-width:100%'
-			    });
+				    'style': 'display:none'
+			    }),
+			    fileButton = E('button', {
+				    'class': 'btn',
+				    'type': 'button',
+				    'click': function(ev) {
+					    ev.preventDefault();
+					    fileInput.value = '';
+					    fileInput.click();
+				    }
+			    }, [ _('Select file…') ]);
 
 			const nodes = E('div', {
 				'dragover': this.handleDragConfig,
@@ -725,7 +734,7 @@ return network.registerProtocol('amneziawg', {
 					E('p', _('Select, paste or drag a AmneziaWG configuration (commonly <em>wg0.conf</em>) from another system below to create a matching peer entry allowing that system to connect to the local AmneziaWG interface.')),
 					E('p', _('To configure fully the local AmneziaWG interface from an existing (e.g. provider supplied) configuration file, use the <strong><a class="full-import" href="#">configuration import</a></strong> instead.'))
 				]),
-				E('p', [ fileInput ]),
+				E('p', [ fileButton, fileInput ]),
 				E('p', [
 					E('textarea', {
 						'placeholder': (mode == 'full')
