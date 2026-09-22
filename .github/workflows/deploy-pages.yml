@@ -2,6 +2,8 @@ name: Deploy OpenWrt Feed Pages
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
 
 permissions:
   contents: write
@@ -10,6 +12,9 @@ jobs:
   deploy-pages:
     name: Regenerate GitHub Pages site
     runs-on: ubuntu-latest
+    concurrency:
+      group: gh-pages-publish
+      cancel-in-progress: false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,6 +28,14 @@ jobs:
             git fetch --depth=1 origin gh-pages
             git --work-tree=gh-pages-content checkout FETCH_HEAD -- .
           fi
+
+      - name: Update downloads badge data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          bash .github/scripts/generate-downloads-badge.sh \
+            "$GITHUB_WORKSPACE/gh-pages-content/downloads.json" \
+            "$GITHUB_REPOSITORY"
 
       - name: Check existing feed content
         run: |
