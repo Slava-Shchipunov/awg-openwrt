@@ -309,6 +309,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-feed
     if: ${{ always() }}
+    concurrency:
+      group: gh-pages-publish
+      cancel-in-progress: false
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -322,6 +325,14 @@ jobs:
             git fetch --depth=1 origin gh-pages
             git --work-tree=gh-pages-content checkout FETCH_HEAD -- .
           fi
+
+      - name: Update downloads badge data
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          bash .github/scripts/generate-downloads-badge.sh \
+            "$GITHUB_WORKSPACE/gh-pages-content/downloads.json" \
+            "$GITHUB_REPOSITORY"
 
       - name: Download all feed artifacts
         uses: actions/download-artifact@v4
