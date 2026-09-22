@@ -165,20 +165,11 @@ jobs:
 
           echo "Building AmneziaWG packages..."
 
-          # Build kmod-amneziawg (kernel module)
-          echo "Building kmod-amneziawg..."
-          make package/kmod-amneziawg/{download,prepare} V=s || true
-          make package/kmod-amneziawg/compile V=s || true
-
-          # Build luci-proto-amneziawg (web interface)
-          echo "Building luci-proto-amneziawg..."
-          make package/luci-proto-amneziawg/{download,prepare} V=s
+          # Building the top-level LuCI package also builds its dependencies:
+          # luci-proto-amneziawg -> amneziawg-tools -> kmod-amneziawg.
+          # Keep this in a single make invocation to avoid rebuilding the
+          # kernel package for every individual target, especially on 25.x.
           make package/luci-proto-amneziawg/compile V=s
-
-          # Build amneziawg-tools (userspace tools)
-          echo "Building amneziawg-tools..."
-          make package/amneziawg-tools/{download,prepare} V=s
-          make package/amneziawg-tools/compile V=s
           
           echo "Build completed. Checking for built packages..."
           find bin/ -name "*.?pk" | grep -E "(amneziawg|luci-proto-amneziawg|luci-i18n-amneziawg)" | head -10
