@@ -271,6 +271,8 @@ configure_amneziawg_interface() {
         fi
     done
 
+    read -r -p "Enter DNS server(s), IPv4 and/or IPv6, separated by commas or spaces (from [Interface]) [optional, leave blank to skip]:"$'\n' AWG_DNS
+
     read -r -p "Enter the public key (from [Peer]):"$'\n' AWG_PUBLIC_KEY_INT
     read -r -p "If use PresharedKey, Enter this (from [Peer]). If your don't use leave blank:"$'\n' AWG_PRESHARED_KEY_INT
     read -r -p "Enter Endpoint host without port (Domain or IP) (from [Peer]):"$'\n' AWG_ENDPOINT_INT
@@ -280,6 +282,13 @@ configure_amneziawg_interface() {
     if [ "$AWG_ENDPOINT_PORT_INT" = '51820' ]; then
         echo $AWG_ENDPOINT_PORT_INT
     fi
+
+    if [ "$AWG_VERSION" = "3.1" ]; then
+        read -r -p "Enter PersistentKeepalive value or range (from [Peer]) [optional, leave blank to use 25]:"$'\n' AWG_PERSISTENT_KEEPALIVE
+    else
+        read -r -p "Enter PersistentKeepalive value (from [Peer]) [optional, leave blank to use 25]:"$'\n' AWG_PERSISTENT_KEEPALIVE
+    fi
+    AWG_PERSISTENT_KEEPALIVE=${AWG_PERSISTENT_KEEPALIVE:-25}
 
     read -r -p "Enter Jc value (from [Interface]):"$'\n' AWG_JC
     read -r -p "Enter Jmin value (from [Interface]):"$'\n' AWG_JMIN
@@ -339,6 +348,14 @@ configure_amneziawg_interface() {
     uci set "network.${INTERFACE_NAME}.listen_port=51821"
     uci set "network.${INTERFACE_NAME}.addresses=${AWG_IP}"
 
+    uci -q delete "network.${INTERFACE_NAME}.dns"
+    if [ -n "$AWG_DNS" ]; then
+        AWG_DNS_LIST=$(printf '%s\n' "$AWG_DNS" | tr ',' ' ')
+        for AWG_DNS_SERVER in $AWG_DNS_LIST; do
+            uci add_list "network.${INTERFACE_NAME}.dns=${AWG_DNS_SERVER}"
+        done
+    fi
+
     uci set "network.${INTERFACE_NAME}.awg_jc=${AWG_JC}"
     uci set "network.${INTERFACE_NAME}.awg_jmin=${AWG_JMIN}"
     uci set "network.${INTERFACE_NAME}.awg_jmax=${AWG_JMAX}"
@@ -382,7 +399,7 @@ configure_amneziawg_interface() {
     uci set "network.@${CONFIG_NAME}[0].public_key=${AWG_PUBLIC_KEY_INT}"
     uci set "network.@${CONFIG_NAME}[0].preshared_key=${AWG_PRESHARED_KEY_INT}"
     uci set "network.@${CONFIG_NAME}[0].route_allowed_ips=1"
-    uci set "network.@${CONFIG_NAME}[0].persistent_keepalive=25"
+    uci set "network.@${CONFIG_NAME}[0].persistent_keepalive=${AWG_PERSISTENT_KEEPALIVE}"
     uci set "network.@${CONFIG_NAME}[0].endpoint_host=${AWG_ENDPOINT_INT}"
     uci set "network.@${CONFIG_NAME}[0].allowed_ips=0.0.0.0/0"
     uci add_list "network.@${CONFIG_NAME}[0].allowed_ips=::/0"
