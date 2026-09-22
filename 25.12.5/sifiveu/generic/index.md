@@ -36,9 +36,13 @@ apk add amneziawg-tools kmod-amneziawg luci-proto-amneziawg
 ## Feed files
 
 - [amneziawg-tools-1.0.20260618-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/amneziawg-tools-1.0.20260618-r1.apk)
+- [amneziawg-tools-3.1.20260812-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/amneziawg-tools-3.1.20260812-r1.apk)
 - [feed.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/feed.json)
 - [index.json](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/index.json)
 - [kmod-amneziawg-6.12.94.1.0.20260611-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/kmod-amneziawg-6.12.94.1.0.20260611-r1.apk)
+- [kmod-amneziawg-6.12.94.3.1.20260906-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/kmod-amneziawg-6.12.94.3.1.20260906-r1.apk)
 - [luci-i18n-amneziawg-ru-0.260630.82057.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/luci-i18n-amneziawg-ru-0.260630.82057.apk)
+- [luci-i18n-amneziawg-ru-0.260922.51938.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/luci-i18n-amneziawg-ru-0.260922.51938.apk)
 - [luci-proto-amneziawg-2.0.4-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/luci-proto-amneziawg-2.0.4-r1.apk)
+- [luci-proto-amneziawg-3.1.0-r1.apk](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/luci-proto-amneziawg-3.1.0-r1.apk)
 - [packages.adb](https://slava-shchipunov.github.io/awg-openwrt/25.12.5/sifiveu/generic/packages.adb)
