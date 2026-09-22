@@ -48,7 +48,7 @@ function rangeValidator(max) {
 		if (value.length == 0)
 			return true;
 
-		var m = value.match(/^(\d+)(?:-(\d+))?$/);
+		const m = value.match(/^(\d+)(?:-(\d+))?$/);
 
 		if (!m || +m[1] > max || (m[2] != null && (+m[2] > max || +m[2] < +m[1])))
 			return _('Expecting a value or a range (e.g. 10-20) between 0 and %d').format(max);
@@ -57,11 +57,82 @@ function rangeValidator(max) {
 	};
 }
 
-var validateU16Range = rangeValidator(65535);
-var validateU32Range = rangeValidator(4294967295);
+const validateU16Range = rangeValidator(65535);
+const validateU32Range = rangeValidator(4294967295);
+
+function parseRange(value) {
+	const m = value.match(/^(\d+)(?:-(\d+))?$/);
+
+	return m ? [ +m[1], +(m[2] != null ? m[2] : m[1]) ] : null;
+}
+
+function validateHeaderRanges(values) {
+	const ranges = values.map(function(value, index) {
+		return parseRange(value || String(index + 1));
+	});
+
+	for (let i = 0; i < ranges.length; i++) {
+		if (!ranges[i])
+			continue;
+
+		for (let j = i + 1; j < ranges.length; j++) {
+			if (ranges[j] && ranges[i][0] <= ranges[j][1] && ranges[j][0] <= ranges[i][1])
+				return _('H1-H4 ranges must not overlap');
+		}
+	}
+
+	return true;
+}
+
+function headerRangeValidator(index) {
+	return function(section_id, value) {
+		const result = validateU32Range(section_id, value);
+
+		if (result !== true)
+			return result;
+
+		const values = [ 'awg_h1', 'awg_h2', 'awg_h3', 'awg_h4' ].map(function(option) {
+			return this.section.formvalue(section_id, option) || '';
+		}, this);
+
+		values[index] = value;
+		return validateHeaderRanges(values);
+	};
+}
+
+function validateHeaderProtectionPaddings(values) {
+	for (let i = 0; i < values.length; i++) {
+		if (!/^[0-9]+$/.test(values[i] || '') || +values[i] < 12 || +values[i] > 65535)
+			return _('Header Protection requires S1-S4 to be between 12 and 65535');
+	}
+
+	return true;
+}
+
+function validateHeaderProtectionKey(section_id, value) {
+	const result = validateBase64(section_id, value);
+
+	if (result !== true || value.length == 0)
+		return result;
+
+	const values = [ 'awg_s1', 'awg_s2', 'awg_s3', 'awg_s4' ].map(function(option) {
+		return this.section.formvalue(section_id, option) || '';
+	}, this);
+
+	return validateHeaderProtectionPaddings(values);
+}
 
 function parseFlag(value) {
-	return /^(1|on|true|enabled)$/i.test(value || '') ? '1' : '0';
+	if (/^on$/i.test(value || ''))
+		return '1';
+
+	if (/^off$/i.test(value || ''))
+		return '0';
+
+	if (/^\d+$/.test(value || ''))
+		return /[1-9]/.test(value) ? '1' : '0';
+
+	return null;
 }
 
 var stubValidator = {
@@ -272,23 +343,23 @@ return network.registerProtocol('amneziawg', {
         o.placeholder = '0';
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Value, 'awg_h1', _('H1'), _('Handshake initiation packet type header. A range such as <code>10-20</code> is also accepted.'));
-        o.validate = validateU32Range;
+        o = s.taboption('amneziawg', form.Value, 'awg_h1', _('H1'), _('Handshake initiation packet type header. A range such as <code>10-20</code> is also accepted. H1-H4 ranges must not overlap.'));
+        o.validate = headerRangeValidator(0);
         o.placeholder = '1';
         o.optional = true;
 
         o = s.taboption('amneziawg', form.Value, 'awg_h2', _('H2'), _('Handshake response packet type header. A range such as <code>10-20</code> is also accepted.'));
-        o.validate = validateU32Range;
+        o.validate = headerRangeValidator(1);
         o.placeholder = '2';
         o.optional = true;
 
         o = s.taboption('amneziawg', form.Value, 'awg_h3', _('H3'), _('Handshake cookie packet type header. A range such as <code>10-20</code> is also accepted.'));
-        o.validate = validateU32Range;
+        o.validate = headerRangeValidator(2);
         o.placeholder = '3';
         o.optional = true;
 
         o = s.taboption('amneziawg', form.Value, 'awg_h4', _('H4'), _('Transport packet type header. A range such as <code>10-20</code> is also accepted.'));
-        o.validate = validateU32Range;
+        o.validate = headerRangeValidator(3);
         o.placeholder = '4';
         o.optional = true;
 		
@@ -312,8 +383,8 @@ return network.registerProtocol('amneziawg', {
         o.datatype = 'string';
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Value, 'awg_header_protection_key', _('Header Protection Key'), _('Optional. Base64-encoded key used to obfuscate packet headers. Must match on both sides.'));
-        o.validate = validateBase64;
+        o = s.taboption('amneziawg', form.Value, 'awg_header_protection_key', _('Header Protection Key'), _('Optional. 32-byte key encoded in Base64, used to encrypt and obfuscate packet headers. Must match on both sides and requires S1-S4 to be at least 12.'));
+        o.validate = validateHeaderProtectionKey;
         o.password = true;
         o.optional = true;
 
@@ -332,25 +403,25 @@ return network.registerProtocol('amneziawg', {
         o.placeholder = '5';
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Value, 'awg_reject_after_time', _('Reject After Time'), _('Seconds before a session is discarded. A range such as <code>170-190</code> is also accepted.'));
+        o = s.taboption('amneziawg', form.Value, 'awg_reject_after_time', _('Reject After Time'), _('Seconds after which incoming data for the current session is rejected and a new handshake is initiated. A range such as <code>170-190</code> is also accepted.'));
         o.validate = validateU16Range;
         o.placeholder = '180';
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Value, 'awg_keepalive_timeout', _('Keepalive Timeout'), _('Seconds of inactivity before a keepalive is sent. A range such as <code>8-12</code> is also accepted.'));
+        o = s.taboption('amneziawg', form.Value, 'awg_keepalive_timeout', _('Keepalive Timeout'), _('Seconds to wait after receiving authenticated data when no authenticated packet is sent before sending a keepalive. A range such as <code>8-12</code> is also accepted.'));
         o.validate = validateU16Range;
         o.placeholder = '10';
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Value, 'awg_max_handshake_attempts', _('Max Handshake Attempts'), _('Handshake retries before giving up. A range such as <code>15-20</code> is also accepted.'));
+        o = s.taboption('amneziawg', form.Value, 'awg_max_handshake_attempts', _('Max Handshake Attempts'), _('Maximum number of handshake retries after timeouts. A range such as <code>15-20</code> is also accepted.'));
         o.validate = validateU16Range;
         o.placeholder = '18';
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Flag, 'awg_random_trailers', _('Random Trailers'), _('Append a random number of bytes to every packet. Must be enabled on both sides.'));
+        o = s.taboption('amneziawg', form.Flag, 'awg_random_trailers', _('Random Trailers'), _('Append random-length trailers to handshake and transport packets: random bytes for handshakes and zero bytes for transport. Must be enabled on both sides. Content Padding Addition takes priority for transport packets.'));
         o.optional = true;
 
-        o = s.taboption('amneziawg', form.Flag, 'awg_disable_cookies', _('Disable Cookies'), _('Do not answer handshakes with cookie messages when the interface is under load.'));
+        o = s.taboption('amneziawg', form.Flag, 'awg_disable_cookies', _('Disable Cookies'), _('Do not send Handshake Cookie Reply messages. Received cookies are still processed.'));
         o.optional = true;
 
 		// -- peers -----------------------------------------------------------------------
@@ -447,6 +518,44 @@ return network.registerProtocol('amneziawg', {
 			if (config.interface_headerprotectionkey && validateBase64(null, config.interface_headerprotectionkey) !== true)
 				return _('HeaderProtectionKey setting is invalid');
 
+			const headerValues = [
+				config.interface_h1 || '1',
+				config.interface_h2 || '2',
+				config.interface_h3 || '3',
+				config.interface_h4 || '4'
+			];
+
+			for (let i = 0; i < headerValues.length; i++)
+				if (validateU32Range(null, headerValues[i]) !== true)
+					return _('H1-H4 setting is invalid');
+
+			if (validateHeaderRanges(headerValues) !== true)
+				return _('H1-H4 ranges must not overlap');
+
+			if (config.interface_headerprotectionkey && validateHeaderProtectionPaddings([
+				config.interface_s1,
+				config.interface_s2,
+				config.interface_s3,
+				config.interface_s4
+			]) !== true)
+				return _('Header Protection requires S1-S4 to be between 12 and 65535');
+
+			const flags = [
+				[ 'interface_randomtrailers', 'RandomTrailers' ],
+				[ 'interface_disablecookies', 'DisableCookies' ]
+			];
+
+			for (let i = 0; i < flags.length; i++) {
+				const key = flags[i][0];
+
+				if (config[key] != null) {
+					config[key] = parseFlag(config[key]);
+
+					if (config[key] == null)
+						return _('%s setting is invalid').format(flags[i][1]);
+				}
+			}
+
 			for (var i = 0; i < config.peers.length; i++) {
 				var pconf = config.peers[i];
 
@@ -532,8 +641,8 @@ return network.registerProtocol('amneziawg', {
 					s.getOption('awg_reject_after_time').getUIElement(s.section).setValue(config.interface_rejectaftertime || '');
 					s.getOption('awg_keepalive_timeout').getUIElement(s.section).setValue(config.interface_keepalivetimeout || '');
 					s.getOption('awg_max_handshake_attempts').getUIElement(s.section).setValue(config.interface_maxhandshakeattempts || '');
-					s.getOption('awg_random_trailers').getUIElement(s.section).setValue(parseFlag(config.interface_randomtrailers));
-					s.getOption('awg_disable_cookies').getUIElement(s.section).setValue(parseFlag(config.interface_disablecookies));
+					s.getOption('awg_random_trailers').getUIElement(s.section).setValue(config.interface_randomtrailers || '0');
+					s.getOption('awg_disable_cookies').getUIElement(s.section).setValue(config.interface_disablecookies || '0');
 
 					if (config.interface_dns)
 						s.getOption('dns').getUIElement(s.section).setValue(config.interface_dns);
