@@ -7,10 +7,12 @@ PKG_EXT=""
 
 usage() {
     cat <<EOF
-Usage: ${0##*/} [-h] [-e] [-n]
+Usage: ${0##*/} [-h] [-e] [-n] [-u]
     -h    show this help
     -e    do not install 'luci-i18n-amneziawg-ru' package
     -n    do not configure the amneziawg interface
+    -u    userspace mode: do not require kmod-amneziawg, use 'amneziawg-go'
+          instead (the binary must be installed separately)
 EOF
     exit 0
 }
@@ -51,6 +53,83 @@ install_local_pkg() {
         apk add --allow-untrusted "$pkg_file"
     else
         opkg install "$pkg_file"
+    fi
+}
+
+# Returns the version of an installed package, or an empty string if not installed
+get_installed_version() {
+    pkg_name="$1"
+    if [ "$PKG_MANAGER" = "apk" ]; then
+        # apk line format: <name>-<major.minor...>-r<rev> <arch>
+        apk list -I "$pkg_name" 2>/dev/null | awk '{print $1}' | head -n1 | sed -E 's/^[^ ]*-([0-9]+\.[0-9]+).*/\1/'
+    else
+        opkg info "$pkg_name" 2>/dev/null | grep '^Version:' | awk '{print $2}' | head -n1
+    fi
+}
+
+# Returns 0 if the given package version corresponds to AmneziaWG 3.1
+is_awg_3_1_version() {
+    pkg_version="$1"
+    MAJOR_PKG_VERSION=$(echo "$pkg_version" | cut -d '.' -f1)
+    MINOR_PKG_VERSION=$(echo "$pkg_version" | cut -d '.' -f2)
+
+    if [ -z "$MAJOR_PKG_VERSION" ] || [ -z "$MINOR_PKG_VERSION" ] ||
+        [ "$MAJOR_PKG_VERSION" -lt 0 ] 2>/dev/null || [ "$MINOR_PKG_VERSION" -lt 0 ] 2>/dev/null; then
+        return 1
+    fi
+
+    [ "$MAJOR_PKG_VERSION" = "3" ] && [ "$MINOR_PKG_VERSION" -ge 1 ]
+}
+
+# Installs the package if missing; in AWG 3.1 mode upgrades an already installed
+# older (2.0/1.0) package. Stops with a clear error if the release for this
+# OpenWrt version has no AWG 3.1 build.
+install_or_upgrade_pkg() {
+    pkg_base_name="$1"
+    pkg_postfix_base="$2"
+    awg_dir="$3"
+    base_url="$4"
+
+    if is_pkg_installed "$pkg_base_name"; then
+        installed_version=$(get_installed_version "$pkg_base_name")
+        if [ "$AWG_VERSION" = "3.1" ] && ! is_awg_3_1_version "$installed_version"; then
+            printf "\033[33;1m$pkg_base_name %s does not support AWG 3.1. Trying to upgrade...\033[0m\n" "$installed_version"
+            pkg_filename=$(download_package "$pkg_base_name" "$pkg_postfix_base" "$awg_dir" "$base_url")
+            if [ $? -eq 0 ]; then
+                echo "$pkg_base_name file downloaded successfully"
+                if [ "$PKG_MANAGER" = "apk" ]; then
+                    apk add --allow-untrusted --force-overwrite "$awg_dir/$pkg_filename" >/dev/null 2>&1
+                else
+                    opkg install --force-reinstall "$awg_dir/$pkg_filename" >/dev/null 2>&1
+                fi
+                if [ $? -eq 0 ]; then
+                    echo "$pkg_base_name upgraded successfully"
+                else
+                    echo "Error installing $pkg_base_name. Please, install $pkg_base_name manually and run the script again"
+                    exit 1
+                fi
+            else
+                printf "\033[31;1mError: there are no AWG 3.1 packages for OpenWrt %s in releases (only up to AWG 2.0 are published for this firmware version).\nPlease upgrade the firmware to OpenWrt 24.10.8+ / 25.12.5+ (AWG 3.1) or build the %s package manually, then run the script again.\033[0m\n" "$VERSION" "$pkg_base_name"
+                exit 1
+            fi
+        else
+            echo "$pkg_base_name already installed (version $installed_version)"
+        fi
+    else
+        pkg_filename=$(download_package "$pkg_base_name" "$pkg_postfix_base" "$awg_dir" "$base_url")
+        if [ $? -eq 0 ]; then
+            echo "$pkg_base_name file downloaded successfully"
+        else
+            echo "Error downloading $pkg_base_name. Please, install $pkg_base_name manually and run the script again"
+            exit 1
+        fi
+        install_local_pkg "$awg_dir/$pkg_filename" >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+            echo "$pkg_base_name installed successfully"
+        else
+            echo "Error installing $pkg_base_name. Please, install $pkg_base_name manually and run the script again"
+            exit 1
+        fi
     fi
 }
 
@@ -159,46 +238,26 @@ install_awg_packages() {
     AWG_DIR="/tmp/amneziawg"
     mkdir -p "$AWG_DIR"
 
-    if is_pkg_installed "kmod-amneziawg"; then
-        echo "kmod-amneziawg already installed"
+    if [ "$USE_USERSPACE" = "1" ]; then
+        echo "Userspace mode: skipping kmod-amneziawg"
+        if ! command -v amneziawg-go >/dev/null 2>&1; then
+            printf "\033[33;1mWarning: 'amneziawg-go' is not found in PATH.\nThe userspace AmneziaWG daemon is not provided as a package yet - please build it from https://github.com/amnezia-vpn/amneziawg-go (or place a binary at /usr/bin/amneziawg-go), otherwise the amneziawg interface will not start.\033[0m\n"
+        fi
     else
-        KMOD_AMNEZIAWG_FILENAME=$(download_package "kmod-amneziawg" "$PKGPOSTFIX_BASE" "$AWG_DIR" "${BASE_URL}v${VERSION}/")
-        if [ $? -eq 0 ]; then
-            echo "kmod-amneziawg file downloaded successfully"
-        else
-            echo "Error downloading kmod-amneziawg. Please, install kmod-amneziawg manually and run the script again"
-            exit 1
-        fi
-
-        install_local_pkg "$AWG_DIR/$KMOD_AMNEZIAWG_FILENAME"
-
-        if [ $? -eq 0 ]; then
-            echo "kmod-amneziawg installed successfully"
-        else
-            echo "Error installing kmod-amneziawg. Please, install kmod-amneziawg manually and run the script again"
-            exit 1
-        fi
+        install_or_upgrade_pkg "kmod-amneziawg" "$PKGPOSTFIX_BASE" "$AWG_DIR" "${BASE_URL}v${VERSION}/"
     fi
 
-    if is_pkg_installed "amneziawg-tools"; then
-        echo "amneziawg-tools already installed"
-    else
-        AMNEZIAWG_TOOLS_FILENAME=$(download_package "amneziawg-tools" "$PKGPOSTFIX_BASE" "$AWG_DIR" "${BASE_URL}v${VERSION}/")
-        if [ $? -eq 0 ]; then
-            echo "amneziawg-tools file downloaded successfully"
-        else
-            echo "Error downloading amneziawg-tools. Please, install amneziawg-tools manually and run the script again"
-            exit 1
-        fi
+    install_or_upgrade_pkg "amneziawg-tools" "$PKGPOSTFIX_BASE" "$AWG_DIR" "${BASE_URL}v${VERSION}/"
 
-        install_local_pkg "$AWG_DIR/$AMNEZIAWG_TOOLS_FILENAME"
-
-        if [ $? -eq 0 ]; then
-            echo "amneziawg-tools installed successfully"
-        else
-            echo "Error installing amneziawg-tools. Please, install amneziawg-tools manually and run the script again"
-            exit 1
-        fi
+    # Warn if the 'awg' CLI is still too old for AWG 3.1
+    if command -v awg >/dev/null 2>&1 && [ "$AWG_VERSION" = "3.1" ]; then
+        AWG_CLI_VERSION=$(awg --version 2>/dev/null)
+        case "$AWG_CLI_VERSION" in
+            *3.1*) ;;
+            *)
+                printf "\033[31;1mWarning: installed 'awg' CLI (%s) does not support AWG 3.1.\nThe AWG 3.1 tunnel will not handshake until amneziawg-tools 3.1 is installed (see instruction above).\033[0m\n" "$AWG_CLI_VERSION"
+                ;;
+        esac
     fi
 
     # Проверяем оба возможных названия пакета
@@ -436,12 +495,14 @@ configure_amneziawg_interface() {
 
 ASK_FOR_TRANSLATION=1
 ASK_FOR_INTERFACE_CONFIG=1
+USE_USERSPACE=0
 
-while getopts ":ehn" opt; do
+while getopts ":ehnu" opt; do
     case "$opt" in
         h) usage ;;
         e) ASK_FOR_TRANSLATION=0 ;;
         n) ASK_FOR_INTERFACE_CONFIG=0 ;;
+        u) USE_USERSPACE=1 ;;
         \?) echo "Unknown option -$OPTARG" >&2; usage ;;
     esac
 done
