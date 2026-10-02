@@ -255,6 +255,19 @@ proto_amneziawg_setup() {
 		logger -t "amneziawg" "info: using user-space amneziawg-go for ${AWG}"
 		rm -f "/var/run/amneziawg/${config}.sock"
 		amneziawg-go "${config}"
+		# amneziawg-go daemonizes by itself: wait until the UAPI socket
+		# appears before pushing the config, otherwise 'awg setconf' races
+		# with the daemon startup and the interface setup fails.
+		sock_wait=0
+		while [ ! -S "/var/run/amneziawg/${config}.sock" ] && [ "${sock_wait}" -lt 50 ]; do
+			sleep 0.2
+			sock_wait=$((sock_wait + 1))
+		done
+		if [ ! -S "/var/run/amneziawg/${config}.sock" ]; then
+			logger -t "amneziawg" "error: amneziawg-go did not create the UAPI socket for ${config}"
+			proto_setup_failed "${config}"
+			exit 1
+		fi
 	fi
 
 	if [ "${mtu}" ]; then
@@ -403,7 +416,9 @@ proto_amneziawg_teardown() {
 	if proto_amneziawg_is_kernel_mode; then
 		ip link del dev "${config}" >/dev/null 2>&1
 	else
+		pkill -f "amneziawg-go ${config}" >/dev/null 2>&1
 		rm -f "/var/run/amneziawg/${config}.sock"
+		ip link del dev "${config}" >/dev/null 2>&1
 	fi
 }
 
