@@ -119,6 +119,37 @@ AWG 2.0 можно собрать под определённую платфор
 
 `DisableCookies` влияет только на отправку `Handshake Cookie Reply`. Обработка полученных cookie продолжает работать. Включение параметра отключает исходящую часть встроенной защиты WireGuard от DoS-атак через поток рукопожатий.
 
+## Обновление с AWG 2.0 на 3.1
+
+Сервер AmneziaWG 3.1 использует обновлённый протокол и новые параметры (`HeaderProtectionKey`, `RekeyAfterTime`, `KeepaliveTimeout` и другие), поэтому на роутере должны быть установлены пакеты 3.1:
+
+- `kmod-amneziawg` версии `3.1.x`;
+- `amneziawg-tools` версии `3.1.x` — проверить можно командой `awg --version` (должна выводиться версия `3.1`).
+
+Готовые сборки AWG 3.1 опубликованы для OpenWrt **24.10.8+ и 25.12.5+**; более ранние релизы содержат только AWG 2.0. Если после обновления сервера на 3.1 туннель перестал подниматься, проверьте версии пакетов на роутере:
+
+```
+opkg info amneziawg-tools kmod-amneziawg
+awg --version
+```
+
+Скрипт `amneziawg-install.sh` раньше не переустанавливал уже установленные пакеты: повторный запуск после перехода на 3.1 оставлял старые (2.0/1.0) пакеты на месте. Теперь скрипт проверяет версии установленных пакетов и пытается заменить их на 3.1 (`--force-reinstall`/`--force-overwrite`); если для вашей версии OpenWrt в релизах нет сборок 3.1, он остановится и подскажет, что нужно сделать.
+
+## Userspace-режим (amneziawg-go)
+
+Если ядро не поддерживает kmod-amneziawg 3.1 (модуль не собирается/не загружается для вашего устройства), интерфейс AmneziaWG можно поднять через userspace-демон `amneziawg-go`:
+
+1. Соберите `amneziawg-go` под архитектуру роутера (https://github.com/amnezia-vpn/amneziawg-go) и поместите бинарник в `/usr/bin/amneziawg-go`.
+2. Запустите установщик в userspace-режиме (без kmod):
+
+```
+sh <(wget -O - https://raw.githubusercontent.com/Slava-Shchipunov/awg-openwrt/refs/heads/master/amneziawg-install.sh) -u
+```
+
+3. netifd автоматически использует userspace-демон, если модуль ядра не установлен (см. `proto_amneziawg_is_kernel_mode` в `amneziawg-tools/files/amneziawg.sh`).
+
+> Примечание: `amneziawg-go` пока не поставляется в виде отдельного пакета в этом репозитории.
+
 ## 🙏 Благодарности
 
 Огромное спасибо за помощь в сборке пакетов AWG 2.0:
@@ -148,6 +179,37 @@ sh <(wget -O - https://raw.githubusercontent.com/Slava-Shchipunov/awg-openwrt/re
 4. In addition, for automatic configuration you can also use the [script](https://github.com/itdoginfo/domain-routing-openwrt) from user [@itdoginfo](https://github.com/itdoginfo). This script allows you to automatically download the necessary packages from those collected here and configure [point-by-point bypass of blocking by domains](https://habr.com/ru/articles/767464/) (instructions in Russian). Suitable if you have a weak router with insufficient ROM to install podkop and its dependencies
 
 # Building packages for all devices that support OpenWRT
+
+## Upgrading from AWG 2.0 to 3.1
+
+AmneziaWG 3.1 servers use an updated protocol and new parameters (`HeaderProtectionKey`, `RekeyAfterTime`, `KeepaliveTimeout`, etc.), so the router must have 3.1 packages installed:
+
+- `kmod-amneziawg` version `3.1.x`;
+- `amneziawg-tools` version `3.1.x` (check with `awg --version`, it should report `3.1`).
+
+AWG 3.1 builds are published for OpenWrt **24.10.8+ and 25.12.5+**; earlier releases only contain AWG 2.0 packages. If the tunnel stopped working after the server was upgraded to 3.1, check the installed versions first:
+
+```
+opkg info amneziawg-tools kmod-amneziawg
+awg --version
+```
+
+The `amneziawg-install.sh` script used to skip packages that were already installed, so re-running it after the 3.1 upgrade left old (2.0/1.0) packages in place. The script now checks installed versions and tries to replace them with 3.1 builds (`--force-reinstall`/`--force-overwrite`); if there are no 3.1 builds in the release for your OpenWrt version, it stops with an explanatory message.
+
+## Userspace mode (amneziawg-go)
+
+If the kernel does not support kmod-amneziawg 3.1 (the module cannot be built/loaded for your device), the AmneziaWG interface can be brought up with the `amneziawg-go` userspace daemon:
+
+1. Build `amneziawg-go` for your router architecture (https://github.com/amnezia-vpn/amneziawg-go) and place the binary at `/usr/bin/amneziawg-go`.
+2. Run the installer in userspace mode (no kmod):
+
+```
+sh <(wget -O - https://raw.githubusercontent.com/Slava-Shchipunov/awg-openwrt/refs/heads/master/amneziawg-install.sh) -u
+```
+
+3. netifd automatically falls back to the userspace daemon when the kernel module is not installed (see `proto_amneziawg_is_kernel_mode` in `amneziawg-tools/files/amneziawg.sh`).
+
+> Note: `amneziawg-go` is not yet shipped as a separate package in this repository.
 
 A script has been added to the repository that parses data on supported platforms from the OpenWRT page and automatically starts building AmneziaWG packages for all devices.
 At the moment I have collected packages for all devices for OpenWRT versions:
