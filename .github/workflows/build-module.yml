@@ -37,7 +37,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20.16.0'
+          node-version: '24'
 
       - name: Get OpenWRT version from inputs or tag
         run: |
