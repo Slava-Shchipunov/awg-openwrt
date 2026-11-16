@@ -228,6 +228,9 @@ msgstr ""
 "Не отправлять сообщения Handshake Cookie Reply. Полученные cookie продолжат "
 "обрабатываться."
 
+msgid "MTU setting is invalid"
+msgstr "Некорректное значение MTU"
+
 msgid "HeaderProtectionKey setting is invalid"
 msgstr "Некорректное значение HeaderProtectionKey"
 

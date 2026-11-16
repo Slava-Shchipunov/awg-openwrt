@@ -515,6 +515,9 @@ return network.registerProtocol('amneziawg', {
 			if (!stubValidator.apply('port', config.interface_listenport || '0'))
 				return _('ListenPort setting is invalid');
 
+			if (config.interface_mtu && !(stubValidator.apply('uinteger', config.interface_mtu) && stubValidator.apply('range', config.interface_mtu, [0, 8940])))
+				return _('MTU setting is invalid');
+
 			if (config.interface_headerprotectionkey && validateBase64(null, config.interface_headerprotectionkey) !== true)
 				return _('HeaderProtectionKey setting is invalid');
 
@@ -618,6 +621,7 @@ return network.registerProtocol('amneziawg', {
 					s.getOption('public_key').getUIElement(s.section).setValue(keypair.pub);
 					s.getOption('listen_port').getUIElement(s.section).setValue(config.interface_listenport || '');
 					s.getOption('addresses').getUIElement(s.section).setValue(config.interface_address);
+					s.getOption('mtu').getUIElement(s.section).setValue(config.interface_mtu || '');
 					s.getOption('awg_jc').getUIElement(s.section).setValue(config.interface_jc || '');
 					s.getOption('awg_jmin').getUIElement(s.section).setValue(config.interface_jmin || '');
 					s.getOption('awg_jmax').getUIElement(s.section).setValue(config.interface_jmax || '');
